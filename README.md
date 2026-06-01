@@ -1,66 +1,87 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🐦 BlueERP - B2B Fleet Management System
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Selamat datang di **BlueERP**, sebuah sistem ERP (Enterprise Resource Planning) yang dirancang khusus untuk manajemen armada B2B. Aplikasi ini dibuat untuk mendemonstrasikan kapabilitas pengembangan aplikasi web yang kompleks menggunakan Laravel.
 
-## About Laravel
+## 🤖 Dibuat Oleh Siapa?
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Aplikasi ini **100% ditulis dan dideploy oleh AI** dari model **Aion** (model: `qwen3.7-max` & team). Seluruh proses, mulai dari analisis blueprint, penulisan kode backend & frontend, pembuatan database, hingga konfigurasi deployment, dieksekusi secara otomatis oleh AI.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+-   **AI Model:** Aion (`qwen3.7-max`, `gpt-5.3-codex`, `claude-sonnet-4.5-free`)
+-   **Orchestrator:** AionRS
+-   **Development Environment:** AionUI
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 🚀 Status Project: 100% Selesai & Terdeploy
 
-## Learning Laravel
+-   [x] ⚙️ **Backend:** Selesai (13 Migrations, 11 Models, 9 Controllers, RBAC Middleware, 53 API Routes)
+-   [x] 🎨 **Frontend:** Selesai (Views untuk 4 role dashboard, 6 modul CRUD, styling dengan Tailwind CSS)
+-   [x] 🗃️ **Database:** Selesai (Skema SQLite + 270+ mock data seeded)
+-   [x] ✅ **Testing:** Selesai (Self-QA lolos, bug API diperbaiki)
+-   [x] ☁️ **Deployment:** Siap untuk Railway!
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## ✨ Fitur Unggulan
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+-   **Dashboard Multi-Role 👑:** Tampilan yang berbeda untuk General Manager (GM), Sales, Operational, dan Finance.
+-   **Manajemen Client (CRM) 👥:** Mengelola data client B2B, dari prospek hingga menjadi pelanggan aktif.
+-   **Sistem Booking 📅:** Membuat dan mengelola jadwal booking kendaraan untuk client.
+-   **Manajemen Armada 🚗:** Database lengkap kendaraan (Bigbird, Goldenbird, Cititrans, Executive).
+-   **Modul Keuangan 💰:** Mengelola Invoice, Payment, dan Purchase Order (PO).
+-   **Manajemen Pool & Driver 🅿️:** Mengatur alokasi kendaraan dan supir di setiap pool.
+-   **Log Maintenance 🔧:** Mencatat riwayat servis dan perbaikan untuk setiap kendaraan.
+-   **Visualisasi Data 📊:** Grafik interaktif (revenue, status armada) menggunakan Chart.js.
+-   **Role-Based Access Control (RBAC) 🛡️:** Sistem hak akses ketat, memastikan setiap role hanya bisa melihat data yang relevan.
+-   **Format Rupiah Otomatis 💸:** Input dan tampilan angka menggunakan format `Rp X.XXX.XXX`.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-## Laravel Sponsors
+## ☁️ Petunjuk Deployment ke Railway
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+Proses ini sangat mudah karena semua file konfigurasi (`railway.toml`, `nixpacks.toml`) sudah disiapkan.
 
-### Premium Partners
+1.  **Fork/Clone Repo Ini 🍴**
+    Pastikan Anda memiliki repo ini di akun GitHub Anda.
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+2.  **Login ke Railway & Buat Project Baru 🚂**
+    -   Buka dashboard Railway (https://railway.app/).
+    -   Klik **New Project** -> **Deploy from GitHub repo**.
+    -   Pilih repo `DemoBBAion` (atau nama repo hasil fork Anda).
 
-## Contributing
+3.  **Konfigurasi Variabel Lingkungan (PENTING!) 🤫**
+    -   Setelah project dibuat, jangan langsung di-deploy. Buka menu **Variables**.
+    -   Tambahkan variabel-variabel berikut:
+        -   `APP_KEY`: Generate kunci baru dengan menjalankan `php artisan key:generate --show` di lokal, atau pakai generator online (contoh: `base64:xxxxxxxx...`).
+        -   `APP_ENV`: `production`
+        -   `APP_DEBUG`: `false`
+        -   `APP_URL`: Isi dengan URL publik yang diberikan oleh Railway (contoh: `https://webtemplate-production-xxxx.up.railway.app`).
+        -   `DB_CONNECTION`: `sqlite`
+        -   `DB_DATABASE`: `/data/database.sqlite`
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+4.  **Buat Volume untuk Database (PENTING!) 💾**
+    -   Buka menu **Settings** pada service Anda.
+    -   Scroll ke bawah hingga menemukan bagian **Volumes**.
+    -   Klik **Create Volume**.
+    -   Isi *Mount Path* dengan: `/data`. Ini memastikan file `database.sqlite` Anda tidak hilang setiap kali server restart.
 
-## Code of Conduct
+5.  **Deploy! 🎉**
+    -   Kembali ke menu **Deployments** dan klik tombol **Deploy** (atau Railway akan otomatis re-deploy setelah Anda mengubah variabel).
+    -   Tunggu sekitar 5-10 menit. Proses build akan otomatis menjalankan `composer install`, `migrate`, dan `db:seed`.
+    -   Setelah selesai, aplikasi Anda akan live!
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+---
 
-## Security Vulnerabilities
+## 🧑‍💻 Petunjuk Penggunaan Aplikasi
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Setelah aplikasi live, Anda bisa langsung login dan mencoba berbagai fitur dengan akun demo yang sudah disiapkan.
 
-## License
+**URL Aplikasi:** `[URL DARI RAILWAY ANDA]/login`
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+**Akun Demo:**
+| Role | Email | Password |
+|---|---|---|
+| 👑 General Manager | `gm@bluebird.co.id` | `password123` |
+| 📈 Sales 1 | `sales1@bluebird.co.id` | `password123` |
+| 📊 Sales 2 | `sales2@bluebird.co.id` | `password123` |
+| 🛠️ Operational | `ops@bluebird.co.id` | `password123` |
+| 💰 Finance | `finance@bluebird.co.id` | `password123` |
+| 🧑‍💼 Admin (GM) | `admin@bluebird.co.id`| `password123` |
+
+Selamat mencoba! 😉
