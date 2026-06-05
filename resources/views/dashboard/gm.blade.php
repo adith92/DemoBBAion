@@ -5,178 +5,411 @@
 @section('content')
 <div class="space-y-6 font-sans">
 
-    {{-- Welcome Header --}}
-    <div class="bg-gradient-to-r from-[#003887] via-[#1e4fa8] to-secondary text-white rounded-2xl p-6 shadow-xl relative overflow-hidden">
-        <div class="absolute right-4 bottom-0 top-0 opacity-10 pointer-events-none flex items-center">
-            <span class="material-symbols-outlined text-[120px]">insights</span>
-        </div>
-        <div class="relative z-10">
-            <h2 class="text-2xl font-bold">Welcome back, General Manager!</h2>
-            <p class="text-blue-100 text-sm mt-1">Real-time analytical dispatch metrics and consolidated B2B enterprise performance.</p>
-        </div>
-    </div>
+    {{-- SECTION 1: QUICK SHORTCUTS --}}
+    <section>
+        <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
+            <span class="material-symbols-outlined text-[#003887] text-[28px]">flash_on</span>
+            Quick Shortcuts
+        </h2>
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
 
-    {{-- 6 KPI Cards --}}
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {{-- Shortcut 1: Approve PO --}}
+            <a href="{{ route('approvals.index') }}"
+               class="group p-6 bg-white rounded-2xl shadow-sm border border-slate-200 hover:border-blue-400 hover:shadow-lg transition-all cursor-pointer">
+                <div class="text-center">
+                    <div class="text-4xl mb-3">📋</div>
+                    <p class="text-sm font-bold text-gray-900">Approve PO</p>
+                    <p class="text-xs text-orange-600 font-semibold mt-2 group-hover:text-orange-700">
+                        {{ $pendingPO ?? 0 }} Pending
+                    </p>
+                </div>
+            </a>
 
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition-all group flex justify-between items-center">
-            <div class="space-y-1">
-                <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Revenue Bulan Ini</p>
-                <p class="text-3xl font-extrabold text-[#003887]">{{ \App\Helpers\FormatHelper::formatIDR($monthRevenue ?? 0) }}</p>
-                <p class="text-[10px] text-slate-400">Total pembayaran terkonfirmasi</p>
-            </div>
-            <div class="p-3 bg-blue-50 text-blue-700 rounded-xl group-hover:scale-110 transition-transform">
-                <span class="material-symbols-outlined text-[28px]">payments</span>
-            </div>
+            {{-- Shortcut 2: Fleet Availability --}}
+            <a href="{{ route('fleet.index') }}"
+               class="group p-6 bg-white rounded-2xl shadow-sm border border-slate-200 hover:border-blue-400 hover:shadow-lg transition-all cursor-pointer">
+                <div class="text-center">
+                    <div class="text-4xl mb-3">🚗</div>
+                    <p class="text-sm font-bold text-gray-900">Fleet Status</p>
+                    <p class="text-xs text-green-600 font-semibold mt-2 group-hover:text-green-700">
+                        {{ $availableVehicles ?? 0 }} Available
+                    </p>
+                </div>
+            </a>
+
+            {{-- Shortcut 3: Revenue Report --}}
+            <a href="{{ route('finance.index') }}"
+               class="group p-6 bg-white rounded-2xl shadow-sm border border-slate-200 hover:border-blue-400 hover:shadow-lg transition-all cursor-pointer">
+                <div class="text-center">
+                    <div class="text-4xl mb-3">💰</div>
+                    <p class="text-sm font-bold text-gray-900">Revenue</p>
+                    <p class="text-xs text-blue-600 font-semibold mt-2 group-hover:text-blue-700">
+                        {{ \App\Helpers\FormatHelper::formatIDR($todayRevenue ?? 0) }}
+                    </p>
+                </div>
+            </a>
+
+            {{-- Shortcut 4: Dispatch Center --}}
+            <a href="{{ route('bookings.index') }}"
+               class="group p-6 bg-white rounded-2xl shadow-sm border border-slate-200 hover:border-blue-400 hover:shadow-lg transition-all cursor-pointer">
+                <div class="text-center">
+                    <div class="text-4xl mb-3">📍</div>
+                    <p class="text-sm font-bold text-gray-900">Dispatch</p>
+                    <p class="text-xs text-blue-600 font-semibold mt-2 group-hover:text-blue-700">
+                        {{ $pendingDispatch ?? 0 }} Pending
+                    </p>
+                </div>
+            </a>
+
+            {{-- Shortcut 5: Activities --}}
+            <a href="{{ route('activities.index') }}"
+               class="group p-6 bg-white rounded-2xl shadow-sm border border-slate-200 hover:border-blue-400 hover:shadow-lg transition-all cursor-pointer">
+                <div class="text-center">
+                    <div class="text-4xl mb-3">📝</div>
+                    <p class="text-sm font-bold text-gray-900">Activities</p>
+                    <p class="text-xs text-purple-600 font-semibold mt-2 group-hover:text-purple-700">
+                        View Log
+                    </p>
+                </div>
+            </a>
+
         </div>
+    </section>
 
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition-all group flex justify-between items-center">
-            <div class="space-y-1">
-                <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Fleet</p>
-                <p class="text-3xl font-extrabold text-slate-900">{{ $totalFleet ?? 0 }}</p>
-                <p class="text-[10px] text-slate-400">Unit armada terdaftar</p>
-            </div>
-            <div class="p-3 bg-indigo-50 text-indigo-700 rounded-xl group-hover:scale-110 transition-transform">
-                <span class="material-symbols-outlined text-[28px]">local_shipping</span>
-            </div>
-        </div>
+    {{-- SECTION 2: KPI CARDS --}}
+    <section>
+        <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
+            <span class="material-symbols-outlined text-[#003887] text-[28px]">trending_up</span>
+            Key Performance Indicators
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
 
-        <a href="{{ route('bookings.index', ['status'=>'active']) }}" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md hover:border-blue-300 transition-all group flex justify-between items-center">
-            <div class="space-y-1">
-                <p class="text-xs font-bold text-blue-600 uppercase tracking-wider flex items-center gap-1">
-                    Active Bookings <span class="material-symbols-outlined text-xs">open_in_new</span>
+            {{-- KPI 1: Total Revenue This Month --}}
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-shadow cursor-pointer border-l-4 border-l-blue-500">
+                <p class="text-gray-600 text-xs uppercase font-semibold tracking-wider">Revenue (This Month)</p>
+                <p class="text-3xl font-extrabold text-gray-900 mt-3">
+                    {{ \App\Helpers\FormatHelper::formatIDR($totalMonthlyRevenue ?? 0) }}
                 </p>
-                <p class="text-3xl font-extrabold text-blue-800">{{ $activeBookings ?? 0 }}</p>
-                <p class="text-[10px] text-blue-500 font-semibold">Click untuk inspect →</p>
+                <p class="text-xs text-green-600 mt-2">📈 Target tracking</p>
             </div>
-            <div class="p-3 bg-blue-50 text-blue-800 rounded-xl group-hover:scale-110 transition-transform">
-                <span class="material-symbols-outlined text-[28px]">distance</span>
-            </div>
-        </a>
 
-        <a href="{{ route('clients.index') }}" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md hover:border-purple-300 transition-all group flex justify-between items-center">
-            <div class="space-y-1">
-                <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Clients</p>
-                <p class="text-3xl font-extrabold text-purple-700">{{ $totalClients ?? 0 }}</p>
-                <p class="text-[10px] text-slate-400">Klien B2B aktif</p>
+            {{-- KPI 2: Completed Bookings This Month --}}
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-shadow cursor-pointer border-l-4 border-l-green-500">
+                <p class="text-gray-600 text-xs uppercase font-semibold tracking-wider">Completed Bookings</p>
+                <p class="text-3xl font-extrabold text-gray-900 mt-3">{{ $completedBookings ?? 0 }}</p>
+                <p class="text-xs text-green-600 mt-2">✅ This month</p>
             </div>
-            <div class="p-3 bg-purple-50 text-purple-700 rounded-xl group-hover:scale-110 transition-transform">
-                <span class="material-symbols-outlined text-[28px]">business</span>
-            </div>
-        </a>
 
-        <a href="{{ route('pipeline.index') }}" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md hover:border-emerald-300 transition-all group flex justify-between items-center">
-            <div class="space-y-1">
-                <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Sales Pipeline</p>
-                <p class="text-3xl font-extrabold text-emerald-700">{{ $pipelineCount ?? 0 }}</p>
-                <p class="text-[10px] text-slate-400">Opportunity aktif</p>
+            {{-- KPI 3: Avg Revenue per Booking --}}
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-shadow cursor-pointer border-l-4 border-l-purple-500">
+                <p class="text-gray-600 text-xs uppercase font-semibold tracking-wider">Avg per Booking</p>
+                <p class="text-3xl font-extrabold text-gray-900 mt-3">
+                    {{ \App\Helpers\FormatHelper::formatIDR($avgRevenuePerBooking ?? 0) }}
+                </p>
+                <p class="text-xs text-purple-600 mt-2">💡 Average value</p>
             </div>
-            <div class="p-3 bg-emerald-50 text-emerald-700 rounded-xl group-hover:scale-110 transition-transform">
-                <span class="material-symbols-outlined text-[28px]">handshake</span>
-            </div>
-        </a>
 
-        <a href="{{ route('finance.index', ['status'=>'overdue']) }}" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md hover:border-red-300 transition-all group flex justify-between items-center">
-            <div class="space-y-1">
-                <p class="text-xs font-bold text-red-500 uppercase tracking-wider">Invoice Overdue</p>
-                <p class="text-3xl font-extrabold text-red-600">{{ $outstandingCount ?? 0 }}</p>
-                <p class="text-[10px] text-red-400 font-semibold">{{ \App\Helpers\FormatHelper::formatIDR($outstandingAmt ?? 0) }}</p>
+            {{-- KPI 4: Active Clients --}}
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-shadow cursor-pointer border-l-4 border-l-orange-500">
+                <p class="text-gray-600 text-xs uppercase font-semibold tracking-wider">Active Clients</p>
+                <p class="text-3xl font-extrabold text-gray-900 mt-3">{{ $activeClients ?? 0 }}</p>
+                <p class="text-xs text-orange-600 mt-2">🏢 B2B partners</p>
             </div>
-            <div class="p-3 bg-red-50 text-red-600 rounded-xl group-hover:scale-110 transition-transform">
-                <span class="material-symbols-outlined text-[28px]">warning</span>
-            </div>
-        </a>
-    </div>
 
-    {{-- Revenue Chart --}}
-    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-        <div class="flex justify-between items-center mb-5">
-            <div>
-                <h3 class="text-base font-bold text-slate-900">Revenue Trend</h3>
-                <p class="text-xs text-slate-400">Klik bar/periode untuk detail</p>
-            </div>
-            <div class="flex gap-2">
-                @foreach(['daily'=>'Harian','weekly'=>'Mingguan','monthly'=>'Bulanan','yearly'=>'Tahunan'] as $key=>$label)
-                <button onclick="updateChart('{{ $key }}')" data-period="{{ $key }}"
-                    class="period-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors {{ $key==='monthly' ? 'bg-[#003887] text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}">
-                    {{ $label }}
-                </button>
-                @endforeach
-            </div>
         </div>
-        <canvas id="revenueChart" height="80"></canvas>
-    </div>
+    </section>
 
-    {{-- Top Sales & Top Clients --}}
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
-
+    {{-- SECTION 3: MAIN CHART (Tabbed Carousel) --}}
+    <section>
         <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-            <h3 class="text-base font-bold text-slate-900 mb-4">Top Sales Performance</h3>
-            @forelse($topSales ?? [] as $i => $sale)
-            <div class="flex items-center justify-between py-2.5 border-b border-slate-100 last:border-0">
-                <div class="flex items-center gap-3">
-                    <span class="w-7 h-7 rounded-full bg-blue-100 text-[#003887] text-xs font-extrabold flex items-center justify-center">{{ $i+1 }}</span>
-                    <a href="#" class="text-sm font-semibold text-slate-800 hover:text-[#003887]">{{ $sale->name }}</a>
-                </div>
-                <div class="text-right">
-                    <div class="text-sm font-bold text-slate-900">{{ \App\Helpers\FormatHelper::formatIDR($sale->total_revenue ?? 0) }}</div>
-                    <div class="text-[10px] text-slate-400">{{ $sale->bookings_count ?? 0 }} bookings</div>
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-bold text-gray-900 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[#003887] text-[24px]">show_chart</span>
+                    Revenue Trend
+                </h2>
+                <div class="flex gap-2">
+                    <button data-period="daily"
+                            class="tab-btn active px-4 py-2 rounded-lg border-2 border-[#003887] bg-blue-50 text-[#003887] font-semibold text-sm">
+                        Daily
+                    </button>
+                    <button data-period="weekly"
+                            class="tab-btn px-4 py-2 rounded-lg border-2 border-gray-200 text-gray-700 font-semibold text-sm hover:border-gray-300">
+                        Weekly
+                    </button>
+                    <button data-period="monthly"
+                            class="tab-btn px-4 py-2 rounded-lg border-2 border-gray-200 text-gray-700 font-semibold text-sm hover:border-gray-300">
+                        Monthly
+                    </button>
+                    <button data-period="yearly"
+                            class="tab-btn px-4 py-2 rounded-lg border-2 border-gray-200 text-gray-700 font-semibold text-sm hover:border-gray-300">
+                        Yearly
+                    </button>
                 </div>
             </div>
-            @empty
-            <p class="text-sm text-slate-400 text-center py-4">Belum ada data sales</p>
-            @endforelse
-        </div>
 
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-            <h3 class="text-base font-bold text-slate-900 mb-4">Top Clients by Revenue</h3>
-            @forelse($topClients ?? [] as $i => $client)
-            <div class="flex items-center justify-between py-2.5 border-b border-slate-100 last:border-0">
-                <div class="flex items-center gap-3">
-                    <span class="w-7 h-7 rounded-full bg-emerald-100 text-emerald-700 text-xs font-extrabold flex items-center justify-center">{{ $i+1 }}</span>
-                    <div>
-                        <a href="{{ route('clients.show', $client->id) }}" class="text-sm font-semibold text-slate-800 hover:text-[#003887] block">{{ $client->company_name }}</a>
-                        <span class="text-[10px] text-slate-400">{{ $client->bookings_count ?? 0 }} bookings</span>
-                    </div>
-                </div>
-                <div class="text-sm font-bold text-slate-900">{{ \App\Helpers\FormatHelper::formatIDR($client->total_spend ?? 0) }}</div>
+            <div class="relative h-80 transition-opacity duration-300" id="chartContainer">
+                <canvas id="revenueChart" style="position: relative; height: 320px !important;"></canvas>
             </div>
-            @empty
-            <p class="text-sm text-slate-400 text-center py-4">Belum ada data klien</p>
-            @endforelse
-            <a href="{{ route('clients.index') }}" class="block mt-3 text-center text-xs font-semibold text-[#003887] hover:underline">Lihat semua klien →</a>
+
+            <div class="mt-6 pt-6 border-t border-gray-200 flex justify-between items-center">
+                <p class="text-xs text-gray-600">
+                    <span class="inline-block w-3 h-3 bg-[#003887] rounded-full mr-2"></span>
+                    Revenue (Rp)
+                </p>
+                <a href="{{ route('finance.index') }}" class="px-3 py-1 text-xs bg-gray-100 text-gray-700 rounded hover:bg-gray-200">
+                    📊 View Full Report
+                </a>
+            </div>
         </div>
-    </div>
+    </section>
+
+    {{-- SECTION 4: SECONDARY CHARTS --}}
+    <section>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+            {{-- Chart 1: Top Sales --}}
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                <h3 class="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[20px] text-green-600">person_fill</span>
+                    Top Sales This Month
+                </h3>
+                <div class="relative h-80">
+                    <canvas id="topSalesChart" style="position: relative; height: 300px !important;"></canvas>
+                </div>
+                <div class="mt-4 pt-4 border-t border-gray-200">
+                    <a href="{{ route('activities.index') }}" class="text-[#003887] hover:underline text-sm font-semibold">
+                        View all sales performance →
+                    </a>
+                </div>
+            </div>
+
+            {{-- Chart 2: Client Distribution --}}
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                <h3 class="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[20px] text-purple-600">pie_chart</span>
+                    Client Tier Distribution
+                </h3>
+                <div class="relative h-80">
+                    <canvas id="clientTierChart" style="position: relative; height: 300px !important;"></canvas>
+                </div>
+                <div class="mt-4 pt-4 border-t border-gray-200">
+                    <a href="{{ route('clients.index') }}" class="text-[#003887] hover:underline text-sm font-semibold">
+                        View all clients →
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </section>
 
 </div>
-@endsection
 
-@push('scripts')
+{{-- SCRIPTS --}}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+
 <script>
-let revenueChart;
-function updateChart(period) {
-    document.querySelectorAll('.period-btn').forEach(btn => {
-        btn.classList.remove('bg-[#003887]','text-white');
-        btn.classList.add('bg-slate-100','text-slate-600');
-    });
-    const active = document.querySelector(`[data-period="${period}"]`);
-    if (active) { active.classList.add('bg-[#003887]','text-white'); active.classList.remove('bg-slate-100','text-slate-600'); }
-    fetch(`/api/revenue?period=${period}`)
-        .then(r => r.json())
-        .then(data => {
-            const labels = data.map(d => d.date || d.week || d.month || d.year);
-            const values = data.map(d => parseInt(d.total));
-            if (revenueChart) revenueChart.destroy();
-            revenueChart = new Chart(document.getElementById('revenueChart'), {
-                type: 'line',
-                data: { labels, datasets: [{ label: 'Revenue', data: values, borderColor: '#003887', backgroundColor: 'rgba(0,56,135,0.08)', fill: true, tension: 0.4, pointRadius: 5, pointBackgroundColor: '#003887' }] },
-                options: { responsive: true,
-                    plugins: { tooltip: { callbacks: { label: c => 'Rp ' + c.parsed.y.toLocaleString('id-ID') } } },
-                    scales: { y: { ticks: { callback: v => 'Rp ' + (v/1000000).toFixed(1) + 'jt' } } }
+let revenueChart = null;
+let topSalesChart = null;
+let clientTierChart = null;
+
+const chartData = {
+    daily: {
+        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+        revenue: [12000000, 15000000, 11000000, 18000000, 14000000, 16000000, 13000000],
+    },
+    weekly: {
+        labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+        revenue: [85000000, 92000000, 78000000, 95000000],
+    },
+    monthly: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+        revenue: [380000000, 420000000, 350000000, 450000000, 400000000, 380000000],
+    },
+    yearly: {
+        labels: ['2021', '2022', '2023', '2024', '2025', '2026'],
+        revenue: [3200000000, 3800000000, 4200000000, 4600000000, 5100000000, 4900000000],
+    }
+};
+
+const topSalesData = {
+    labels: ['Andi (Sales 1)', 'Sari (Sales 2)', 'Reza (Sales 3)', 'Budi', 'Dewi'],
+    data: [450000000, 380000000, 320000000, 280000000, 210000000],
+};
+
+const clientTierData = {
+    labels: ['Platinum', 'Gold', 'Silver', 'Bronze'],
+    data: [12, 28, 35, 25],
+    colors: ['#003887', '#1e4fa8', '#2563EB', '#60A5FA'],
+};
+
+function initRevenueChart(period = 'daily') {
+    const ctx = document.getElementById('revenueChart').getContext('2d');
+    const data = chartData[period];
+
+    if (revenueChart) {
+        revenueChart.destroy();
+    }
+
+    revenueChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: data.labels,
+            datasets: [{
+                label: 'Revenue (Rp)',
+                data: data.revenue,
+                borderColor: '#003887',
+                backgroundColor: 'rgba(0, 56, 135, 0.1)',
+                borderWidth: 3,
+                fill: true,
+                tension: 0.4,
+                pointRadius: 5,
+                pointBackgroundColor: '#003887',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                pointHoverRadius: 7,
+            }],
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return 'Rp ' + context.parsed.y.toLocaleString('id-ID');
+                        }
+                    }
                 }
-            });
-        }).catch(() => {});
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return 'Rp ' + (value / 1000000).toFixed(0) + 'M';
+                        }
+                    }
+                }
+            }
+        }
+    });
 }
-updateChart('monthly');
+
+function initTopSalesChart() {
+    const ctx = document.getElementById('topSalesChart').getContext('2d');
+
+    topSalesChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: topSalesData.labels,
+            datasets: [{
+                label: 'Revenue (Rp)',
+                data: topSalesData.data,
+                backgroundColor: ['#003887', '#1e4fa8', '#2563EB', '#60A5FA', '#93C5FD'],
+                borderRadius: 8,
+                borderSkipped: false,
+            }],
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return 'Rp ' + context.parsed.x.toLocaleString('id-ID');
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    ticks: {
+                        callback: function(value) {
+                            return 'Rp ' + (value / 1000000).toFixed(0) + 'M';
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+function initClientTierChart() {
+    const ctx = document.getElementById('clientTierChart').getContext('2d');
+
+    clientTierChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: clientTierData.labels,
+            datasets: [{
+                data: clientTierData.data,
+                backgroundColor: clientTierData.colors,
+                borderColor: '#fff',
+                borderWidth: 3,
+            }],
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'bottom' },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            const percentage = ((context.parsed / total) * 100).toFixed(1);
+                            return context.label + ': ' + context.parsed + ' (' + percentage + '%)';
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const period = this.dataset.period;
+
+        document.querySelectorAll('.tab-btn').forEach(b => {
+            b.classList.remove('border-[#003887]', 'bg-blue-50', 'text-[#003887]');
+            b.classList.add('border-gray-200', 'text-gray-700');
+        });
+        this.classList.add('border-[#003887]', 'bg-blue-50', 'text-[#003887]');
+        this.classList.remove('border-gray-200', 'text-gray-700');
+
+        const container = document.getElementById('chartContainer');
+        container.style.opacity = '0';
+
+        setTimeout(() => {
+            initRevenueChart(period);
+            container.style.opacity = '1';
+        }, 200);
+    });
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    initRevenueChart('daily');
+    initTopSalesChart();
+    initClientTierChart();
+});
 </script>
-@endpush
+
+<style>
+.tab-btn {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tab-btn.active {
+    transform: translateY(-2px);
+}
+
+#chartContainer {
+    transition: opacity 0.3s ease;
+}
+</style>
+@endsection
