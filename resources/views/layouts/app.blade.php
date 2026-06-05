@@ -132,10 +132,12 @@
             </a>
             @endif
 
+            @if(in_array($role, ['director','gm','manager','sales','finance']))
             <a href="{{ route('clients.index') }}" class="flex items-center gap-3 py-2.5 px-4 rounded-xl transition duration-150 {{ Request::routeIs('clients*') ? 'bg-secondary text-on-secondary sidebar-active-glow' : 'text-on-primary-container hover:bg-primary-container hover:text-on-primary-container' }}">
                 <span class="material-symbols-outlined">business</span>
                 <span class="text-sm font-semibold">Clients</span>
             </a>
+            @endif
 
             @if(in_array($role, ['director','gm','manager','operational']))
             <a href="{{ route('fleet.index') }}" class="flex items-center gap-3 py-2.5 px-4 rounded-xl transition duration-150 {{ Request::routeIs('fleet*','vehicles*') ? 'bg-secondary text-on-secondary sidebar-active-glow' : 'text-on-primary-container hover:bg-primary-container hover:text-on-primary-container' }}">
@@ -149,14 +151,14 @@
                 <span class="text-sm font-semibold">Dispatch (Booking)</span>
             </a>
 
-            @if(in_array($role, ['director','gm','manager','finance','sales']))
+            @if(in_array($role, ['director','gm','manager','finance']))
             <a href="{{ route('subscriptions.index') }}" class="flex items-center gap-3 py-2.5 px-4 rounded-xl transition duration-150 {{ Request::routeIs('subscriptions*') ? 'bg-secondary text-on-secondary sidebar-active-glow' : 'text-on-primary-container hover:bg-primary-container hover:text-on-primary-container' }}">
                 <span class="material-symbols-outlined">autorenew</span>
                 <span class="text-sm font-semibold">Subscriptions</span>
             </a>
             @endif
 
-            @if(in_array($role, ['director','gm','sales','finance']))
+            @if(in_array($role, ['director','gm','manager','finance']))
             <a href="{{ route('vouchers.index') }}" class="flex items-center gap-3 py-2.5 px-4 rounded-xl transition duration-150 {{ Request::routeIs('vouchers*') ? 'bg-secondary text-on-secondary sidebar-active-glow' : 'text-on-primary-container hover:bg-primary-container hover:text-on-primary-container' }}">
                 <span class="material-symbols-outlined">confirmation_number</span>
                 <span class="text-sm font-semibold">E-Voucher</span>

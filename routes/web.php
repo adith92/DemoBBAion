@@ -32,7 +32,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/bookings', [BookingController::class, 'index'])->name('bookings.index')->withoutMiddleware('role:gm,sales,operational');
 
     // Clients
-    Route::resource('clients', ClientController::class)->middleware('role:gm,manager,sales,finance');
+    Route::resource('clients', ClientController::class)->middleware('role:director,gm,manager,sales,finance');
 
     // Pipeline / Opportunities
     Route::get('/pipeline', [PipelineController::class, 'index'])->name('pipeline.index')->middleware('role:director,gm,manager,sales');
@@ -72,15 +72,15 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/vouchers/bulk', [VoucherController::class, 'bulkStore'])->name('vouchers.bulk');
 
     // Fleet (Operational)
-    Route::resource('fleet', FleetController::class)->middleware('role:gm,operational');
-    Route::resource('vehicle-contracts', App\Http\Controllers\VehicleContractController::class)->middleware('role:gm,operational,manager');
+    Route::resource('fleet', FleetController::class)->middleware('role:director,gm,manager,operational');
+    Route::resource('vehicle-contracts', App\Http\Controllers\VehicleContractController::class)->middleware('role:director,gm,operational,manager');
 
     // Finance
     Route::get('/finance', [FinanceController::class, 'index'])->name('finance.index')->middleware('role:director,gm,finance');
     Route::get('/finance/invoices/{invoice}', [FinanceController::class, 'show'])->name('invoices.show')->middleware('role:director,gm,finance');
 
     // Maintenance
-    Route::resource('maintenance', MaintenanceController::class)->middleware('role:gm,operational');
+    Route::resource('maintenance', MaintenanceController::class)->middleware('role:director,gm,manager,operational');
 
     // Analytics
     Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics.index')->middleware('role:director,gm,manager');

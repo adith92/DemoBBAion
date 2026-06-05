@@ -200,11 +200,8 @@
 document.addEventListener('DOMContentLoaded', function () {
     // Revenue by category (via API - approximate with invoice data)
     // Placeholder donut with dummy breakdown if no API available
-    const catData = @json([
-        'labels' => ['Short Term', 'Long Term', 'E-Voucher', 'Lainnya'],
-        'values' => [40, 35, 15, 10],
-        'colors' => ['#3b82f6', '#10b981', '#f59e0b', '#6b7280'],
-    ]);
+    @php $catJson = ['labels' => ['Short Term', 'Long Term', 'E-Voucher', 'Lainnya'], 'values' => [40, 35, 15, 10], 'colors' => ['#3b82f6', '#10b981', '#f59e0b', '#6b7280']]; @endphp
+    const catData = @json($catJson);
 
     const ctx = document.getElementById('categoryDonut').getContext('2d');
     const chart = new Chart(ctx, {
