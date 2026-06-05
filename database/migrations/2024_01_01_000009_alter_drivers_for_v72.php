@@ -35,6 +35,9 @@ return new class extends Migration
             // 3. Drop old table and rename new
             DB::statement('DROP TABLE drivers');
             DB::statement('ALTER TABLE drivers_new RENAME TO drivers');
+        } elseif ($driver === 'pgsql') {
+            DB::statement('ALTER TABLE drivers ALTER COLUMN phone DROP NOT NULL');
+            DB::statement('ALTER TABLE drivers ALTER COLUMN license_number DROP NOT NULL');
         } else {
             // MySQL / MariaDB
             DB::statement('ALTER TABLE drivers MODIFY COLUMN phone VARCHAR(255) NULL');
@@ -63,6 +66,9 @@ return new class extends Migration
 
             DB::statement('DROP TABLE drivers');
             DB::statement('ALTER TABLE drivers_old RENAME TO drivers');
+        } elseif ($driver === 'pgsql') {
+            DB::statement('ALTER TABLE drivers ALTER COLUMN phone SET NOT NULL');
+            DB::statement('ALTER TABLE drivers ALTER COLUMN license_number SET NOT NULL');
         } else {
             DB::statement('ALTER TABLE drivers MODIFY COLUMN phone VARCHAR(255) NOT NULL');
             DB::statement('ALTER TABLE drivers MODIFY COLUMN license_number VARCHAR(255) NOT NULL');

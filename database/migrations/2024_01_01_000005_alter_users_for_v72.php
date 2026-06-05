@@ -26,13 +26,11 @@ return new class extends Migration
         $driver = DB::getDriverName();
 
         if ($driver === 'sqlite') {
-            // SQLite: recreate the check by dropping and re-adding using raw DDL.
-            // Since SQLite does not support DROP CONSTRAINT, we rely on the
-            // application layer validation. The column already exists as a
-            // varchar/text in SQLite (enums are stored as strings), so we
-            // simply leave the existing column – new role values (director,
-            // manager) are now valid at the application level.
-            // Nothing to do for SQLite here.
+            // SQLite: enums stored as strings, no column modification needed.
+        } elseif ($driver === 'pgsql') {
+            // PostgreSQL: drop old check constraint, then add new one with expanded roles
+            DB::statement("ALTER TABLE users DROP CONSTRAINT IF EXISTS users_role_check");
+            DB::statement("ALTER TABLE users ADD CONSTRAINT users_role_check CHECK (role IN ('director','gm','manager','sales','operational','finance'))");
         } else {
             // MySQL / MariaDB
             DB::statement("ALTER TABLE users MODIFY COLUMN role ENUM('director','gm','manager','sales','operational','finance') NOT NULL DEFAULT 'sales'");
@@ -48,7 +46,7 @@ return new class extends Migration
 
         $driver = DB::getDriverName();
 
-        if ($driver !== 'sqlite') {
+        if ($driver === 'mysql' || $driver === 'mariadb') {
             DB::statement("ALTER TABLE users MODIFY COLUMN role ENUM('gm','sales','operational','finance') NOT NULL DEFAULT 'sales'");
         }
     }
