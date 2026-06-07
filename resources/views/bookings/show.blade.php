@@ -45,14 +45,10 @@
                     <div class="space-y-2 text-sm">
                         <div>
                             <p class="text-gray-500">Sales Person</p>
-                            @if(auth()->user()->isGM())
-                                <a href="{{ route('sales.performance', $booking->sales_id) }}"
-                                   class="text-blue-600 hover:underline font-semibold">
-                                    {{ $booking->sales->name }}
-                                </a>
-                            @else
-                                <p class="font-semibold text-gray-900">{{ $booking->sales->name }}</p>
-                            @endif
+                            <a href="{{ route('sales.performance', $booking->sales_id) }}"
+                               class="text-blue-600 hover:underline font-semibold">
+                                {{ $booking->sales->name }}
+                            </a>
                         </div>
                         <div>
                             <p class="text-gray-500">Driver</p>

@@ -32,7 +32,7 @@
             </div>
 
             @if(auth()->user()->isSales() || auth()->user()->isGM() || auth()->user()->isOperational())
-                <a href="{{ route('bookings.create') }}" class="bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-700 text-sm">
+                <a href="{{ route('bookings.create') }}" class="btn-3d">
                     ➕ New Booking
                 </a>
             @endif
@@ -66,13 +66,9 @@
                         </a>
                     </td>
                     <td class="px-4 py-3">
-                        @if(auth()->user()->isGM())
-                            <a href="{{ route('sales.performance', $booking->sales_id) }}" class="text-blue-600 hover:underline">
-                                {{ $booking->sales->name }}
-                            </a>
-                        @else
-                            <span class="text-gray-700">{{ $booking->sales->name }}</span>
-                        @endif
+                        <a href="{{ route('sales.performance', $booking->sales_id) }}" class="text-blue-600 hover:underline">
+                            {{ $booking->sales->name }}
+                        </a>
                     </td>
                     <td class="px-4 py-3">
                         @if(auth()->user()->isGM() || auth()->user()->isOperational())

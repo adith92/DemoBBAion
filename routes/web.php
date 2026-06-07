@@ -23,11 +23,19 @@ use App\Http\Controllers\WidgetController;
 
 Route::redirect('/', '/dashboard');
 
+Route::get('/language/{locale}', function (string $locale) {
+    abort_unless(in_array($locale, ['id', 'en'], true), 404);
+
+    session(['locale' => $locale]);
+
+    return back();
+})->name('language.switch');
+
 Route::middleware(['auth'])->group(function () {
 
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('/dashboard/gm', [DashboardController::class, 'gm'])->name('dashboard.gm')->middleware('role:gm');
+    Route::get('/dashboard/gm', [DashboardController::class, 'gm'])->name('dashboard.gm')->middleware('role:director,gm');
 
     // Bookings
     Route::resource('bookings', BookingController::class)->middleware('role:gm,sales,operational');

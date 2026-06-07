@@ -6,7 +6,7 @@
             <a href="{{ $item['url'] }}" class="hover:text-blue-600 transition-colors">{{ $item['label'] }}</a>
             <span class="text-gray-300">/</span>
         @else
-            <span class="text-gray-800 font-medium">{{ $item['label'] }}</span>
+            <a href="{{ $item['url'] ?? '#' }}" class="text-gray-800 font-medium hover:text-blue-600 transition-colors">{{ $item['label'] }}</a>
         @endif
     @endforeach
 </nav>

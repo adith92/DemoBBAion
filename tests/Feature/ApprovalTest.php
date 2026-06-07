@@ -63,9 +63,12 @@ class ApprovalTest extends TestCase
         $manager = $this->makeManagerUser();
         $opp     = $this->makeOpportunity($sales, ['estimated_value' => 10_000_000]);
 
-        $response = $this->actingAs($sales)->post("/opportunities/{$opp->id}/discount", [
-            'discount_percent' => 3,
-        ]);
+        $response = $this->actingAs($sales)
+            ->withSession(['_token' => 'test-token'])
+            ->post("/opportunities/{$opp->id}/discount", [
+                'discount_percent' => 3,
+                '_token'           => 'test-token',
+            ]);
 
         $response->assertRedirect();
 

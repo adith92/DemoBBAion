@@ -12,97 +12,97 @@
             <span class="material-symbols-outlined text-[20px]" style="color:#00e5ff;">directions_bus</span>
         </div>
         <div>
-            <div class="text-sm font-bold text-white leading-tight">Bluebird CRM</div>
-            <div class="text-[9px] uppercase tracking-widest font-semibold" style="color:#334155;">Command Center</div>
+            <div class="text-sm font-bold text-white leading-tight">{{ __('ui.bluebird_crm') }}</div>
+            <div class="text-[9px] uppercase tracking-widest font-semibold" style="color:#334155;">{{ __('ui.command_center') }}</div>
         </div>
     </div>
 
     {{-- Navigation --}}
     <nav class="flex-grow overflow-y-auto px-3 py-3 space-y-0.5">
 
-        <div class="nav-section-label">Main</div>
+        <div class="nav-section-label">{{ __('ui.main') }}</div>
         <a href="{{ route('dashboard') }}" class="nav-item {{ Request::routeIs('dashboard') ? 'active' : '' }}">
             <span class="material-symbols-outlined">space_dashboard</span>
-            <span>Dashboard</span>
+            <span>{{ __('ui.dashboard') }}</span>
         </a>
 
         @if(in_array($role, ['director','gm','manager','sales']))
-        <div class="nav-section-label">Sales</div>
+        <div class="nav-section-label">{{ __('ui.sales') }}</div>
 
         <a href="{{ route('pipeline.index') }}" class="nav-item {{ Request::routeIs('pipeline*','opportunities*') ? 'active' : '' }}">
             <span class="material-symbols-outlined">view_kanban</span>
-            <span>Sales Pipeline</span>
+            <span>{{ __('ui.sales_pipeline') }}</span>
         </a>
 
         <a href="{{ route('clients.index') }}" class="nav-item {{ Request::routeIs('clients*') ? 'active' : '' }}">
             <span class="material-symbols-outlined">corporate_fare</span>
-            <span>Clients</span>
+            <span>{{ __('ui.clients') }}</span>
         </a>
 
         <a href="{{ route('activities.index') }}" class="nav-item {{ Request::routeIs('activities*') ? 'active' : '' }}">
             <span class="material-symbols-outlined">event_note</span>
-            <span>Activity Log</span>
+            <span>{{ __('ui.activity_log') }}</span>
         </a>
         @endif
 
         @if(in_array($role, ['director','gm','manager']))
-        <div class="nav-section-label">Operations</div>
+        <div class="nav-section-label">{{ __('ui.operations') }}</div>
 
         <a href="{{ route('approvals.index') }}" class="nav-item {{ Request::routeIs('approvals*') ? 'active' : '' }}">
             <span class="material-symbols-outlined">fact_check</span>
-            <span>Approval Queue</span>
+            <span>{{ __('ui.approval_queue') }}</span>
         </a>
         @endif
 
         @if(in_array($role, ['director','gm','manager','operational']))
         <a href="{{ route('fleet.index') }}" class="nav-item {{ Request::routeIs('fleet*','vehicles*') ? 'active' : '' }}">
             <span class="material-symbols-outlined">local_shipping</span>
-            <span>Fleet Armada</span>
+            <span>{{ __('ui.fleet_armada') }}</span>
         </a>
         @endif
 
         <a href="{{ route('bookings.index') }}" class="nav-item {{ Request::routeIs('bookings*') ? 'active' : '' }}">
             <span class="material-symbols-outlined">route</span>
-            <span>Dispatch</span>
+            <span>{{ __('ui.dispatch') }}</span>
         </a>
 
         @if(in_array($role, ['director','gm','manager','finance']))
-        <div class="nav-section-label">Finance</div>
+        <div class="nav-section-label">{{ __('ui.finance') }}</div>
 
         <a href="{{ route('subscriptions.index') }}" class="nav-item {{ Request::routeIs('subscriptions*') ? 'active' : '' }}">
             <span class="material-symbols-outlined">autorenew</span>
-            <span>Subscriptions</span>
+            <span>{{ __('ui.subscriptions') }}</span>
         </a>
 
         <a href="{{ route('vouchers.index') }}" class="nav-item {{ Request::routeIs('vouchers*') ? 'active' : '' }}">
             <span class="material-symbols-outlined">confirmation_number</span>
-            <span>E-Voucher</span>
+            <span>{{ __('ui.e_voucher') }}</span>
         </a>
 
         <a href="{{ route('finance.index') }}" class="nav-item {{ Request::routeIs('finance*','invoices*') ? 'active' : '' }}">
             <span class="material-symbols-outlined">payments</span>
-            <span>Finance & Billing</span>
+            <span>{{ __('ui.finance_billing') }}</span>
         </a>
         @endif
 
         @if(in_array($role, ['director','gm','manager','sales']))
         <a href="{{ route('products.index') }}" class="nav-item {{ Request::routeIs('products*') ? 'active' : '' }}">
             <span class="material-symbols-outlined">menu_book</span>
-            <span>Price Book</span>
+            <span>{{ __('ui.price_book') }}</span>
         </a>
 
-        <div class="nav-section-label">Intelligence</div>
+        <div class="nav-section-label">{{ __('ui.intelligence') }}</div>
 
         <a href="{{ route('kpi.index') }}" class="nav-item {{ Request::routeIs('kpi*') ? 'active' : '' }}">
             <span class="material-symbols-outlined">leaderboard</span>
-            <span>KPI & Target</span>
+            <span>{{ __('ui.kpi_target') }}</span>
         </a>
         @endif
 
         @if(in_array($role, ['director','gm','manager']))
         <a href="{{ route('analytics.index') }}" class="nav-item {{ Request::routeIs('analytics*') ? 'active' : '' }}">
             <span class="material-symbols-outlined">query_stats</span>
-            <span>Reports & Analytics</span>
+            <span>{{ __('ui.reports_analytics') }}</span>
         </a>
         @endif
 
@@ -126,7 +126,7 @@
                 onmouseover="this.style.background='rgba(239,68,68,0.18)'"
                 onmouseout="this.style.background='rgba(239,68,68,0.08)'">
                 <span class="material-symbols-outlined text-[15px]">logout</span>
-                <span>Logout</span>
+                <span>{{ __('ui.logout') }}</span>
             </button>
         </form>
     </div>

@@ -30,7 +30,7 @@ class DashboardController extends Controller
         $role = $user->role ?? 'sales';
 
         return match ($role) {
-            'director'    => $this->director(),
+            'director'    => $this->gm(),
             'gm'          => $this->gm(),
             'manager'     => $this->manager(),
             'sales'       => $this->sales(),

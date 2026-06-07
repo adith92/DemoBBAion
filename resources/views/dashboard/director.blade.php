@@ -5,9 +5,10 @@
 @push('styles')
 <style>
 .exec-summary-card {
-    background: linear-gradient(135deg, rgba(19,19,36,0.9) 0%, rgba(15,15,28,0.95) 100%);
-    border: 1px solid rgba(0,229,255,0.12);
-    border-radius: 16px;
+    background: #ffffff;
+    border: 1px solid rgba(16,40,72,0.10);
+    border-radius: 12px;
+    box-shadow: 0 10px 28px rgba(16,40,72,0.08);
     position: relative;
     overflow: hidden;
 }
@@ -16,13 +17,13 @@
     position: absolute;
     top: -60px; right: -60px;
     width: 200px; height: 200px;
-    background: radial-gradient(circle, rgba(0,229,255,0.05) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(20,104,168,0.08) 0%, transparent 70%);
     pointer-events: none;
 }
 .fleet-bar {
     height: 6px;
     border-radius: 3px;
-    background: rgba(255,255,255,0.06);
+    background: rgba(16,40,72,0.10);
     overflow: hidden;
 }
 .fleet-bar-fill {
@@ -34,7 +35,7 @@
     align-items: center;
     gap: 12px;
     padding: 10px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.04);
+    border-bottom: 1px solid rgba(16,40,72,0.08);
 }
 .rank-row:last-child { border-bottom: none; }
 .rank-num {
@@ -56,17 +57,19 @@
     border-radius: 10px;
     transition: background 0.15s;
 }
-.booking-row:hover { background: rgba(255,255,255,0.03); }
+.booking-row:hover { background: rgba(20,104,168,0.06); }
 .approval-item {
     display: flex;
     align-items: center;
     gap: 10px;
     padding: 10px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.04);
+    border-bottom: 1px solid rgba(16,40,72,0.08);
 }
 .approval-item:last-child { border-bottom: none; }
-.priority-high { color: #ef4444; font-size: 10px; font-weight: 700; }
-.priority-med { color: #f59e0b; font-size: 10px; font-weight: 700; }
+.priority-high { color: #b94a48; font-size: 10px; font-weight: 700; }
+.priority-med { color: #a17412; font-size: 10px; font-weight: 700; }
+.dashboard-link { color: inherit; text-decoration: none; }
+.dashboard-link:hover { color: #1468a8 !important; text-decoration: underline; text-underline-offset: 3px; }
 </style>
 @endpush
 
@@ -77,18 +80,18 @@
     <div class="flex flex-col md:flex-row md:items-start justify-between gap-4">
         <div>
             <div class="flex items-center gap-3 mb-1">
-                <h1 class="text-xl font-black text-white tracking-tight">Bluebird CRM <span style="color:#00e5ff;">Command Center</span></h1>
+                <h1 class="text-xl font-black tracking-tight" style="color:#101828;">Bluebird CRM <span style="color:#1468a8;">Command Center</span></h1>
             </div>
             <p class="text-xs" style="color:#475569;">Corporate Fleet · Sales Pipeline · Dispatch · Revenue Intelligence</p>
             <div class="flex flex-wrap items-center gap-2 mt-3">
-                <span class="badge-demo">Live Demo</span>
-                <span class="badge-demo">June 2026</span>
-                <span class="badge-live flex items-center gap-1.5">
+                <a href="{{ route('dashboard') }}" class="badge-demo">Live Demo</a>
+                <a href="{{ route('analytics.index') }}" class="badge-demo">June 2026</a>
+                <a href="{{ route('dashboard') }}" class="badge-live flex items-center gap-1.5">
                     <span class="pulse-dot" style="width:5px;height:5px;"></span>
                     Director HQ
-                </span>
-                <span style="background:rgba(139,92,246,0.12);color:#a78bfa;border:1px solid rgba(139,92,246,0.2);font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;text-transform:uppercase;letter-spacing:0.04em;">API Ready</span>
-                <span style="background:rgba(245,158,11,0.1);color:#fbbf24;border:1px solid rgba(245,158,11,0.2);font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;text-transform:uppercase;letter-spacing:0.04em;">Railway Deploy</span>
+                </a>
+                <a href="{{ route('analytics.index') }}" style="background:rgba(141,107,184,0.12);color:#72529a;border:1px solid rgba(141,107,184,0.2);font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;text-transform:uppercase;letter-spacing:0.04em;">API Ready</a>
+                <a href="{{ route('bookings.index') }}" style="background:rgba(215,167,47,0.14);color:#8c6814;border:1px solid rgba(215,167,47,0.26);font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;text-transform:uppercase;letter-spacing:0.04em;">Railway Deploy</a>
             </div>
         </div>
         <div class="flex items-center gap-2 flex-shrink-0">
@@ -109,12 +112,12 @@
         {{-- KPI 1: Revenue --}}
         <div class="kpi-card kpi-cyan col-span-2 md:col-span-1 lg:col-span-1">
             <div class="flex items-start justify-between mb-3">
-                <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:rgba(0,229,255,0.1);">
-                    <span class="material-symbols-outlined text-[17px]" style="color:#00e5ff;">payments</span>
+                <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:rgba(20,104,168,0.10);">
+                    <span class="material-symbols-outlined text-[17px]" style="color:#1468a8;">payments</span>
                 </div>
                 <span class="signal-up">▲ 18.4%</span>
             </div>
-            <div class="text-lg font-black text-white leading-tight">Rp 2,84 M</div>
+            <div class="text-lg font-black leading-tight" style="color:#101828;">Rp 2,84 M</div>
             <div class="text-[10px] font-semibold uppercase tracking-wide mt-1" style="color:#475569;">Monthly Revenue</div>
         </div>
 
@@ -126,7 +129,7 @@
                 </div>
                 <span class="signal-up">▲ 32</span>
             </div>
-            <div class="text-lg font-black text-white leading-tight">{{ $pendingDispatch ?? 248 }}</div>
+            <div class="text-lg font-black leading-tight" style="color:#101828;">{{ $pendingDispatch ?? 248 }}</div>
             <div class="text-[10px] font-semibold uppercase tracking-wide mt-1" style="color:#475569;">Active Bookings</div>
         </div>
 
@@ -138,7 +141,7 @@
                 </div>
                 <span class="signal-up">Healthy</span>
             </div>
-            <div class="text-lg font-black text-white leading-tight">{{ $availableVehicles ?? 72 }}%</div>
+            <div class="text-lg font-black leading-tight" style="color:#101828;">{{ $availableVehicles ?? 72 }}%</div>
             <div class="text-[10px] font-semibold uppercase tracking-wide mt-1" style="color:#475569;">Fleet Utilization</div>
         </div>
 
@@ -150,7 +153,7 @@
                 </div>
                 <span class="signal-up">▲ 12</span>
             </div>
-            <div class="text-lg font-black text-white leading-tight">128</div>
+            <div class="text-lg font-black leading-tight" style="color:#101828;">128</div>
             <div class="text-[10px] font-semibold uppercase tracking-wide mt-1" style="color:#475569;">Corp. Clients</div>
         </div>
 
@@ -162,7 +165,7 @@
                 </div>
                 <span class="signal-warn">Attention</span>
             </div>
-            <div class="text-lg font-black text-white leading-tight">Rp 420 Jt</div>
+            <div class="text-lg font-black leading-tight" style="color:#101828;">Rp 420 Jt</div>
             <div class="text-[10px] font-semibold uppercase tracking-wide mt-1" style="color:#475569;">Outstanding Inv.</div>
         </div>
 
@@ -174,7 +177,7 @@
                 </div>
                 <span class="signal-down">Urgent</span>
             </div>
-            <div class="text-lg font-black text-white leading-tight">{{ $pendingPO ?? 14 }}</div>
+            <div class="text-lg font-black leading-tight" style="color:#101828;">{{ $pendingPO ?? 14 }}</div>
             <div class="text-[10px] font-semibold uppercase tracking-wide mt-1" style="color:#475569;">Pending Approval</div>
         </div>
 
@@ -187,32 +190,32 @@
         <div class="lg:col-span-2 exec-summary-card p-6">
             <div class="flex items-center justify-between mb-4">
                 <div class="flex items-center gap-2">
-                    <span class="material-symbols-outlined text-[18px]" style="color:#00e5ff;">auto_awesome</span>
-                    <span class="text-xs font-bold uppercase tracking-widest" style="color:#00e5ff;">Executive Intelligence</span>
+                    <span class="material-symbols-outlined text-[18px]" style="color:#1468a8;">auto_awesome</span>
+                    <a href="{{ route('analytics.index') }}" class="text-xs font-bold uppercase tracking-widest dashboard-link" style="color:#1468a8;">Executive Intelligence</a>
                 </div>
-                <span style="background:rgba(0,229,255,0.08);color:#00e5ff;border:1px solid rgba(0,229,255,0.15);font-size:9px;font-weight:700;padding:2px 8px;border-radius:5px;text-transform:uppercase;letter-spacing:0.06em;">AI Summary</span>
+                <a href="{{ route('analytics.index') }}" style="background:rgba(20,104,168,0.08);color:#0f5f9f;border:1px solid rgba(20,104,168,0.18);font-size:9px;font-weight:700;padding:2px 8px;border-radius:5px;text-transform:uppercase;letter-spacing:0.06em;">AI Summary</a>
             </div>
-            <h3 class="text-base font-bold text-white mb-3 leading-snug">
-                Corporate fleet performance naik <span style="color:#10b981;">18.4%</span> bulan ini.
+            <h3 class="text-base font-bold mb-3 leading-snug" style="color:#101828;">
+                <a href="{{ route('analytics.index') }}" class="dashboard-link">Corporate fleet performance naik <span style="color:#21785f;">18.4%</span> bulan ini.</a>
             </h3>
             <p class="text-sm leading-relaxed mb-4" style="color:#64748b;">
-                Golden Bird menjadi kontributor revenue terbesar, didorong kontrak corporate dan airport executive transfer. Big Bird stabil dari charter perusahaan, sementara Cititrans membutuhkan peningkatan pipeline untuk rute bisnis. Finance perlu mempercepat follow-up outstanding invoice di atas 14 hari.
+                <a href="{{ route('fleet.index') }}" class="dashboard-link">Golden Bird</a> menjadi kontributor revenue terbesar, didorong kontrak corporate dan airport executive transfer. <a href="{{ route('bookings.index') }}" class="dashboard-link">Big Bird</a> stabil dari charter perusahaan, sementara <a href="{{ route('pipeline.index') }}" class="dashboard-link">Cititrans</a> membutuhkan peningkatan pipeline untuk rute bisnis. <a href="{{ route('finance.index') }}" class="dashboard-link">Finance</a> perlu mempercepat follow-up outstanding invoice di atas 14 hari.
             </p>
             <div class="space-y-2">
                 <div class="text-[10px] font-bold uppercase tracking-widest mb-2" style="color:#334155;">Strategic Recommendations</div>
                 @php
                 $recs = [
-                    ['icon'=>'group','color'=>'#00e5ff','text'=>'Prioritaskan 12 client corporate dengan potensi renewal'],
-                    ['icon'=>'receipt_long','color'=>'#f59e0b','text'=>'Follow-up invoice overdue di atas 14 hari — Rp 420 Jt exposed'],
-                    ['icon'=>'local_shipping','color'=>'#10b981','text'=>'Tambahkan fleet allocation untuk area Jakarta HQ'],
-                    ['icon'=>'build','color'=>'#8b5cf6','text'=>'Percepat approval PO maintenance untuk unit high-demand'],
-                    ['icon'=>'leaderboard','color'=>'#60a5fa','text'=>'Dorong sales terbaik untuk handle enterprise account'],
+                    ['icon'=>'group','color'=>'#1468a8','route'=>'clients.index','text'=>'Prioritaskan 12 client corporate dengan potensi renewal'],
+                    ['icon'=>'receipt_long','color'=>'#a17412','route'=>'finance.index','text'=>'Follow-up invoice overdue di atas 14 hari - Rp 420 Jt exposed'],
+                    ['icon'=>'local_shipping','color'=>'#21785f','route'=>'fleet.index','text'=>'Tambahkan fleet allocation untuk area Jakarta HQ'],
+                    ['icon'=>'build','color'=>'#72529a','route'=>'approvals.index','text'=>'Percepat approval PO maintenance untuk unit high-demand'],
+                    ['icon'=>'leaderboard','color'=>'#1468a8','route'=>'kpi.index','text'=>'Dorong sales terbaik untuk handle enterprise account'],
                 ];
                 @endphp
                 @foreach($recs as $r)
                 <div class="flex items-start gap-2.5">
                     <span class="material-symbols-outlined text-[14px] mt-0.5 flex-shrink-0" style="color:{{ $r['color'] }};">{{ $r['icon'] }}</span>
-                    <span class="text-xs" style="color:#94a3b8;">{{ $r['text'] }}</span>
+                    <a href="{{ route($r['route']) }}" class="text-xs dashboard-link" style="color:#475467;">{{ $r['text'] }}</a>
                 </div>
                 @endforeach
             </div>
@@ -240,12 +243,12 @@
                 <div>
                     <div class="flex items-center justify-between mb-1.5">
                         <div class="flex items-center gap-2">
-                            <div class="rank-num" style="background:rgba(255,255,255,0.05);color:#64748b;">{{ $i+1 }}</div>
-                            <span class="text-xs font-semibold text-white">{{ $f['name'] }}</span>
+                            <div class="rank-num" style="background:rgba(16,40,72,0.06);color:#667085;">{{ $i+1 }}</div>
+                            <a href="{{ route('fleet.index') }}" class="text-xs font-semibold dashboard-link" style="color:#101828;">{{ $f['name'] }}</a>
                         </div>
                         <div class="flex items-center gap-2">
                             <span style="background:{{ $f['badgeColor'] }};color:{{ $f['badgeText'] }};font-size:9px;font-weight:700;padding:1px 6px;border-radius:4px;text-transform:uppercase;letter-spacing:0.04em;">{{ $f['badge'] }}</span>
-                            <span class="text-xs font-bold text-white">{{ $f['pct'] }}%</span>
+                            <span class="text-xs font-bold" style="color:#101828;">{{ $f['pct'] }}%</span>
                         </div>
                     </div>
                     <div class="fleet-bar">
@@ -267,7 +270,7 @@
                     <span class="material-symbols-outlined text-[18px]" style="color:#3b82f6;">bar_chart</span>
                     <span class="text-xs font-bold uppercase tracking-widest" style="color:#94a3b8;">Weekly Revenue Movement</span>
                 </div>
-                <span class="text-[10px] font-semibold" style="color:#475569;">Peak: Kamis — Corporate Airport Transfer</span>
+                <span class="text-[10px] font-semibold" style="color:#475569;">Peak: Kamis - Corporate Airport Transfer</span>
             </div>
             <canvas id="revenueChart" height="180"></canvas>
         </div>
@@ -294,7 +297,7 @@
                 <div class="rank-row">
                     <span class="text-base flex-shrink-0">{{ $s['medal'] }}</span>
                     <div class="flex-grow min-w-0">
-                        <div class="text-xs font-semibold text-white truncate">{{ $s['name'] }}</div>
+                        <a href="{{ route('kpi.index') }}" class="text-xs font-semibold dashboard-link truncate" style="color:#101828;">{{ $s['name'] }}</a>
                         <div class="text-[10px]" style="color:#475569;">Closing {{ $s['closing'] }}</div>
                     </div>
                     <div class="text-xs font-bold flex-shrink-0" style="color:{{ $s['color'] }};">{{ $s['rev'] }}</div>
@@ -328,8 +331,8 @@
                 @foreach($bookings as $b)
                 <div class="booking-row">
                     <div class="flex-grow min-w-0">
-                        <div class="text-xs font-bold text-white font-mono">{{ $b['id'] }}</div>
-                        <div class="text-[10px]" style="color:#475569;">{{ $b['client'] }} — {{ $b['fleet'] }}</div>
+                        <a href="{{ route('bookings.index') }}" class="text-xs font-bold font-mono dashboard-link">{{ $b['id'] }}</a>
+                        <div class="text-[10px]" style="color:#475569;"><a href="{{ route('clients.index') }}" class="dashboard-link">{{ $b['client'] }}</a> - <a href="{{ route('fleet.index') }}" class="dashboard-link">{{ $b['fleet'] }}</a></div>
                     </div>
                     <span class="status-badge {{ $b['statusClass'] }} flex-shrink-0">{{ $b['status'] }}</span>
                 </div>
@@ -361,7 +364,7 @@
                         <span class="material-symbols-outlined text-[16px]" style="color:{{ $a['iconColor'] }};">{{ $a['icon'] }}</span>
                     </div>
                     <div class="flex-grow min-w-0">
-                        <div class="text-xs font-semibold text-white truncate">{{ $a['title'] }}</div>
+                        <a href="{{ route('approvals.index') }}" class="text-xs font-semibold dashboard-link truncate" style="color:#101828;">{{ $a['title'] }}</a>
                         <div class="text-[10px]" style="color:#475569;">{{ $a['dept'] }}</div>
                     </div>
                     <span class="{{ $a['priority'] === 'High' ? 'priority-high' : 'priority-med' }} flex-shrink-0 uppercase tracking-wide">{{ $a['priority'] }}</span>
@@ -392,7 +395,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     'rgba(59,130,246,0.5)',
                     'rgba(59,130,246,0.5)',
                     'rgba(59,130,246,0.5)',
-                    'rgba(0,229,255,0.6)',
+                    'rgba(20,104,168,0.62)',
                     'rgba(59,130,246,0.5)',
                     'rgba(59,130,246,0.3)',
                     'rgba(59,130,246,0.3)',
@@ -401,7 +404,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     'rgba(59,130,246,0.8)',
                     'rgba(59,130,246,0.8)',
                     'rgba(59,130,246,0.8)',
-                    'rgba(0,229,255,0.9)',
+                    'rgba(20,104,168,0.88)',
                     'rgba(59,130,246,0.8)',
                     'rgba(59,130,246,0.5)',
                     'rgba(59,130,246,0.5)',
@@ -421,7 +424,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     borderColor: 'rgba(255,255,255,0.1)',
                     borderWidth: 1,
                     titleColor: '#94a3b8',
-                    bodyColor: '#00e5ff',
+                    bodyColor: '#1468a8',
                     bodyFont: { weight: 'bold', size: 14 },
                     callbacks: {
                         label: ctx => `Rp ${ctx.raw} Jt`

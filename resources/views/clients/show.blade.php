@@ -21,7 +21,7 @@
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6 pt-6 border-t">
         <div>
             <p class="text-xs text-gray-500">PIC Name</p>
-            <p class="font-semibold text-gray-900">{{ $client->pic_name }}</p>
+            <a href="mailto:{{ $client->email }}" class="font-semibold text-blue-600 hover:underline">{{ $client->pic_name }}</a>
         </div>
         <div>
             <p class="text-xs text-gray-500">Phone</p>
@@ -107,13 +107,9 @@
                         @endif
                     </td>
                     <td class="py-2">
-                        @if(auth()->user()->isGM())
-                            <a href="{{ route('sales.performance', $booking->sales_id) }}" class="text-blue-600 hover:underline">
-                                {{ $booking->sales->name }}
-                            </a>
-                        @else
-                            <span class="text-gray-700">{{ $booking->sales->name }}</span>
-                        @endif
+                        <a href="{{ route('sales.performance', $booking->sales_id) }}" class="text-blue-600 hover:underline">
+                            {{ $booking->sales->name }}
+                        </a>
                     </td>
                     <td class="py-2 text-gray-600">{{ $booking->pickup_datetime->format('d M Y') }}</td>
                     <td class="py-2 text-gray-600">{{ $booking->destination }}</td>

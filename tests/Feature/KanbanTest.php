@@ -96,17 +96,17 @@ class KanbanTest extends TestCase
         ]);
     }
 
-    public function test_move_stage_invalid_transition_returns_422(): void
+    public function test_move_stage_skipping_returns_ok(): void
     {
         $sales = $this->salesUser();
         $opp   = $this->makeOpp($sales, ['stage' => 'prospecting']);
 
         $response = $this->actingAs($sales)->patchJson("/opportunities/{$opp->id}/move-stage", [
-            'stage' => 'won', // skip not allowed
+            'stage' => 'won', // skip is now allowed
         ]);
 
-        $response->assertStatus(422)->assertJsonFragment(['ok' => false]);
-        $this->assertDatabaseHas('opportunities', ['id' => $opp->id, 'stage' => 'prospecting']);
+        $response->assertOk()->assertJsonFragment(['ok' => true]);
+        $this->assertDatabaseHas('opportunities', ['id' => $opp->id, 'stage' => 'won']);
     }
 
     public function test_move_to_lost_requires_lost_reason(): void

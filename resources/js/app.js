@@ -14,25 +14,17 @@ document.addEventListener('alpine:init', () => {
 
     /* ── Store: Theme ── */
     Alpine.store('theme', {
-        mode: 'dark',
+        mode: 'light',
 
         init() {
-            // 1. Saved preference  2. OS preference  3. Default dark
+            // 1. Saved preference  2. Corporate light dashboard default
             const saved = localStorage.getItem('crm-theme');
             if (saved) {
                 this.mode = saved;
             } else {
-                this.mode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+                this.mode = 'light';
             }
             this._apply();
-
-            // Sync when OS preference changes (only if user hasn't manually set)
-            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-                if (!localStorage.getItem('crm-theme')) {
-                    this.mode = e.matches ? 'dark' : 'light';
-                    this._apply();
-                }
-            });
         },
 
         toggle() {
@@ -170,7 +162,7 @@ window.CRM_Toast = {
             document.body.appendChild(el);
         }
         const colors = {
-            info:    'background:rgba(0,229,255,0.15);color:#00e5ff;border:1px solid rgba(0,229,255,0.3)',
+            info:    'background:rgba(20,104,168,0.12);color:#1468a8;border:1px solid rgba(20,104,168,0.24)',
             success: 'background:rgba(16,185,129,0.15);color:#10b981;border:1px solid rgba(16,185,129,0.3)',
             error:   'background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.3)',
             warning: 'background:rgba(245,158,11,0.15);color:#f59e0b;border:1px solid rgba(245,158,11,0.3)',
@@ -331,7 +323,7 @@ window.CRM_Palette = {
    ════════════════════════════════════════════════════════════ */
 window.CRM_Confetti = {
     fire() {
-        const colors = ['#00e5ff','#3b82f6','#10b981','#f59e0b','#8b5cf6','#ec4899','#ffffff','#f97316'];
+        const colors = ['#1468a8','#4fa4c7','#2f9d7e','#d7a72f','#8d6bb8','#b94a48','#ffffff','#cd7c2f'];
         const count = 120;
         const fragment = document.createDocumentFragment();
         for (let i = 0; i < count; i++) {
@@ -415,7 +407,7 @@ window.CRM_Keys = {
    7. DASHBOARD SPARKLINES
    ════════════════════════════════════════════════════════════ */
 window.CRM_Sparkline = {
-    render(canvasId, data, color = '#00e5ff') {
+    render(canvasId, data, color = '#1468a8') {
         const canvas = document.getElementById(canvasId);
         if (!canvas) return;
         // Destroy existing instance if any
@@ -627,22 +619,80 @@ window.initBoardDragScroll = function() {
 window.CRM_Widget = {
     _drawer: null,
     widgets: [],
+    _saveTimer: null,
 
     _defaults: [
         { id: 'kpi-row',        label: '📊 KPI Cards',         visible: true,  order: 1 },
-        { id: 'exec-summary',   label: '🤖 Executive Summary',  visible: true,  order: 2 },
-        { id: 'fleet-league',   label: '🏆 Fleet League',       visible: true,  order: 3 },
-        { id: 'revenue-chart',  label: '📈 Revenue Chart',      visible: true,  order: 4 },
-        { id: 'sales-ranking',  label: '🥇 Sales Ranking',      visible: true,  order: 5 },
-        { id: 'recent-books',   label: '🚌 Recent Bookings',    visible: true,  order: 6 },
-        { id: 'approval-q',     label: '✅ Approval Queue',     visible: true,  order: 7 },
-        { id: 'charts-section', label: '📉 Analytics Charts',   visible: true,  order: 8 },
+        { id: 'quick-shortcuts',label: '⚡ Quick Shortcuts',    visible: true,  order: 2 },
+        { id: 'exec-summary',   label: '🤖 Executive Summary',  visible: true,  order: 3 },
+        { id: 'fleet-league',   label: '🏆 Fleet League',       visible: true,  order: 4 },
+        { id: 'revenue-chart',  label: '📈 Revenue Chart',      visible: true,  order: 5 },
+        { id: 'sales-ranking',  label: '🥇 Sales Ranking',      visible: true,  order: 6 },
+        { id: 'recent-books',   label: '🚌 Recent Bookings',    visible: true,  order: 7 },
+        { id: 'approval-q',     label: '✅ Approval Queue',     visible: true,  order: 8 },
+        { id: 'charts-section', label: '📉 Analytics Charts',   visible: true,  order: 9 },
     ],
+
+    _t(key) {
+        const id = document.documentElement.lang === 'en' ? {
+            customize: 'Customize Dashboard',
+            helper: 'Show/hide widgets',
+            reset: 'Reset',
+            save: 'Save Layout',
+            saved: 'Layout saved in realtime',
+            local: 'Saved locally',
+            resetDone: 'Reset to default layout',
+        } : {
+            customize: 'Kustomisasi Dashboard',
+            helper: 'Tampilkan/sembunyikan widget',
+            reset: 'Reset',
+            save: 'Simpan Layout',
+            saved: 'Layout tersimpan realtime',
+            local: 'Tersimpan lokal',
+            resetDone: 'Layout dikembalikan ke default',
+        };
+
+        return id[key] || key;
+    },
+
+    _label(widget) {
+        const labels = document.documentElement.lang === 'en' ? {
+            'kpi-row': 'KPI Cards',
+            'quick-shortcuts': 'Quick Shortcuts',
+            'exec-summary': 'Executive Summary',
+            'fleet-league': 'Fleet League',
+            'revenue-chart': 'Revenue Chart',
+            'sales-ranking': 'Sales Ranking',
+            'recent-books': 'Recent Bookings',
+            'approval-q': 'Approval Queue',
+            'charts-section': 'Analytics Charts',
+        } : {
+            'kpi-row': 'Kartu KPI',
+            'quick-shortcuts': 'Shortcut Cepat',
+            'exec-summary': 'Executive Summary',
+            'fleet-league': 'Fleet League',
+            'revenue-chart': 'Grafik Revenue',
+            'sales-ranking': 'Ranking Sales',
+            'recent-books': 'Booking Terbaru',
+            'approval-q': 'Antrean Approval',
+            'charts-section': 'Grafik Analitik',
+        };
+
+        return labels[widget.id] || widget.label;
+    },
 
     init() {
         const saved = localStorage.getItem('crm-widgets');
-        this.widgets = saved ? JSON.parse(saved) : [...this._defaults];
+        this.widgets = saved ? this._mergeSaved(JSON.parse(saved)) : [...this._defaults];
         this._applyVisibility();
+    },
+
+    _mergeSaved(saved) {
+        const savedById = new Map(saved.map(w => [w.id, w]));
+        return this._defaults.map(defaultWidget => ({
+            ...defaultWidget,
+            visible: savedById.has(defaultWidget.id) ? savedById.get(defaultWidget.id).visible : defaultWidget.visible,
+        }));
     },
 
     open() {
@@ -655,7 +705,13 @@ window.CRM_Widget = {
 
     toggle(id) {
         const w = this.widgets.find(x => x.id === id);
-        if (w) { w.visible = !w.visible; this._renderList(); this._applyVisibility(); }
+        if (!w) return;
+
+        w.visible = !w.visible;
+        this._renderList();
+        this._applyVisibility();
+        this._saveLocal();
+        this._autoSave();
     },
 
     _applyVisibility() {
@@ -665,19 +721,26 @@ window.CRM_Widget = {
         });
     },
 
-    save() {
+    _saveLocal() {
         localStorage.setItem('crm-widgets', JSON.stringify(this.widgets));
+    },
+
+    _autoSave() {
+        clearTimeout(this._saveTimer);
+        this._saveTimer = setTimeout(() => this.save({ quiet: true }), 350);
+    },
+
+    save(options = {}) {
+        this._saveLocal();
         const csrf = document.querySelector('meta[name=csrf-token]')?.content;
-        fetch('/widgets/save', {
+        return fetch('/api/widgets/save', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf },
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': csrf },
             body: JSON.stringify({ widgets: this.widgets }),
         }).then(() => {
-            CRM_Toast.show('🧩 Layout saved!', 'success', 2000);
-            this.close();
+            if (!options.quiet) CRM_Toast.show(this._t('saved'), 'success', 1800);
         }).catch(() => {
-            CRM_Toast.show('✅ Saved locally', 'success', 2000);
-            this.close();
+            if (!options.quiet) CRM_Toast.show(this._t('local'), 'success', 1800);
         });
     },
 
@@ -686,7 +749,14 @@ window.CRM_Widget = {
         localStorage.removeItem('crm-widgets');
         this._applyVisibility();
         this._renderList();
-        CRM_Toast.show('↩ Reset to default layout', 'info', 2000);
+        fetch('/api/widgets/reset', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]')?.content,
+            },
+        }).catch(() => {});
+        CRM_Toast.show(this._t('resetDone'), 'info', 2000);
     },
 
     _renderList() {
@@ -695,12 +765,12 @@ window.CRM_Widget = {
         list.innerHTML = this.widgets.map(w => `
             <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--cc-border);">
                 <span style="color:var(--cc-text-muted);font-size:16px;cursor:default;">⠿</span>
-                <span style="flex:1;font-size:13px;font-weight:500;color:var(--cc-text);">${w.label}</span>
-                <div onclick="CRM_Widget.toggle('${w.id}')" style="
+                <span style="flex:1;font-size:13px;font-weight:500;color:var(--cc-text);">${this._label(w)}</span>
+                <button type="button" onclick="event.stopPropagation(); CRM_Widget.toggle('${w.id}')" aria-pressed="${w.visible}" style="
                     width:36px;height:20px;border-radius:10px;position:relative;cursor:pointer;transition:background 0.2s;
-                    background:${w.visible ? 'var(--cc-accent)' : 'rgba(255,255,255,0.1)'};flex-shrink:0;">
+                    background:${w.visible ? 'var(--cc-accent)' : 'rgba(16,40,72,0.14)'};flex-shrink:0;border:0;padding:0;">
                     <div style="position:absolute;top:2px;${w.visible ? 'right:2px' : 'left:2px'};width:16px;height:16px;border-radius:50%;background:#fff;transition:all 0.2s;"></div>
-                </div>
+                </button>
             </div>`).join('');
     },
 
@@ -716,15 +786,15 @@ window.CRM_Widget = {
         this._drawer.innerHTML = `
             <div style="padding:20px;border-bottom:1px solid var(--cc-border);display:flex;align-items:center;justify-content:space-between;">
                 <div>
-                    <div style="font-size:15px;font-weight:700;color:var(--cc-text);">🧩 Customize Dashboard</div>
-                    <div style="font-size:11px;color:var(--cc-text-muted);margin-top:2px;">Show/hide widgets</div>
+                    <div style="font-size:15px;font-weight:700;color:var(--cc-text);">${this._t('customize')}</div>
+                    <div style="font-size:11px;color:var(--cc-text-muted);margin-top:2px;">${this._t('helper')}</div>
                 </div>
                 <button onclick="CRM_Widget.close()" style="background:none;border:none;cursor:pointer;font-size:18px;color:var(--cc-text-muted);">✕</button>
             </div>
             <div id="widget-list" style="flex:1;overflow-y:auto;padding:0 20px;"></div>
             <div style="padding:16px 20px;border-top:1px solid var(--cc-border);display:flex;gap:8px;">
-                <button onclick="CRM_Widget.reset()" style="flex:1;padding:9px;border-radius:8px;border:1px solid var(--cc-border);background:none;cursor:pointer;font-size:13px;font-weight:600;color:var(--cc-text-muted);">↩ Reset</button>
-                <button onclick="CRM_Widget.save()" style="flex:2;padding:9px;border-radius:8px;border:none;background:var(--cc-accent);cursor:pointer;font-size:13px;font-weight:700;color:#000;">Save Layout</button>
+                <button onclick="CRM_Widget.reset()" style="flex:1;padding:9px;border-radius:8px;border:1px solid var(--cc-border);background:none;cursor:pointer;font-size:13px;font-weight:600;color:var(--cc-text-muted);">${this._t('reset')}</button>
+                <button onclick="CRM_Widget.save()" style="flex:2;padding:9px;border-radius:8px;border:none;background:var(--cc-accent);cursor:pointer;font-size:13px;font-weight:700;color:#fff;">${this._t('save')}</button>
             </div>`;
         const s = document.createElement('style');
         s.textContent = `#widget-drawer.open{transform:translateX(0)!important;}`;

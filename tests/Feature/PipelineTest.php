@@ -49,13 +49,16 @@ class PipelineTest extends TestCase
         $sales  = $this->makeSalesUser();
         $client = $this->makeClient($sales);
 
-        $response = $this->actingAs($sales)->post('/opportunities', [
-            'title'               => 'New Fleet Deal',
-            'client_id'           => $client->id,
-            'stage'               => 'prospecting',
-            'estimated_value'     => 5000000,
-            'expected_close_date' => now()->addMonths(2)->toDateString(),
-        ]);
+        $response = $this->actingAs($sales)
+            ->withSession(['_token' => 'test-token'])
+            ->post('/opportunities', [
+                'title'               => 'New Fleet Deal',
+                'client_id'           => $client->id,
+                'stage'               => 'prospecting',
+                'estimated_value'     => 5000000,
+                'expected_close_date' => now()->addMonths(2)->toDateString(),
+                '_token'              => 'test-token',
+            ]);
 
         $response->assertRedirect();
         $response->assertSessionHasNoErrors();
@@ -82,9 +85,12 @@ class PipelineTest extends TestCase
             'stage'     => 'prospecting',
         ]);
 
-        $response = $this->actingAs($sales)->post("/opportunities/{$opportunity->id}/advance-stage", [
-            'stage' => 'proposal',
-        ]);
+        $response = $this->actingAs($sales)
+            ->withSession(['_token' => 'test-token'])
+            ->post("/opportunities/{$opportunity->id}/advance-stage", [
+                'stage'  => 'proposal',
+                '_token' => 'test-token',
+            ]);
 
         $response->assertRedirect();
         $response->assertSessionHasNoErrors();
@@ -96,11 +102,10 @@ class PipelineTest extends TestCase
     }
 
     /**
-     * Attempting to skip from prospecting directly to won must be rejected
-     * (the controller returns back() with errors, which results in a redirect
-     * with session errors — we assert no 200 and that the stage did not change).
+     * Skipping from prospecting directly to won is now allowed
+     * due to free movement kanban logic.
      */
-    public function test_cannot_skip_stages(): void
+    public function test_can_skip_stages(): void
     {
         $sales  = $this->makeSalesUser();
         $client = $this->makeClient($sales);
@@ -111,18 +116,21 @@ class PipelineTest extends TestCase
             'stage'     => 'prospecting',
         ]);
 
-        $response = $this->actingAs($sales)->post("/opportunities/{$opportunity->id}/advance-stage", [
-            'stage' => 'won',
-        ]);
+        $response = $this->actingAs($sales)
+            ->withSession(['_token' => 'test-token'])
+            ->post("/opportunities/{$opportunity->id}/advance-stage", [
+                'stage'  => 'won',
+                '_token' => 'test-token',
+            ]);
 
-        // Expect a redirect back with validation / application error
+        // Expect a successful redirect without errors
         $response->assertRedirect();
-        $response->assertSessionHasErrors();
+        $response->assertSessionHasNoErrors();
 
-        // Stage must remain unchanged
+        // Stage must be updated
         $this->assertDatabaseHas('opportunities', [
             'id'    => $opportunity->id,
-            'stage' => 'prospecting',
+            'stage' => 'won',
         ]);
     }
 
@@ -148,9 +156,12 @@ class PipelineTest extends TestCase
 
         $invoicesBefore = Invoice::count();
 
-        $response = $this->actingAs($sales)->post("/opportunities/{$opportunity->id}/advance-stage", [
-            'stage' => 'won',
-        ]);
+        $response = $this->actingAs($sales)
+            ->withSession(['_token' => 'test-token'])
+            ->post("/opportunities/{$opportunity->id}/advance-stage", [
+                'stage'  => 'won',
+                '_token' => 'test-token',
+            ]);
 
         $response->assertRedirect();
 

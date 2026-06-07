@@ -38,18 +38,18 @@
                         </a>
                         <div class="text-xs text-gray-400">{{ $client->email }}</div>
                     </td>
-                    <td class="py-3 px-4 text-gray-700">{{ $client->pic_name }}</td>
+                    <td class="py-3 px-4 text-gray-700">
+                        <a href="mailto:{{ $client->email }}" class="text-blue-600 hover:underline">
+                            {{ $client->pic_name }}
+                        </a>
+                    </td>
                     <td class="py-3 px-4 text-gray-500">{{ $client->industry ?? '—' }}</td>
                     <td class="py-3 px-4">
                         @if($client->assignedSales)
-                            @can('viewAny', App\Models\User::class)
-                                <a href="{{ route('sales.performance', $client->assignedSales->id) }}"
-                                   class="text-blue-600 hover:underline text-sm">
-                                    {{ $client->assignedSales->name }}
-                                </a>
-                            @else
-                                <span class="text-sm text-gray-700">{{ $client->assignedSales->name }}</span>
-                            @endcan
+                            <a href="{{ route('sales.performance', $client->assignedSales->id) }}"
+                               class="text-blue-600 hover:underline text-sm">
+                                {{ $client->assignedSales->name }}
+                            </a>
                         @else
                             <span class="text-gray-400 text-sm">Unassigned</span>
                         @endif

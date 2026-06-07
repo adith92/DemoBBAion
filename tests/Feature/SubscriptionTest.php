@@ -62,14 +62,17 @@ class SubscriptionTest extends TestCase
         $finance = $this->makeFinanceUser();
         $client  = $this->makeClient();
 
-        $response = $this->actingAs($finance)->post('/subscriptions', [
-            'client_id'     => $client->id,
-            'start_date'    => today()->toDateString(),
-            'end_date'      => today()->addYear()->toDateString(),
-            'monthly_rate'  => 5_000_000,
-            'billing_cycle' => 'monthly',
-            'auto_renew'    => true,
-        ]);
+        $response = $this->actingAs($finance)
+            ->withSession(['_token' => 'test-token'])
+            ->post('/subscriptions', [
+                '_token'        => 'test-token',
+                'client_id'     => $client->id,
+                'start_date'    => today()->toDateString(),
+                'end_date'      => today()->addYear()->toDateString(),
+                'monthly_rate'  => 5_000_000,
+                'billing_cycle' => 'monthly',
+                'auto_renew'    => true,
+            ]);
 
         $response->assertRedirect();
         $response->assertSessionHasNoErrors();

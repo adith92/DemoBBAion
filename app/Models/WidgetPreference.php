@@ -19,13 +19,14 @@ class WidgetPreference extends Model
     {
         return [
             ['id' => 'kpi-row',       'label' => '📊 KPI Cards',          'visible' => true,  'order' => 1],
-            ['id' => 'exec-summary',  'label' => '🤖 Executive Summary',   'visible' => true,  'order' => 2],
-            ['id' => 'fleet-league',  'label' => '🏆 Fleet League',        'visible' => true,  'order' => 3],
-            ['id' => 'revenue-chart', 'label' => '📈 Revenue Chart',       'visible' => true,  'order' => 4],
-            ['id' => 'sales-ranking', 'label' => '🥇 Sales Ranking',       'visible' => true,  'order' => 5],
-            ['id' => 'recent-books',  'label' => '🚌 Recent Bookings',     'visible' => true,  'order' => 6],
-            ['id' => 'approval-q',    'label' => '✅ Approval Queue',      'visible' => true,  'order' => 7],
-            ['id' => 'charts-section','label' => '📉 Analytics Charts',    'visible' => true,  'order' => 8],
+            ['id' => 'quick-shortcuts','label' => '⚡ Quick Shortcuts',     'visible' => true,  'order' => 2],
+            ['id' => 'exec-summary',  'label' => '🤖 Executive Summary',   'visible' => true,  'order' => 3],
+            ['id' => 'fleet-league',  'label' => '🏆 Fleet League',        'visible' => true,  'order' => 4],
+            ['id' => 'revenue-chart', 'label' => '📈 Revenue Chart',       'visible' => true,  'order' => 5],
+            ['id' => 'sales-ranking', 'label' => '🥇 Sales Ranking',       'visible' => true,  'order' => 6],
+            ['id' => 'recent-books',  'label' => '🚌 Recent Bookings',     'visible' => true,  'order' => 7],
+            ['id' => 'approval-q',    'label' => '✅ Approval Queue',      'visible' => true,  'order' => 8],
+            ['id' => 'charts-section','label' => '📉 Analytics Charts',    'visible' => true,  'order' => 9],
         ];
     }
 

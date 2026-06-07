@@ -91,8 +91,8 @@ class PipelineService
     {
         return Subscription::create([
             'opportunity_id' => $opportunity->id,
-            'customer_id'    => $opportunity->customer_id,
-            'amount'         => $opportunity->deal_value,
+            'client_id'      => $opportunity->client_id,
+            'monthly_rate'   => $this->getOpportunityAmount($opportunity),
             'start_date'     => now(),
             'status'         => 'active',
         ]);
@@ -104,12 +104,20 @@ class PipelineService
     protected function createInvoice(Opportunity $opportunity): Invoice
     {
         return Invoice::create([
-            'opportunity_id' => $opportunity->id,
-            'customer_id'    => $opportunity->customer_id,
-            'amount'         => $opportunity->deal_value,
-            'issued_at'      => now(),
-            'due_at'         => now()->addDays(30),
-            'status'         => 'unpaid',
+            'invoice_number' => 'INV-' . strtoupper(uniqid()),
+            'client_id'      => $opportunity->client_id,
+            'amount'         => $this->getOpportunityAmount($opportunity),
+            'due_date'       => now()->addDays(30),
+            'status'         => 'draft',
+            'notes'          => 'Generated from Opportunity: ' . $opportunity->title,
         ]);
+    }
+
+    /**
+     * Get the opportunity amount.
+     */
+    protected function getOpportunityAmount(Opportunity $opportunity): float
+    {
+        return (float) ($opportunity->estimated_value ?? $opportunity->final_value ?? 0);
     }
 }

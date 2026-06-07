@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id" class="dark">
+<html lang="{{ app()->getLocale() }}" class="light">
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -90,7 +90,7 @@
              style="background:var(--cc-sidebar);border-bottom:1px solid var(--cc-border)">
             <div class="flex items-center gap-2.5">
                 <div class="w-7 h-7 rounded-lg flex items-center justify-center"
-                     style="background:var(--cc-accent-dim);border:1px solid rgba(0,229,255,0.2)">
+                     style="background:var(--cc-accent-dim);border:1px solid rgba(20,104,168,0.2)">
                     <span class="material-symbols-outlined text-[16px]" style="color:var(--cc-accent)">directions_bus</span>
                 </div>
                 <span class="text-sm font-bold" style="color:var(--cc-text)">Golden Bird CRM</span>

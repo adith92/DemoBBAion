@@ -8,7 +8,7 @@
 
     {{-- LEFT: Breadcrumb + page title --}}
     <div class="flex items-center gap-2 text-xs min-w-0">
-        <span class="font-bold text-xs hidden md:block" style="color:var(--cc-text-faint)">Bluebird CRM</span>
+        <span class="font-bold text-xs hidden md:block" style="color:var(--cc-text-faint)">{{ __('ui.bluebird_crm') }}</span>
         <span class="material-symbols-outlined text-[13px] hidden md:block" style="color:var(--cc-text-faint)">chevron_right</span>
         <span class="font-black uppercase tracking-widest text-[11px] truncate" style="color:var(--cc-accent)">
             @yield('header_title', 'Dashboard')
@@ -20,7 +20,7 @@
             class="hidden lg:flex items-center gap-2 px-4 py-2 rounded-xl text-[12px] transition-all duration-150 mx-4"
             style="background:var(--cc-card);border:1px solid var(--cc-border);color:var(--cc-text-muted);min-width:200px;max-width:300px;flex:1">
         <span class="material-symbols-outlined text-[15px]" style="color:var(--cc-accent)">search</span>
-        <span>Quick search...</span>
+        <span>{{ __('ui.quick_search') }}</span>
         <span class="kbd-hint ml-auto">⌘K</span>
     </button>
 
@@ -61,6 +61,17 @@
         {{-- Divider --}}
         <div class="w-px h-6 mx-1 hidden md:block" style="background:var(--cc-border)"></div>
 
+        {{-- Language switch --}}
+        <div class="hidden sm:flex items-center rounded-xl overflow-hidden"
+             style="background:var(--cc-card);border:1px solid var(--cc-border);">
+            <a href="{{ route('language.switch', 'id') }}"
+               class="px-2.5 py-1.5 text-[10px] font-black"
+               style="color:{{ app()->getLocale() === 'id' ? '#fff' : 'var(--cc-text-muted)' }};background:{{ app()->getLocale() === 'id' ? 'var(--cc-accent)' : 'transparent' }};">ID</a>
+            <a href="{{ route('language.switch', 'en') }}"
+               class="px-2.5 py-1.5 text-[10px] font-black"
+               style="color:{{ app()->getLocale() === 'en' ? '#fff' : 'var(--cc-text-muted)' }};background:{{ app()->getLocale() === 'en' ? 'var(--cc-accent)' : 'transparent' }};">EN</a>
+        </div>
+
         {{-- Role badge --}}
         <div class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-bold cursor-default"
              style="background:var(--cc-card);border:1px solid var(--cc-border);color:var(--cc-text-muted)">
@@ -71,7 +82,7 @@
         {{-- Live badge --}}
         <span class="badge-live hidden sm:inline-flex">
             <span class="pulse-dot" style="width:5px;height:5px;flex-shrink:0"></span>
-            <span class="hidden md:inline">Live</span>
+            <span class="hidden md:inline">{{ __('ui.live') }}</span>
         </span>
 
     </div>
