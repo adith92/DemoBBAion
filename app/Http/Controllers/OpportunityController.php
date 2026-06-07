@@ -358,10 +358,19 @@ class OpportunityController extends Controller
             $this->pipelineService->triggerWonActions($opportunity->fresh());
         }
 
+        // Return per-stage summary so frontend can update counts + Rupiah values instantly
+        $summary = Opportunity::selectRaw("stage, COUNT(*) as count, COALESCE(SUM(estimated_value),0) as total")
+            ->groupBy('stage')
+            ->get()
+            ->keyBy('stage')
+            ->map(fn($r) => ['count' => (int)$r->count, 'total' => (float)$r->total])
+            ->toArray();
+
         return response()->json([
             'ok'      => true,
             'message' => "Deal dipindah ke {$toStage}.",
             'stage'   => $toStage,
+            'summary' => $summary,
         ]);
     }
 

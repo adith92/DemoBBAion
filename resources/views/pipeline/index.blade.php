@@ -313,7 +313,8 @@
                 <div class="text-[10px] font-bold uppercase tracking-wide text-slate-500">{{ $c['label'] }}</div>
                 <div class="text-[15px] font-bold text-slate-100"
                      id="count-{{ $s }}" data-count-badge="{{ $s }}">{{ $col['count'] }}</div>
-                <div class="text-[10px] text-slate-500">Rp {{ number_format($col['total_value'],0,',','.') }}</div>
+                <div class="text-[10px] text-slate-500"
+                     data-value-badge="{{ $s }}">Rp {{ number_format($col['total_value'],0,',','.') }}</div>
             </div>
         </div>
         @endforeach
@@ -344,9 +345,8 @@
                               style="background:rgba(255,255,255,0.1); color:{{ $c['color'] }}"
                               id="badge-{{ $stage }}" data-count-badge="{{ $stage }}">{{ $col['count'] }}</span>
                     </div>
-                    <div class="text-[11px] text-slate-500 font-semibold px-1 pb-1">
-                        Rp {{ number_format($col['total_value'],0,',','.') }}
-                    </div>
+                    <div class="text-[11px] text-slate-500 font-semibold px-1 pb-1"
+                         data-col-value="{{ $stage }}">Rp {{ number_format($col['total_value'],0,',','.') }}</div>
                 </div>
 
                 {{-- Drop zone: scrolls independently per column --}}
@@ -855,7 +855,7 @@ function kanbanBoard() {
                 });
                 const data = await res.json();
                 if (!res.ok || !data.ok) { revertFn && revertFn(); this.toast(data.message ?? 'Gagal.', 'error'); return; }
-                this.updateColumnCounts();
+                this.updateColumnCounts(data.summary);
                 this.toast(data.message, 'success');
                 // 🎊 Konfetti celebration when deal moves to Won!
                 if (body.stage === 'won') {
@@ -941,15 +941,35 @@ function kanbanBoard() {
         stageColor(s) { return {prospecting:'#3b82f6',proposal:'#f59e0b',negotiation:'#f97316',won:'#10b981',lost:'#ef4444'}[s]??'#94a3b8'; },
         stageLabel(s) { return {prospecting:'Prospekting',proposal:'Proposal',negotiation:'Negosiasi',won:'Menang',lost:'Kalah'}[s]??s; },
 
-        updateColumnCounts() {
-            // Small delay so SortableJS finishes moving the DOM node first
-            setTimeout(() => {
+        updateColumnCounts(summary) {
+            const fmt = (n) => new Intl.NumberFormat('id-ID').format(Math.round(n));
+
+            if (summary) {
+                // Update counts from server-authoritative summary
                 document.querySelectorAll('[data-count-badge]').forEach(el => {
                     const stage = el.dataset.countBadge;
-                    const zone  = document.getElementById(`zone-${stage}`);
-                    if (zone) el.textContent = zone.querySelectorAll('.kanban-card').length;
+                    if (summary[stage] !== undefined) el.textContent = summary[stage].count;
                 });
-            }, 80);
+                // Update Rupiah values in summary bar
+                document.querySelectorAll('[data-value-badge]').forEach(el => {
+                    const stage = el.dataset.valueBadge;
+                    if (summary[stage] !== undefined) el.textContent = 'Rp ' + fmt(summary[stage].total);
+                });
+                // Update Rupiah in column headers
+                document.querySelectorAll('[data-col-value]').forEach(el => {
+                    const stage = el.dataset.colValue;
+                    if (summary[stage] !== undefined) el.textContent = 'Rp ' + fmt(summary[stage].total);
+                });
+            } else {
+                // Fallback: count DOM cards (no rupiah update possible)
+                setTimeout(() => {
+                    document.querySelectorAll('[data-count-badge]').forEach(el => {
+                        const stage = el.dataset.countBadge;
+                        const zone  = document.getElementById(`zone-${stage}`);
+                        if (zone) el.textContent = zone.querySelectorAll('.kanban-card').length;
+                    });
+                }, 80);
+            }
         },
 
         toast(msg, type='success') {
