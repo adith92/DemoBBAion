@@ -131,7 +131,7 @@
     <div id="widget-kpi-row" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
 
         {{-- KPI 1: Revenue --}}
-        <div class="kpi-card kpi-cyan col-span-2 md:col-span-1 lg:col-span-1" style="position:relative;overflow:hidden;">
+        <a href="{{ route('analytics.index') }}" class="kpi-card kpi-cyan col-span-2 md:col-span-1 lg:col-span-1 block group" style="position:relative;overflow:hidden;transition:transform 0.12s,box-shadow 0.12s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 20px rgba(20,104,168,0.18)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
             <div class="flex items-start justify-between mb-2">
                 <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:rgba(20,104,168,0.10);">
                     <span class="material-symbols-outlined text-[17px]" style="color:#1468a8;">payments</span>
@@ -141,10 +141,10 @@
             <div class="text-lg font-black leading-tight" style="color:#101828;">Rp 2,84 M</div>
             <div class="text-[10px] font-semibold uppercase tracking-wide mt-1" style="color:#475569;">{{ __('ui.monthly_revenue') }}</div>
             <canvas id="spark-revenue" style="position:absolute;bottom:6px;right:6px;width:64px;height:22px;opacity:0.65;"></canvas>
-        </div>
+        </a>
 
         {{-- KPI 2: Bookings --}}
-        <div class="kpi-card kpi-blue" style="position:relative;overflow:hidden;">
+        <a href="{{ route('bookings.index') }}" class="kpi-card kpi-blue block group" style="position:relative;overflow:hidden;transition:transform 0.12s,box-shadow 0.12s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 20px rgba(59,130,246,0.18)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
             <div class="flex items-start justify-between mb-2">
                 <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:rgba(59,130,246,0.1);">
                     <span class="material-symbols-outlined text-[17px]" style="color:#60a5fa;">route</span>
@@ -154,10 +154,10 @@
             <div class="text-lg font-black leading-tight" style="color:#101828;">{{ $pendingDispatch ?? 248 }}</div>
             <div class="text-[10px] font-semibold uppercase tracking-wide mt-1" style="color:#475569;">{{ __('ui.active_bookings') }}</div>
             <canvas id="spark-bookings" style="position:absolute;bottom:6px;right:6px;width:64px;height:22px;opacity:0.65;"></canvas>
-        </div>
+        </a>
 
         {{-- KPI 3: Fleet --}}
-        <div class="kpi-card kpi-emerald" style="position:relative;overflow:hidden;">
+        <a href="{{ route('fleet.index') }}" class="kpi-card kpi-emerald block group" style="position:relative;overflow:hidden;transition:transform 0.12s,box-shadow 0.12s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 20px rgba(16,185,129,0.18)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
             <div class="flex items-start justify-between mb-2">
                 <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:rgba(16,185,129,0.1);">
                     <span class="material-symbols-outlined text-[17px]" style="color:#34d399;">local_shipping</span>
@@ -167,10 +167,10 @@
             <div class="text-lg font-black leading-tight" style="color:#101828;">{{ $availableVehicles ?? 72 }}%</div>
             <div class="text-[10px] font-semibold uppercase tracking-wide mt-1" style="color:#475569;">{{ __('ui.fleet_utilization') }}</div>
             <canvas id="spark-fleet" style="position:absolute;bottom:6px;right:6px;width:64px;height:22px;opacity:0.65;"></canvas>
-        </div>
+        </a>
 
         {{-- KPI 4: Clients --}}
-        <div class="kpi-card kpi-purple" style="position:relative;overflow:hidden;">
+        <a href="{{ route('clients.index') }}" class="kpi-card kpi-purple block group" style="position:relative;overflow:hidden;transition:transform 0.12s,box-shadow 0.12s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 20px rgba(139,92,246,0.18)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
             <div class="flex items-start justify-between mb-2">
                 <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:rgba(139,92,246,0.1);">
                     <span class="material-symbols-outlined text-[17px]" style="color:#a78bfa;">corporate_fare</span>
@@ -180,10 +180,10 @@
             <div class="text-lg font-black leading-tight" style="color:#101828;">128</div>
             <div class="text-[10px] font-semibold uppercase tracking-wide mt-1" style="color:#475569;">{{ __('ui.corp_clients') }}</div>
             <canvas id="spark-clients" style="position:absolute;bottom:6px;right:6px;width:64px;height:22px;opacity:0.65;"></canvas>
-        </div>
+        </a>
 
         {{-- KPI 5: Outstanding --}}
-        <div class="kpi-card kpi-gold" style="position:relative;overflow:hidden;">
+        <a href="{{ route('finance.index') }}" class="kpi-card kpi-gold block group" style="position:relative;overflow:hidden;transition:transform 0.12s,box-shadow 0.12s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 20px rgba(245,158,11,0.18)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
             <div class="flex items-start justify-between mb-2">
                 <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:rgba(245,158,11,0.1);">
                     <span class="material-symbols-outlined text-[17px]" style="color:#fbbf24;">receipt_long</span>
@@ -193,10 +193,10 @@
             <div class="text-lg font-black leading-tight" style="color:#101828;">Rp 420 Jt</div>
             <div class="text-[10px] font-semibold uppercase tracking-wide mt-1" style="color:#475569;">{{ __('ui.outstanding_inv') }}</div>
             <canvas id="spark-invoice" style="position:absolute;bottom:6px;right:6px;width:64px;height:22px;opacity:0.65;"></canvas>
-        </div>
+        </a>
 
         {{-- KPI 6: Approval --}}
-        <div class="kpi-card kpi-red" style="position:relative;overflow:hidden;">
+        <a href="{{ route('approvals.index') }}" class="kpi-card kpi-red block group" style="position:relative;overflow:hidden;transition:transform 0.12s,box-shadow 0.12s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 20px rgba(239,68,68,0.18)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
             <div class="flex items-start justify-between mb-2">
                 <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:rgba(239,68,68,0.1);">
                     <span class="material-symbols-outlined text-[17px]" style="color:#f87171;">pending_actions</span>
@@ -206,7 +206,7 @@
             <div class="text-lg font-black leading-tight" style="color:#101828;">{{ $pendingPO ?? 14 }}</div>
             <div class="text-[10px] font-semibold uppercase tracking-wide mt-1" style="color:#475569;">{{ __('ui.pending_approval') }}</div>
             <canvas id="spark-approvals" style="position:absolute;bottom:6px;right:6px;width:64px;height:22px;opacity:0.65;"></canvas>
-        </div>
+        </a>
 
     </div>
 
@@ -359,7 +359,10 @@
                     <span class="material-symbols-outlined text-[18px]" style="color:#3b82f6;">bar_chart</span>
                     <span class="text-xs font-bold uppercase tracking-widest" style="color:#94a3b8;">{{ __('ui.weekly_revenue_movement') }}</span>
                 </div>
-                <span class="text-[10px] font-semibold" style="color:#475569;">{{ __('ui.peak_note') }}</span>
+                <div class="flex items-center gap-3">
+                    <span class="text-[10px] font-semibold" style="color:#475569;">{{ __('ui.peak_note') }}</span>
+                    <a href="{{ route('analytics.index') }}" class="text-[10px] font-semibold" style="color:#3b82f6;">Detail →</a>
+                </div>
             </div>
             <canvas id="revenueChart" height="180"></canvas>
         </div>

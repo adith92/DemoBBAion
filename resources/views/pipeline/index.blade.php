@@ -157,6 +157,31 @@
                 <option value="{{ $s }}">{{ ucfirst($s) }}</option>
                 @endforeach
             </select>
+            {{-- Sales filter (manager/gm/director) --}}
+            @if($salesUsers->isNotEmpty())
+            <form method="GET" id="pipeline-filter-form">
+                <input type="hidden" name="sort_by" value="{{ $sortBy }}">
+                <select name="filter_sales" onchange="document.getElementById('pipeline-filter-form').submit()"
+                        class="dark-input text-[13px] py-2 px-3 rounded-xl">
+                    <option value="">Semua Sales</option>
+                    @foreach($salesUsers as $su)
+                    <option value="{{ $su->id }}" {{ request('filter_sales') == $su->id ? 'selected' : '' }}>{{ $su->name }}</option>
+                    @endforeach
+                </select>
+            </form>
+            @endif
+            {{-- Sort --}}
+            <form method="GET" id="pipeline-sort-form">
+                @if(request('filter_sales'))<input type="hidden" name="filter_sales" value="{{ request('filter_sales') }}">@endif
+                <select name="sort_by" onchange="document.getElementById('pipeline-sort-form').submit()"
+                        class="dark-input text-[13px] py-2 px-3 rounded-xl">
+                    <option value="updated"    {{ $sortBy === 'updated'    ? 'selected' : '' }}>Terbaru diupdate</option>
+                    <option value="newest"     {{ $sortBy === 'newest'     ? 'selected' : '' }}>Terbaru dibuat</option>
+                    <option value="value_desc" {{ $sortBy === 'value_desc' ? 'selected' : '' }}>Nilai ↓</option>
+                    <option value="value_asc"  {{ $sortBy === 'value_asc'  ? 'selected' : '' }}>Nilai ↑</option>
+                    <option value="close_date" {{ $sortBy === 'close_date' ? 'selected' : '' }}>Close date</option>
+                </select>
+            </form>
             {{-- View Toggle: Board / List / Table --}}
             <div class="view-toggle">
                 <button class="view-btn active" id="view-board" onclick="setKanbanView('board')" title="Board view">
@@ -280,12 +305,24 @@
                         {{-- Title --}}
                         <h3 class="text-[13px] font-semibold leading-snug line-clamp-2 mb-2" style="color:var(--cc-text)">{{ $opp->title }}</h3>
 
-                        {{-- Client (clickable) --}}
-                        <a href="{{ route('clients.show', $opp->client_id) }}"
-                           class="flex items-center gap-1.5 text-[12px] mb-2 hover:opacity-80 transition-opacity" style="color:var(--cc-text-muted)" @click.stop>
-                            <span class="material-symbols-outlined text-[13px]">corporate_fare</span>
-                            <span class="truncate">{{ $opp->client->company_name ?? '-' }}</span>
-                        </a>
+                        {{-- Client (click-to-reveal) --}}
+                        <div x-data="{ show: false }" class="mb-2">
+                            <button @click.stop="show = !show"
+                                    class="flex items-center gap-1.5 text-[12px] hover:opacity-80 transition-opacity w-full text-left"
+                                    style="color:var(--cc-text-muted)">
+                                <span class="material-symbols-outlined text-[13px]">corporate_fare</span>
+                                <span x-show="!show" class="truncate italic text-slate-600 text-[11px]">Klik untuk lihat klien</span>
+                                <span x-show="show" x-cloak class="truncate">{{ $opp->client->company_name ?? '-' }}</span>
+                                <span class="material-symbols-outlined text-[12px] ml-auto" x-text="show ? 'visibility_off' : 'visibility'"></span>
+                            </button>
+                            <div x-show="show" x-cloak class="mt-1 pl-5">
+                                <a href="{{ route('clients.show', $opp->client_id) }}"
+                                   class="text-[11px] text-blue-400 hover:underline" @click.stop>
+                                    {{ $opp->client->pic_name ?? '' }}
+                                    @if($opp->client?->phone) · {{ $opp->client->phone }} @endif
+                                </a>
+                            </div>
+                        </div>
 
                         {{-- Value --}}
                         @if($opp->estimated_value)

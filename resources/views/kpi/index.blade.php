@@ -178,31 +178,43 @@
 
     {{-- Team KPI Table (Manager/GM/Director) --}}
     @if($isManager && $teamUsers->isNotEmpty())
-    <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden mb-6">
-        <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-            <h3 class="text-lg font-bold text-gray-900">KPI Tim Sales — {{ $monthNames[$month] }} {{ $year }}</h3>
-            <span class="text-sm text-gray-500">{{ $teamUsers->count() }} anggota</span>
+    <div class="cc-card rounded-2xl overflow-hidden mb-6">
+        <div class="px-6 py-4 border-b border-white/5 flex items-center justify-between flex-wrap gap-3">
+            <h3 class="text-[15px] font-bold text-slate-200">KPI Tim Sales — {{ $monthNames[$month] }} {{ $year }}</h3>
+            <div class="flex items-center gap-3">
+                <span class="text-sm text-slate-500">{{ $teamUsers->count() }} anggota</span>
+                <form method="GET" action="{{ route('kpi.index') }}" class="flex items-center gap-1">
+                    <input type="hidden" name="year" value="{{ $year }}">
+                    <input type="hidden" name="month" value="{{ $month }}">
+                    <label class="text-xs text-slate-500">Urutkan:</label>
+                    <select name="sort_team" onchange="this.form.submit()"
+                            class="dark-input text-[12px] py-1 px-2 rounded-lg ml-1">
+                        <option value="revenue" {{ ($sortTeam ?? 'revenue') === 'revenue' ? 'selected' : '' }}>Revenue ↓</option>
+                        <option value="kpi_pct" {{ ($sortTeam ?? '') === 'kpi_pct'  ? 'selected' : '' }}>Skor KPI ↓</option>
+                        <option value="name"    {{ ($sortTeam ?? '') === 'name'     ? 'selected' : '' }}>Nama A-Z</option>
+                    </select>
+                </form>
+            </div>
         </div>
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
                 <thead>
-                    <tr class="bg-gray-50 border-b border-gray-100">
-                        <th class="text-left px-4 py-3 font-semibold text-gray-600 text-xs uppercase">Sales</th>
-                        <th class="text-center px-3 py-3 font-semibold text-gray-600 text-xs uppercase">Meeting</th>
-                        <th class="text-center px-3 py-3 font-semibold text-gray-600 text-xs uppercase">Panggilan</th>
-                        <th class="text-center px-3 py-3 font-semibold text-gray-600 text-xs uppercase">Kunjungan</th>
-                        <th class="text-center px-3 py-3 font-semibold text-gray-600 text-xs uppercase">Oppty</th>
-                        <th class="text-center px-3 py-3 font-semibold text-gray-600 text-xs uppercase">Won</th>
-                        <th class="text-right px-4 py-3 font-semibold text-gray-600 text-xs uppercase">Revenue</th>
-                        <th class="text-center px-4 py-3 font-semibold text-gray-600 text-xs uppercase">Skor</th>
+                    <tr class="border-b border-white/5 text-[11px] uppercase text-slate-500 font-semibold">
+                        <th class="text-left px-4 py-3">Sales</th>
+                        <th class="text-center px-3 py-3">Meeting</th>
+                        <th class="text-center px-3 py-3">Panggilan</th>
+                        <th class="text-center px-3 py-3">Kunjungan</th>
+                        <th class="text-center px-3 py-3">Oppty</th>
+                        <th class="text-center px-3 py-3">Won</th>
+                        <th class="text-right px-4 py-3">Revenue</th>
+                        <th class="text-center px-4 py-3">Skor</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-50">
-                    @foreach($teamUsers as $tu)
+                <tbody class="divide-y divide-white/5">
+                    @foreach($teamTargets as $tt)
                     @php
-                        $tt = $teamTargets->get($tu->id);
-                        if (!$tt) continue;
-
+                        if (!$tt->user) continue;
+                        $tu = $tt->user;
                         $scores = [];
                         if ($tt->target_meetings > 0) $scores[] = min(100, ($tt->actual_meetings / $tt->target_meetings) * 100);
                         if ($tt->target_calls > 0) $scores[] = min(100, ($tt->actual_calls / $tt->target_calls) * 100);
@@ -211,36 +223,36 @@
                         if ($tt->target_won > 0) $scores[] = min(100, ($tt->actual_won / $tt->target_won) * 100);
                         if ((float)$tt->target_revenue > 0) $scores[] = min(100, ((float)$tt->actual_revenue / (float)$tt->target_revenue) * 100);
                         $teamScore = count($scores) > 0 ? round(array_sum($scores) / count($scores), 1) : 0;
-                        $scoreColor = $teamScore >= 80 ? 'text-green-700 bg-green-100' : ($teamScore >= 50 ? 'text-yellow-700 bg-yellow-100' : 'text-red-700 bg-red-100');
+                        $scoreColor = $teamScore >= 80 ? 'text-green-400 bg-green-900/40' : ($teamScore >= 50 ? 'text-yellow-400 bg-yellow-900/40' : 'text-red-400 bg-red-900/40');
                     @endphp
-                    <tr class="hover:bg-gray-50 transition-colors">
+                    <tr class="hover:bg-white/3 transition-colors">
                         <td class="px-4 py-3">
-                            <div class="font-medium text-gray-900">{{ $tu->name }}</div>
-                            <div class="text-xs text-gray-400 uppercase">{{ $tu->sales_level ?? $tu->role }}</div>
+                            <div class="font-semibold text-slate-200">{{ $tu->name }}</div>
+                            <div class="text-xs text-slate-500 uppercase">{{ $tu->role }}</div>
                         </td>
                         <td class="px-3 py-3 text-center">
-                            <span class="font-semibold text-gray-900">{{ $tt->actual_meetings }}</span>
-                            <span class="text-gray-400">/{{ $tt->target_meetings }}</span>
+                            <span class="font-semibold text-slate-200">{{ $tt->actual_meetings }}</span>
+                            <span class="text-slate-600">/{{ $tt->target_meetings }}</span>
                         </td>
                         <td class="px-3 py-3 text-center">
-                            <span class="font-semibold text-gray-900">{{ $tt->actual_calls }}</span>
-                            <span class="text-gray-400">/{{ $tt->target_calls }}</span>
+                            <span class="font-semibold text-slate-200">{{ $tt->actual_calls }}</span>
+                            <span class="text-slate-600">/{{ $tt->target_calls }}</span>
                         </td>
                         <td class="px-3 py-3 text-center">
-                            <span class="font-semibold text-gray-900">{{ $tt->actual_visits }}</span>
-                            <span class="text-gray-400">/{{ $tt->target_visits }}</span>
+                            <span class="font-semibold text-slate-200">{{ $tt->actual_visits }}</span>
+                            <span class="text-slate-600">/{{ $tt->target_visits }}</span>
                         </td>
                         <td class="px-3 py-3 text-center">
-                            <span class="font-semibold text-gray-900">{{ $tt->actual_opportunities }}</span>
-                            <span class="text-gray-400">/{{ $tt->target_opportunities }}</span>
+                            <span class="font-semibold text-slate-200">{{ $tt->actual_opportunities }}</span>
+                            <span class="text-slate-600">/{{ $tt->target_opportunities }}</span>
                         </td>
                         <td class="px-3 py-3 text-center">
-                            <span class="font-semibold text-green-700">{{ $tt->actual_won }}</span>
-                            <span class="text-gray-400">/{{ $tt->target_won }}</span>
+                            <span class="font-semibold text-green-400">{{ $tt->actual_won }}</span>
+                            <span class="text-slate-600">/{{ $tt->target_won }}</span>
                         </td>
                         <td class="px-4 py-3 text-right">
-                            <div class="text-xs font-semibold text-gray-900">{{ rupiah((float)$tt->actual_revenue) }}</div>
-                            <div class="text-xs text-gray-400">/ {{ rupiah((float)$tt->target_revenue) }}</div>
+                            <div class="text-xs font-semibold text-slate-200">{{ rupiah((float)$tt->actual_revenue) }}</div>
+                            <div class="text-xs text-slate-600">/ {{ rupiah((float)$tt->target_revenue) }}</div>
                         </td>
                         <td class="px-4 py-3 text-center">
                             <span class="inline-block px-2 py-1 rounded-full text-xs font-bold {{ $scoreColor }}">

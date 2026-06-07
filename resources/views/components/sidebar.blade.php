@@ -106,6 +106,59 @@
         </a>
         @endif
 
+        {{-- Quick Add Dropdown --}}
+        @if(in_array($role, ['director','gm','manager','sales','operational']))
+        <div class="nav-section-label mt-3">{{ __('ui.quick_add') ?? 'Tambah Baru' }}</div>
+        <div x-data="{ open: false }" class="relative">
+            <button @click="open = !open"
+                    class="nav-item w-full flex items-center justify-between"
+                    :class="open ? 'active' : ''">
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined">add_circle</span>
+                    <span>Tambah Baru</span>
+                </div>
+                <span class="material-symbols-outlined text-[16px] transition-transform" :class="open ? 'rotate-180' : ''">expand_more</span>
+            </button>
+            <div x-show="open" x-cloak
+                 x-transition:enter="transition ease-out duration-100"
+                 x-transition:enter-start="opacity-0 -translate-y-1"
+                 x-transition:enter-end="opacity-100 translate-y-0"
+                 class="mt-1 ml-2 space-y-0.5 border-l-2 pl-3"
+                 style="border-color:rgba(255,255,255,0.06)">
+                @if(in_array($role, ['director','gm','manager','sales']))
+                <a href="{{ route('opportunities.create') }}" class="nav-item text-[12px]">
+                    <span class="material-symbols-outlined text-[14px]">star</span>
+                    <span>Deal / Opportunity</span>
+                </a>
+                <a href="{{ route('clients.create') }}" class="nav-item text-[12px]">
+                    <span class="material-symbols-outlined text-[14px]">corporate_fare</span>
+                    <span>Klien Baru</span>
+                </a>
+                <a href="{{ route('activities.create') }}" class="nav-item text-[12px]">
+                    <span class="material-symbols-outlined text-[14px]">event_note</span>
+                    <span>Log Aktivitas</span>
+                </a>
+                @endif
+                @if(in_array($role, ['director','gm','manager','sales','operational']))
+                <a href="{{ route('bookings.create') }}" class="nav-item text-[12px]">
+                    <span class="material-symbols-outlined text-[14px]">route</span>
+                    <span>Booking</span>
+                </a>
+                @endif
+                @if(in_array($role, ['director','gm','operational']))
+                <a href="{{ route('fleet.create') }}" class="nav-item text-[12px]">
+                    <span class="material-symbols-outlined text-[14px]">directions_bus</span>
+                    <span>Armada</span>
+                </a>
+                <a href="{{ route('maintenance.create') }}" class="nav-item text-[12px]">
+                    <span class="material-symbols-outlined text-[14px]">build</span>
+                    <span>Maintenance</span>
+                </a>
+                @endif
+            </div>
+        </div>
+        @endif
+
     </nav>
 
     {{-- Sidebar Footer --}}

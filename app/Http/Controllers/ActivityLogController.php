@@ -52,7 +52,23 @@ class ActivityLogController extends Controller
             $query->whereDate('activity_date', '<=', $request->date_to);
         }
 
-        $activities = $query->orderByDesc('activity_date')->paginate(20)->withQueryString();
+        // Filter by sales user (manager/gm/director only)
+        if ($request->filled('sales_id') && !$user->isSales()) {
+            $query->where('sales_id', $request->sales_id);
+        }
+
+        // Sort
+        $sortBy = $request->get('sort_by', 'newest');
+        $activities = match ($sortBy) {
+            'oldest'  => $query->orderBy('activity_date')->paginate(20)->withQueryString(),
+            'type'    => $query->orderBy('type')->orderByDesc('activity_date')->paginate(20)->withQueryString(),
+            'sales'   => $query->orderBy(
+                             \App\Models\User::select('name')
+                                 ->whereColumn('users.id', 'activity_logs.sales_id')
+                                 ->limit(1)
+                         )->paginate(20)->withQueryString(),
+            default   => $query->orderByDesc('activity_date')->paginate(20)->withQueryString(),
+        };
 
         // Upcoming follow-ups (next_action_date within 7 days)
         $upcomingQuery = ActivityLog::whereNotNull('next_action_date')
@@ -70,7 +86,17 @@ class ActivityLogController extends Controller
 
         $clients = Client::orderBy('company_name')->get();
 
-        return view('activities.index', compact('activities', 'upcomingFollowUps', 'clients'));
+        // Sales users for filter dropdown (manager/gm/director)
+        $salesUsers = collect();
+        if (!$user->isSales()) {
+            if ($user->isManager()) {
+                $salesUsers = User::where('manager_id', $user->id)->where('role', 'sales')->orderBy('name')->get();
+            } else {
+                $salesUsers = User::whereIn('role', ['sales', 'manager'])->orderBy('name')->get();
+            }
+        }
+
+        return view('activities.index', compact('activities', 'upcomingFollowUps', 'clients', 'salesUsers', 'sortBy'));
     }
 
     public function create(Request $request)

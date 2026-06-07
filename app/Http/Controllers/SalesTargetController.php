@@ -32,10 +32,13 @@ class SalesTargetController extends Controller
         $teamTargets = collect();
         $teamUsers   = collect();
 
+        // Sort team by: name | revenue | kpi_pct
+        $sortTeam = $request->get('sort_team', 'revenue');
+
         if ($user->isManager()) {
-            $teamUsers = User::where('manager_id', $user->id)->where('role', 'sales')->get();
+            $teamUsers = User::where('manager_id', $user->id)->where('role', 'sales')->orderBy('name')->get();
         } elseif ($user->isGM() || $user->isDirector()) {
-            $teamUsers = User::where('role', 'sales')->orWhere('role', 'manager')->get();
+            $teamUsers = User::whereIn('role', ['sales', 'manager'])->orderBy('name')->get();
         }
 
         if ($teamUsers->isNotEmpty()) {
@@ -57,6 +60,15 @@ class SalesTargetController extends Controller
             }
         }
 
+        // Sort teamTargets collection
+        if ($teamTargets->isNotEmpty()) {
+            $teamTargets = match ($sortTeam) {
+                'name'    => $teamTargets->sortBy(fn($t) => $t->user->name ?? ''),
+                'kpi_pct' => $teamTargets->sortByDesc(fn($t) => $this->computeOverallScore($t)),
+                default   => $teamTargets->sortByDesc(fn($t) => (float) ($t->actual_revenue ?? 0)),
+            };
+        }
+
         // Overall achievement (average of all KPIs for own target)
         $overallScore = $this->computeOverallScore($ownTarget);
 
@@ -67,6 +79,7 @@ class SalesTargetController extends Controller
             'ownTarget',
             'chartData',
             'teamTargets',
+            'sortTeam',
             'teamUsers',
             'overallScore',
             'salesUsers',

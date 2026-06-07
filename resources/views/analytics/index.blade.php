@@ -10,18 +10,18 @@
         <a href="{{ route('analytics.index') }}"
            class="px-4 py-2 rounded-lg text-sm font-medium bg-blue-700 text-white">Overview</a>
         <a href="{{ route('analytics.pipeline') }}"
-           class="px-4 py-2 rounded-lg text-sm font-medium bg-white border border-gray-200 text-gray-600 hover:bg-gray-50">Pipeline Funnel</a>
+           class="px-4 py-2 rounded-lg text-sm font-medium cc-card border border-white/8 text-slate-500 hover:cc-card">Pipeline Funnel</a>
         <a href="{{ route('analytics.crosssell') }}"
-           class="px-4 py-2 rounded-lg text-sm font-medium bg-white border border-gray-200 text-gray-600 hover:bg-gray-50">Cross-sell</a>
+           class="px-4 py-2 rounded-lg text-sm font-medium cc-card border border-white/8 text-slate-500 hover:cc-card">Cross-sell</a>
         <a href="{{ route('analytics.sales') }}"
-           class="px-4 py-2 rounded-lg text-sm font-medium bg-white border border-gray-200 text-gray-600 hover:bg-gray-50">Sales Performance</a>
+           class="px-4 py-2 rounded-lg text-sm font-medium cc-card border border-white/8 text-slate-500 hover:cc-card">Sales Performance</a>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
         {{-- Pipeline Funnel Chart --}}
-        <div class="lg:col-span-2 bg-white rounded-xl border border-gray-200 shadow-sm p-5">
-            <h3 class="font-semibold text-gray-800 mb-4">Pipeline Funnel (Opportunity Aktif)</h3>
+        <div class="lg:col-span-2 cc-card rounded-xl border border-white/8 shadow-sm p-5">
+            <h3 class="font-semibold text-slate-100 mb-4">Pipeline Funnel (Opportunity Aktif)</h3>
             @php
                 $stageOrder  = ['prospecting', 'proposal', 'negotiation'];
                 $stageLabels = ['Prospecting', 'Proposal', 'Negosiasi'];
@@ -44,10 +44,10 @@
                 @endphp
                 <div>
                     <div class="flex items-center justify-between mb-1 text-sm">
-                        <span class="font-medium text-gray-700">{{ $stageLabels[$i] }}</span>
-                        <span class="text-gray-500">{{ $cnt }} deal &bull; Rp {{ number_format($val, 0, ',', '.') }}</span>
+                        <span class="font-medium text-slate-200">{{ $stageLabels[$i] }}</span>
+                        <span class="text-slate-500">{{ $cnt }} deal &bull; Rp {{ number_format($val, 0, ',', '.') }}</span>
                     </div>
-                    <div class="h-8 bg-gray-100 rounded-lg overflow-hidden">
+                    <div class="h-8 bg-white/10 rounded-lg overflow-hidden">
                         <div class="{{ $colors[$i] }} h-full rounded-lg flex items-center px-3 text-white text-xs font-semibold transition-all"
                              style="width: {{ max($pct, 4) }}%">
                             {{ $pct }}%
@@ -56,7 +56,7 @@
                 </div>
                 @endforeach
             </div>
-            <div class="mt-4 pt-4 border-t border-gray-100 flex gap-6 text-sm text-gray-600">
+            <div class="mt-4 pt-4 border-t border-white/5 flex gap-6 text-sm text-slate-500">
                 @php
                     $wonData  = $pipelineByStage['won'] ?? null;
                     $lostData = $pipelineByStage['lost'] ?? null;
@@ -78,25 +78,25 @@
         </div>
 
         {{-- Cross-sell Widget --}}
-        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
-            <h3 class="font-semibold text-gray-800 mb-4">Cross-sell Segments</h3>
+        <div class="cc-card rounded-xl border border-white/8 shadow-sm p-5">
+            <h3 class="font-semibold text-slate-100 mb-4">Cross-sell Segments</h3>
             <div class="space-y-3">
                 @php
                     $cs = $crossSellCount;
                     $segments = [
-                        ['label' => 'Short Term Only',     'key' => 'short_term_only',  'color' => 'bg-blue-100 text-blue-700'],
-                        ['label' => 'Long Term Only',      'key' => 'long_term_only',   'color' => 'bg-green-100 text-green-700'],
-                        ['label' => 'E-Voucher Only',      'key' => 'evoucher_only',    'color' => 'bg-yellow-100 text-yellow-700'],
-                        ['label' => 'Short + Long Term',   'key' => 'short_and_long',   'color' => 'bg-indigo-100 text-indigo-700'],
-                        ['label' => 'Short + E-Voucher',   'key' => 'short_and_ev',     'color' => 'bg-purple-100 text-purple-700'],
-                        ['label' => 'Long + E-Voucher',    'key' => 'long_and_ev',      'color' => 'bg-teal-100 text-teal-700'],
-                        ['label' => 'Semua Kategori',      'key' => 'all_three',         'color' => 'bg-orange-100 text-orange-700'],
-                        ['label' => 'Belum Ada Produk',    'key' => 'none',              'color' => 'bg-gray-100 text-gray-500'],
+                        ['label' => 'Short Term Only',     'key' => 'short_term_only',  'color' => 'bg-blue-900/40 text-blue-700'],
+                        ['label' => 'Long Term Only',      'key' => 'long_term_only',   'color' => 'bg-green-900/40 text-green-700'],
+                        ['label' => 'E-Voucher Only',      'key' => 'evoucher_only',    'color' => 'bg-yellow-900/30 text-yellow-700'],
+                        ['label' => 'Short + Long Term',   'key' => 'short_and_long',   'color' => 'bg-indigo-900/40 text-indigo-700'],
+                        ['label' => 'Short + E-Voucher',   'key' => 'short_and_ev',     'color' => 'bg-purple-900/40 text-purple-700'],
+                        ['label' => 'Long + E-Voucher',    'key' => 'long_and_ev',      'color' => 'bg-teal-900/40 text-teal-700'],
+                        ['label' => 'Semua Kategori',      'key' => 'all_three',         'color' => 'bg-orange-900/30 text-orange-700'],
+                        ['label' => 'Belum Ada Produk',    'key' => 'none',              'color' => 'bg-white/10 text-slate-500'],
                     ];
                 @endphp
                 @foreach($segments as $seg)
                 <div class="flex items-center justify-between">
-                    <span class="text-sm text-gray-700">{{ $seg['label'] }}</span>
+                    <span class="text-sm text-slate-200">{{ $seg['label'] }}</span>
                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold {{ $seg['color'] }}">
                         {{ $cs[$seg['key']] ?? 0 }}
                     </span>
@@ -114,8 +114,8 @@
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
         {{-- Revenue by Product Category Donut --}}
-        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
-            <h3 class="font-semibold text-gray-800 mb-4">Revenue per Kategori Produk</h3>
+        <div class="cc-card rounded-xl border border-white/8 shadow-sm p-5">
+            <h3 class="font-semibold text-slate-100 mb-4">Revenue per Kategori Produk</h3>
             <div class="flex items-center gap-6">
                 <div class="flex-shrink-0">
                     <canvas id="categoryDonut" width="180" height="180"></canvas>
@@ -125,14 +125,14 @@
         </div>
 
         {{-- Sales Performance Leaderboard --}}
-        <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-            <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
-                <h3 class="font-semibold text-gray-800">Sales Leaderboard</h3>
+        <div class="cc-card rounded-xl border border-white/8 shadow-sm overflow-hidden">
+            <div class="px-5 py-4 border-b border-white/5 flex items-center justify-between">
+                <h3 class="font-semibold text-slate-100">Sales Leaderboard</h3>
                 <a href="{{ route('analytics.sales') }}" class="text-xs text-blue-600 hover:underline">Detail</a>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-sm">
-                    <thead class="bg-gray-50 text-xs text-gray-500 uppercase">
+                    <thead class="cc-card text-xs text-slate-500 uppercase">
                         <tr>
                             <th class="px-4 py-2 text-left">#</th>
                             <th class="px-4 py-2 text-left">Sales</th>
@@ -140,16 +140,16 @@
                             <th class="px-4 py-2 text-right">Revenue</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-100">
+                    <tbody class="divide-y divide-white/5">
                         @forelse($topSales->take(8) as $idx => $s)
-                        <tr class="hover:bg-gray-50">
-                            <td class="px-4 py-2 text-gray-400 font-mono">{{ $idx + 1 }}</td>
-                            <td class="px-4 py-2 font-medium text-gray-800">{{ $s->name }}</td>
+                        <tr class="hover:cc-card">
+                            <td class="px-4 py-2 text-slate-500 font-mono">{{ $idx + 1 }}</td>
+                            <td class="px-4 py-2 font-medium text-slate-100">{{ $s->name }}</td>
                             <td class="px-4 py-2 text-center text-green-600 font-semibold">{{ $s->won_count }}</td>
-                            <td class="px-4 py-2 text-right text-gray-700">Rp {{ number_format($s->won_revenue ?? 0, 0, ',', '.') }}</td>
+                            <td class="px-4 py-2 text-right text-slate-200">Rp {{ number_format($s->won_revenue ?? 0, 0, ',', '.') }}</td>
                         </tr>
                         @empty
-                        <tr><td colspan="4" class="px-4 py-6 text-center text-gray-400">Belum ada data.</td></tr>
+                        <tr><td colspan="4" class="px-4 py-6 text-center text-slate-500">Belum ada data.</td></tr>
                         @endforelse
                     </tbody>
                 </table>
@@ -159,8 +159,8 @@
     </div>
 
     {{-- Activity Summary --}}
-    <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
-        <h3 class="font-semibold text-gray-800 mb-4">Ringkasan Aktivitas (30 hari terakhir)</h3>
+    <div class="cc-card rounded-xl border border-white/8 shadow-sm p-5">
+        <h3 class="font-semibold text-slate-100 mb-4">Ringkasan Aktivitas (30 hari terakhir)</h3>
         @php
             $activityLabels = [
                 'meeting'   => 'Meeting',
@@ -183,13 +183,13 @@
         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
             @foreach($activityLabels as $type => $label)
             @php $count = $activitySummary[$type]->count ?? 0; @endphp
-            <div class="text-center p-3 bg-gray-50 rounded-lg">
-                <p class="text-2xl font-bold text-gray-800">{{ $count }}</p>
-                <p class="text-xs text-gray-500 mt-1">{{ $label }}</p>
+            <div class="text-center p-3 cc-card rounded-lg">
+                <p class="text-2xl font-bold text-slate-100">{{ $count }}</p>
+                <p class="text-xs text-slate-500 mt-1">{{ $label }}</p>
             </div>
             @endforeach
         </div>
-        <div class="mt-4 text-sm text-gray-500">Total: <span class="font-semibold text-gray-800">{{ $totalActivities }}</span> aktivitas</div>
+        <div class="mt-4 text-sm text-slate-500">Total: <span class="font-semibold text-slate-100">{{ $totalActivities }}</span> aktivitas</div>
     </div>
 
     @include('analytics.charts')
@@ -229,8 +229,8 @@ document.addEventListener('DOMContentLoaded', function () {
         legend.innerHTML += `
             <div class="flex items-center gap-2">
                 <span class="w-3 h-3 rounded-full flex-shrink-0" style="background:${catData.colors[i]}"></span>
-                <span class="text-gray-700">${label}</span>
-                <span class="ml-auto font-semibold text-gray-800">${catData.values[i]}%</span>
+                <span class="text-slate-200">${label}</span>
+                <span class="ml-auto font-semibold text-slate-100">${catData.values[i]}%</span>
             </div>`;
     });
 });

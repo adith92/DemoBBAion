@@ -81,7 +81,7 @@ class DashboardController extends Controller
         $monthStart = Carbon::now()->startOfMonth();
         $monthEnd   = Carbon::now()->endOfMonth();
 
-        $pendingPO          = PurchaseOrder::where('status', 'submitted')->count();
+        $pendingPO          = PurchaseOrder::where('status', 'pending')->count();
         $availableVehicles  = Vehicle::where('status', 'available')->count();
         $pendingDispatch    = Booking::where('status', 'pending')->count();
         $upcomingMeetings   = 0;

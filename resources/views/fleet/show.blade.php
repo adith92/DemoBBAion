@@ -10,58 +10,209 @@
 ]" />
 
 {{-- Hero --}}
-<div class="bg-gradient-to-br from-blue-900 to-blue-700 rounded-lg shadow p-8 mb-6 text-white">
-    <div class="flex flex-col md:flex-row justify-between items-start gap-4">
+<div class="rounded-2xl p-6 mb-5 text-white relative overflow-hidden"
+     style="background: linear-gradient(135deg, #003887 0%, #1468a8 60%, #0052cc 100%);">
+    <div class="absolute inset-0 opacity-10"
+         style="background: radial-gradient(ellipse at 80% 50%, #00e5ff 0%, transparent 60%)"></div>
+    <div class="relative flex flex-col md:flex-row justify-between items-start gap-4">
         <div>
-            <p class="text-blue-200 text-sm uppercase tracking-widest mb-1">{{ ucfirst($vehicle->brand) }}</p>
-            <h2 class="text-3xl font-bold">{{ $vehicle->plate_number }}</h2>
-            <p class="text-blue-100 mt-2">{{ $vehicle->model }} · {{ $vehicle->capacity }} pax · {{ $vehicle->year }}</p>
-            <p class="text-blue-200 text-sm mt-2">Pool: {{ $vehicle->pool?->name ?? 'Not assigned' }}</p>
+            <p class="text-blue-200 text-xs uppercase tracking-widest mb-1 font-semibold">{{ ucfirst($vehicle->brand) }}</p>
+            <h2 class="text-3xl font-extrabold tracking-tight">{{ $vehicle->plate_number }}</h2>
+            <p class="text-blue-100 mt-1.5 text-sm">{{ $vehicle->model }} · {{ $vehicle->capacity }} pax · {{ $vehicle->year }}</p>
+            <p class="text-blue-200 text-xs mt-1">Pool: {{ $vehicle->pool?->name ?? 'Tidak ditentukan' }}</p>
         </div>
         <div class="flex flex-col items-end gap-2">
             <x-status-badge :status="$vehicle->status" />
             @if($activeBooking)
-            <div class="bg-white/10 rounded-lg px-4 py-2 text-sm">
-                <p class="text-blue-100">Currently assigned to:</p>
-                <a href="{{ route('clients.show', $activeBooking->client_id) }}"
-                   class="text-white font-semibold hover:underline">
+            <div class="bg-white/10 backdrop-blur rounded-xl px-4 py-2 text-sm border border-white/20">
+                <p class="text-blue-200 text-xs">Sedang digunakan oleh:</p>
+                <a href="{{ route('clients.show', $activeBooking->client_id) }}" class="text-white font-semibold hover:underline">
                     {{ $activeBooking->client->company_name }}
                 </a>
             </div>
             @endif
+            @can('update', $vehicle)
+            <a href="{{ route('fleet.edit', $vehicle->id) }}"
+               class="flex items-center gap-1 text-xs bg-white/10 hover:bg-white/20 border border-white/20 rounded-lg px-3 py-1.5 transition-colors">
+                <span class="material-symbols-outlined text-[14px]">edit</span> Edit
+            </a>
+            @endcan
         </div>
+    </div>
+</div>
+
+{{-- Complete Vehicle Detail Grid --}}
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-5">
+
+    {{-- Spesifikasi Kendaraan --}}
+    <div class="cc-card rounded-xl p-5">
+        <h3 class="text-[13px] font-bold text-slate-300 mb-4 flex items-center gap-2 uppercase tracking-wide">
+            <span class="material-symbols-outlined text-[16px] text-[#00e5ff]">directions_bus</span>
+            Spesifikasi
+        </h3>
+        <dl class="space-y-3 text-sm">
+            <div class="flex justify-between">
+                <dt class="text-slate-500">Merek / Model</dt>
+                <dd class="text-slate-200 font-medium">{{ $vehicle->brand }} {{ $vehicle->model }}</dd>
+            </div>
+            <div class="flex justify-between">
+                <dt class="text-slate-500">Tahun Produksi</dt>
+                <dd class="text-slate-200 font-medium">{{ $vehicle->year_manufactured ?? $vehicle->year ?? '—' }}</dd>
+            </div>
+            <div class="flex justify-between">
+                <dt class="text-slate-500">Kapasitas</dt>
+                <dd class="text-slate-200 font-medium">{{ $vehicle->capacity }} penumpang</dd>
+            </div>
+            <div class="flex justify-between">
+                <dt class="text-slate-500">Warna</dt>
+                <dd class="flex items-center gap-2">
+                    @if($vehicle->color)
+                    <span class="w-4 h-4 rounded-full border border-white/20" style="background:{{ strtolower($vehicle->color) }}"></span>
+                    <span class="text-slate-200 font-medium capitalize">{{ $vehicle->color }}</span>
+                    @else
+                    <span class="text-slate-600">—</span>
+                    @endif
+                </dd>
+            </div>
+            <div class="flex justify-between">
+                <dt class="text-slate-500">Transmisi</dt>
+                <dd class="text-slate-200 font-medium capitalize">{{ $vehicle->transmission ?? '—' }}</dd>
+            </div>
+            <div class="flex justify-between">
+                <dt class="text-slate-500">BBM</dt>
+                <dd class="text-slate-200 font-medium capitalize">{{ $vehicle->bbm_type ?? '—' }}</dd>
+            </div>
+            <div class="flex justify-between">
+                <dt class="text-slate-500">KM Saat Ini</dt>
+                <dd class="text-slate-200 font-medium">{{ $vehicle->current_km ? number_format($vehicle->current_km, 0, ',', '.') . ' km' : '—' }}</dd>
+            </div>
+        </dl>
+    </div>
+
+    {{-- Dokumen & Legalitas --}}
+    <div class="cc-card rounded-xl p-5">
+        <h3 class="text-[13px] font-bold text-slate-300 mb-4 flex items-center gap-2 uppercase tracking-wide">
+            <span class="material-symbols-outlined text-[16px] text-amber-400">description</span>
+            Dokumen
+        </h3>
+        <dl class="space-y-3 text-sm">
+            @php
+                $today = \Carbon\Carbon::today();
+
+                $stnkExpiry   = $vehicle->stnk_expiry   ? \Carbon\Carbon::parse($vehicle->stnk_expiry)   : null;
+                $pajakExpiry  = $vehicle->pajak_expiry  ? \Carbon\Carbon::parse($vehicle->pajak_expiry)  : null;
+
+                $stnkStatus  = $stnkExpiry  ? ($stnkExpiry->isPast()  ? 'expired' : ($stnkExpiry->diffInDays($today) < 30  ? 'soon' : 'ok')) : null;
+                $pajakStatus = $pajakExpiry ? ($pajakExpiry->isPast() ? 'expired' : ($pajakExpiry->diffInDays($today) < 30 ? 'soon' : 'ok')) : null;
+
+                $statusColor = fn($s) => match ($s) {
+                    'expired' => 'text-red-400 font-bold',
+                    'soon'    => 'text-yellow-400 font-semibold',
+                    'ok'      => 'text-green-400',
+                    default   => 'text-slate-600',
+                };
+                $statusBadge = fn($s) => match ($s) {
+                    'expired' => '<span class="ml-2 px-1.5 py-0.5 rounded text-[10px] bg-red-900/40 text-red-400 font-bold">EXPIRED</span>',
+                    'soon'    => '<span class="ml-2 px-1.5 py-0.5 rounded text-[10px] bg-yellow-900/40 text-yellow-400 font-bold">SEGERA</span>',
+                    default   => '',
+                };
+            @endphp
+            <div class="flex justify-between items-center">
+                <dt class="text-slate-500">STNK Berlaku s/d</dt>
+                <dd class="flex items-center {{ $statusColor($stnkStatus) }}">
+                    {{ $stnkExpiry ? $stnkExpiry->format('d M Y') : '—' }}
+                    @if($stnkStatus) {!! $statusBadge($stnkStatus) !!} @endif
+                </dd>
+            </div>
+            <div class="flex justify-between items-center">
+                <dt class="text-slate-500">Pajak s/d</dt>
+                <dd class="flex items-center {{ $statusColor($pajakStatus) }}">
+                    {{ $pajakExpiry ? $pajakExpiry->format('d M Y') : '—' }}
+                    @if($pajakStatus) {!! $statusBadge($pajakStatus) !!} @endif
+                </dd>
+            </div>
+            <div class="border-t border-white/5 pt-3">
+                <dt class="text-slate-500 mb-1">Status Armada</dt>
+                <dd class="mt-1"><x-status-badge :status="$vehicle->status" /></dd>
+            </div>
+            <div>
+                <dt class="text-slate-500 mb-1">Pool</dt>
+                <dd class="text-slate-200 font-medium">{{ $vehicle->pool?->name ?? '—' }}</dd>
+            </div>
+        </dl>
+    </div>
+
+    {{-- Trip Type / Kontrak --}}
+    <div class="cc-card rounded-xl p-5">
+        <h3 class="text-[13px] font-bold text-slate-300 mb-4 flex items-center gap-2 uppercase tracking-wide">
+            <span class="material-symbols-outlined text-[16px] text-purple-400">assignment</span>
+            Penggunaan
+        </h3>
+        @php
+            $tripShort = $bookings->filter(fn($b) => str_contains(strtolower($b->vehicle_type ?? ''), 'short'))->count();
+            $tripLong  = $bookings->filter(fn($b) => str_contains(strtolower($b->vehicle_type ?? ''), 'long'))->count();
+            $totalBookings = $bookings->count();
+            $totalRevenue  = $bookings->where('status','completed')->sum('price');
+        @endphp
+        <dl class="space-y-3 text-sm">
+            <div class="flex justify-between">
+                <dt class="text-slate-500">Total Booking</dt>
+                <dd class="text-slate-200 font-bold text-lg">{{ $totalBookings }}</dd>
+            </div>
+            <div class="flex justify-between">
+                <dt class="text-slate-500">Short Trip</dt>
+                <dd class="text-slate-200 font-medium">{{ $tripShort }}</dd>
+            </div>
+            <div class="flex justify-between">
+                <dt class="text-slate-500">Long Trip</dt>
+                <dd class="text-slate-200 font-medium">{{ $tripLong }}</dd>
+            </div>
+            <div class="flex justify-between border-t border-white/5 pt-3">
+                <dt class="text-slate-500">Total Revenue</dt>
+                <dd class="text-green-400 font-bold">{{ \App\Helpers\FormatHelper::formatIDR($totalRevenue) }}</dd>
+            </div>
+            @if($vehicle->notes)
+            <div class="border-t border-white/5 pt-3">
+                <dt class="text-slate-500 mb-1">Catatan</dt>
+                <dd class="text-slate-400 text-xs leading-relaxed">{{ $vehicle->notes }}</dd>
+            </div>
+            @endif
+        </dl>
     </div>
 </div>
 
 {{-- Active Booking Alert --}}
 @if($activeBooking)
-<div class="bg-purple-50 border border-purple-200 rounded-lg p-4 mb-6">
-    <h3 class="font-semibold text-purple-900 mb-2">🚌 Currently On Trip</h3>
+<div class="rounded-xl p-4 mb-4 border border-purple-500/30 bg-purple-900/20">
+    <h3 class="font-semibold text-purple-300 mb-3 flex items-center gap-2">
+        <span class="material-symbols-outlined text-[18px]">directions_bus</span>
+        Sedang Dalam Perjalanan
+    </h3>
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
         <div>
-            <p class="text-purple-600 text-xs">Booking</p>
-            <a href="{{ route('bookings.show', $activeBooking->id) }}" class="font-semibold text-purple-900 hover:underline">
+            <p class="text-purple-400 text-xs mb-1">Booking</p>
+            <a href="{{ route('bookings.show', $activeBooking->id) }}" class="font-semibold text-purple-200 hover:underline font-mono">
                 {{ $activeBooking->booking_number }}
             </a>
         </div>
         <div>
-            <p class="text-purple-600 text-xs">Client</p>
-            <a href="{{ route('clients.show', $activeBooking->client_id) }}" class="font-semibold text-blue-600 hover:underline">
+            <p class="text-purple-400 text-xs mb-1">Klien</p>
+            <a href="{{ route('clients.show', $activeBooking->client_id) }}" class="font-semibold text-blue-300 hover:underline">
                 {{ $activeBooking->client->company_name }}
             </a>
         </div>
         <div>
-            <p class="text-purple-600 text-xs">Driver</p>
-            <p class="font-semibold text-purple-900">{{ $activeBooking->driver->name }}</p>
+            <p class="text-purple-400 text-xs mb-1">Pengemudi</p>
+            <p class="font-semibold text-slate-200">{{ $activeBooking->driver->name }}</p>
         </div>
         <div>
-            <p class="text-purple-600 text-xs">Sales</p>
+            <p class="text-purple-400 text-xs mb-1">Sales</p>
             @if(auth()->user()->isGM())
-                <a href="{{ route('sales.performance', $activeBooking->sales_id) }}" class="font-semibold text-blue-600 hover:underline">
+                <a href="{{ route('sales.performance', $activeBooking->sales_id) }}" class="font-semibold text-blue-300 hover:underline">
                     {{ $activeBooking->sales->name }}
                 </a>
             @else
-                <p class="font-semibold text-purple-900">{{ $activeBooking->sales->name }}</p>
+                <p class="font-semibold text-slate-200">{{ $activeBooking->sales->name }}</p>
             @endif
         </div>
     </div>
@@ -70,68 +221,79 @@
 
 {{-- Next Maintenance Alert --}}
 @if($nextMaintenance)
-<div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+<div class="rounded-xl p-4 mb-4 border border-yellow-500/30 bg-yellow-900/15">
     <div class="flex justify-between items-center">
         <div>
-            <h3 class="font-semibold text-yellow-900">🔧 Next Maintenance Scheduled</h3>
-            <p class="text-sm text-yellow-700 mt-1">{{ $nextMaintenance->type }} — {{ $nextMaintenance->description }}</p>
+            <h3 class="font-semibold text-yellow-300 flex items-center gap-2">
+                <span class="material-symbols-outlined text-[18px]">build</span>
+                Maintenance Terjadwal
+            </h3>
+            <p class="text-sm text-yellow-200/70 mt-1 capitalize">{{ $nextMaintenance->type }} — {{ $nextMaintenance->description }}</p>
         </div>
         <div class="text-right">
-            <p class="text-yellow-800 font-semibold">{{ \Carbon\Carbon::parse($nextMaintenance->scheduled_date)->format('d M Y') }}</p>
-            <p class="text-xs text-yellow-600">{{ $nextMaintenance->vendor ?? 'No vendor' }}</p>
+            <p class="text-yellow-300 font-bold">{{ \Carbon\Carbon::parse($nextMaintenance->scheduled_date)->format('d M Y') }}</p>
+            <p class="text-xs text-yellow-500">{{ $nextMaintenance->vendor ?? 'Vendor belum ditentukan' }}</p>
         </div>
     </div>
 </div>
 @endif
 
 {{-- Booking History --}}
-<div class="bg-white rounded-lg shadow p-6 mb-6">
-    <div class="flex justify-between items-center mb-4">
-        <h3 class="text-lg font-semibold text-gray-900">Booking History (Last 10)</h3>
-        <a href="{{ route('bookings.index', ['vehicle_id' => $vehicle->id]) }}" class="text-blue-600 hover:text-blue-800 text-sm font-medium">View all →</a>
+<div class="cc-card rounded-xl overflow-hidden mb-4">
+    <div class="flex justify-between items-center px-5 py-4 border-b border-white/5">
+        <h3 class="text-[14px] font-bold text-slate-200">Riwayat Booking (10 Terakhir)</h3>
+        <a href="{{ route('bookings.index', ['vehicle_id' => $vehicle->id]) }}"
+           class="text-xs text-blue-400 hover:underline">Lihat semua →</a>
     </div>
     <div class="overflow-x-auto">
         <table class="w-full text-sm">
-            <thead class="border-b">
-                <tr class="text-gray-500">
-                    <th class="text-left py-2">Booking #</th>
-                    <th class="text-left py-2">Client</th>
-                    <th class="text-left py-2">Sales</th>
-                    <th class="text-left py-2">Pickup</th>
-                    <th class="text-left py-2">Destination</th>
-                    <th class="text-left py-2">Status</th>
-                    <th class="text-right py-2">Revenue</th>
+            <thead>
+                <tr class="border-b border-white/5 text-[11px] uppercase text-slate-500 font-semibold">
+                    <th class="text-left py-3 px-4">Booking #</th>
+                    <th class="text-left py-3 px-4">Klien</th>
+                    <th class="text-left py-3 px-4">Sales</th>
+                    <th class="text-left py-3 px-4">Pickup</th>
+                    <th class="text-left py-3 px-4">Tujuan</th>
+                    <th class="text-left py-3 px-4">Tipe</th>
+                    <th class="text-center py-3 px-4">Status</th>
+                    <th class="text-right py-3 px-4">Revenue</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse($bookings as $booking)
-                <tr class="border-b hover:bg-gray-50">
-                    <td class="py-2">
-                        <a href="{{ route('bookings.show', $booking->id) }}" class="text-blue-600 hover:underline font-mono">
+                <tr class="border-b border-white/5 hover:bg-white/3 transition-colors">
+                    <td class="py-3 px-4">
+                        <a href="{{ route('bookings.show', $booking->id) }}" class="text-[#00e5ff] hover:underline font-mono text-[12px]">
                             {{ $booking->booking_number }}
                         </a>
                     </td>
-                    <td class="py-2">
-                        <a href="{{ route('clients.show', $booking->client_id) }}" class="text-blue-600 hover:underline">
+                    <td class="py-3 px-4">
+                        <a href="{{ route('clients.show', $booking->client_id) }}" class="text-blue-400 hover:underline text-[13px]">
                             {{ $booking->client->company_name }}
                         </a>
                     </td>
-                    <td class="py-2">
+                    <td class="py-3 px-4 text-slate-400 text-[13px]">
                         @if(auth()->user()->isGM())
-                            <a href="{{ route('sales.performance', $booking->sales_id) }}" class="text-blue-600 hover:underline">
+                            <a href="{{ route('sales.performance', $booking->sales_id) }}" class="text-blue-400 hover:underline">
                                 {{ $booking->sales->name }}
                             </a>
                         @else
-                            <span class="text-gray-700">{{ $booking->sales->name }}</span>
+                            {{ $booking->sales->name }}
                         @endif
                     </td>
-                    <td class="py-2 text-gray-600">{{ $booking->pickup_datetime->format('d M Y') }}</td>
-                    <td class="py-2 text-gray-600">{{ $booking->destination }}</td>
-                    <td class="py-2"><x-status-badge :status="$booking->status" /></td>
-                    <td class="py-2 text-right font-semibold">{{ \App\Helpers\FormatHelper::formatIDR($booking->price) }}</td>
+                    <td class="py-3 px-4 text-slate-400 text-[12px]">{{ $booking->pickup_datetime->format('d M Y') }}</td>
+                    <td class="py-3 px-4 text-slate-400 text-[12px] max-w-[140px] truncate">{{ $booking->destination }}</td>
+                    <td class="py-3 px-4 text-slate-500 text-[11px] capitalize">{{ $booking->vehicle_type }}</td>
+                    <td class="py-3 px-4 text-center"><x-status-badge :status="$booking->status" /></td>
+                    <td class="py-3 px-4 text-right font-semibold text-slate-200">{{ \App\Helpers\FormatHelper::formatIDR($booking->price) }}</td>
                 </tr>
                 @empty
-                <tr><td colspan="7" class="py-4 text-center text-gray-500">No booking history</td></tr>
+                <tr>
+                    <td colspan="8" class="py-8 text-center text-slate-500">
+                        <span class="material-symbols-outlined text-3xl block mb-2 opacity-30">event_busy</span>
+                        Belum ada riwayat booking
+                    </td>
+                </tr>
                 @endforelse
             </tbody>
         </table>
@@ -139,34 +301,43 @@
 </div>
 
 {{-- Maintenance History --}}
-<div class="bg-white rounded-lg shadow p-6">
-    <h3 class="text-lg font-semibold text-gray-900 mb-4">Maintenance History</h3>
+<div class="cc-card rounded-xl overflow-hidden">
+    <div class="px-5 py-4 border-b border-white/5">
+        <h3 class="text-[14px] font-bold text-slate-200">Riwayat Maintenance</h3>
+    </div>
     <div class="overflow-x-auto">
         <table class="w-full text-sm">
-            <thead class="border-b">
-                <tr class="text-gray-500">
-                    <th class="text-left py-2">Type</th>
-                    <th class="text-left py-2">Description</th>
-                    <th class="text-left py-2">Vendor</th>
-                    <th class="text-left py-2">Scheduled</th>
-                    <th class="text-left py-2">Completed</th>
-                    <th class="text-left py-2">Status</th>
-                    <th class="text-right py-2">Cost</th>
+            <thead>
+                <tr class="border-b border-white/5 text-[11px] uppercase text-slate-500 font-semibold">
+                    <th class="text-left py-3 px-4">Tipe</th>
+                    <th class="text-left py-3 px-4">Deskripsi</th>
+                    <th class="text-left py-3 px-4">Vendor</th>
+                    <th class="text-left py-3 px-4">Jadwal</th>
+                    <th class="text-left py-3 px-4">Selesai</th>
+                    <th class="text-center py-3 px-4">Status</th>
+                    <th class="text-right py-3 px-4">Biaya</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse($maintenanceLogs as $log)
-                <tr class="border-b hover:bg-gray-50">
-                    <td class="py-2 capitalize text-gray-700">{{ $log->type }}</td>
-                    <td class="py-2 text-gray-600">{{ $log->description }}</td>
-                    <td class="py-2 text-gray-600">{{ $log->vendor ?? '—' }}</td>
-                    <td class="py-2 text-gray-600">{{ \Carbon\Carbon::parse($log->scheduled_date)->format('d M Y') }}</td>
-                    <td class="py-2 text-gray-600">{{ $log->completed_date ? \Carbon\Carbon::parse($log->completed_date)->format('d M Y') : '—' }}</td>
-                    <td class="py-2"><x-status-badge :status="$log->status" /></td>
-                    <td class="py-2 text-right font-semibold">{{ $log->cost ? \App\Helpers\FormatHelper::formatIDR($log->cost) : '—' }}</td>
+                <tr class="border-b border-white/5 hover:bg-white/3 transition-colors">
+                    <td class="py-3 px-4 capitalize text-slate-300">{{ $log->type }}</td>
+                    <td class="py-3 px-4 text-slate-400 max-w-[200px] truncate" title="{{ $log->description }}">{{ $log->description }}</td>
+                    <td class="py-3 px-4 text-slate-500">{{ $log->vendor ?? '—' }}</td>
+                    <td class="py-3 px-4 text-slate-400">{{ \Carbon\Carbon::parse($log->scheduled_date)->format('d M Y') }}</td>
+                    <td class="py-3 px-4 {{ $log->completed_date ? 'text-green-400' : 'text-slate-600' }}">
+                        {{ $log->completed_date ? \Carbon\Carbon::parse($log->completed_date)->format('d M Y') : '—' }}
+                    </td>
+                    <td class="py-3 px-4 text-center"><x-status-badge :status="$log->status" /></td>
+                    <td class="py-3 px-4 text-right font-semibold text-slate-200">{{ $log->cost ? \App\Helpers\FormatHelper::formatIDR($log->cost) : '—' }}</td>
                 </tr>
                 @empty
-                <tr><td colspan="7" class="py-4 text-center text-gray-500">No maintenance records</td></tr>
+                <tr>
+                    <td colspan="7" class="py-8 text-center text-slate-500">
+                        <span class="material-symbols-outlined text-3xl block mb-2 opacity-30">build_circle</span>
+                        Belum ada riwayat maintenance
+                    </td>
+                </tr>
                 @endforelse
             </tbody>
         </table>
