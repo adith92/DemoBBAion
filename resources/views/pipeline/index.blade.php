@@ -10,11 +10,28 @@
        Each column: header is sticky, cards scroll vertically inside the column.
     ── */
 
-    /* Override content-area for kanban: no vertical overflow, board fills height */
+    /* ── PIPELINE: Override layout defaults ──────────────────────────────────
+       The SPA layout has:
+         #content-area { overflow-x: hidden }   ← blocks kanban horiz scroll
+         #content-area > .p-6 { padding: 24px } ← shrinks height
+       We override both here so kanban gets full freedom.
+    ──────────────────────────────────────────────────────────────────────── */
+    #content-area {
+        overflow-x: visible !important;
+        overflow: hidden !important;  /* kanban manages its own scroll */
+    }
+    #content-area > div.p-6 {
+        padding: 0 !important;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* kanban-page-wrapper: fill the now-padding-free content-area */
     .kanban-page-wrapper {
         display: flex;
         flex-direction: column;
-        height: calc(100vh - 56px - 48px); /* viewport - topbar - page header */
+        height: 100%;          /* fill parent — no magic number needed */
         min-height: 0;
     }
 
@@ -153,7 +170,7 @@
     #toast.error   { background: rgba(239,68,68,0.15);  border: 1px solid rgba(239,68,68,0.3);  color: #f87171; }
     @media (max-width: 768px) {
         .kanban-column { width: 256px; }
-        .kanban-page-wrapper { height: calc(100vh - 56px - 40px - 48px); }
+        .kanban-page-wrapper { height: 100%; } /* inherit from content-area */
     }
     @keyframes spin { to { transform: rotate(360deg); } }
     .animate-spin { animation: spin 1s linear infinite; }

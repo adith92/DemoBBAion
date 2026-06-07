@@ -111,7 +111,7 @@ class MassiveVehicleBookingSeeder extends Seeder
         'cancelled',              // 7%
     ];
 
-    private array $voucherDescs = [
+    private array $voucherTitles = [
         'E-Voucher Transport Corporate Annual',
         'E-Voucher Airport Transfer Premium',
         'E-Voucher Shuttle Karyawan Bulanan',
@@ -308,19 +308,21 @@ class MassiveVehicleBookingSeeder extends Seeder
 
             $bookingNum = 'GB-' . $pickupDate->format('Y') . '-' . str_pad($counter, 7, '0', STR_PAD_LEFT);
 
+            $pickupHour      = rand(5, 20);
+            $pickupDatetime  = $pickupDate->copy()->setHour($pickupHour)->setMinute(rand(0, 59));
+            $dropoffDatetime = $pickupDatetime->copy()->addDays($duration)->addHours(rand(1, 8));
+
             $rows[] = [
                 'booking_number'   => $bookingNum,
                 'client_id'        => $clientIds[array_rand($clientIds)],
                 'vehicle_id'       => $vehicleIds[array_rand($vehicleIds)],
                 'sales_id'         => $userIds[array_rand($userIds)],
+                'created_by'       => $userIds[array_rand($userIds)],
                 'status'           => $status,
                 'vehicle_type'     => $vehicleType,
-                'pickup_date'      => $pickupDate->toDateString(),
-                'return_date'      => $pickupDate->copy()->addDays($duration)->toDateString(),
-                'pickup_location'  => $this->pickupLocations[array_rand($this->pickupLocations)],
-                'dropoff_location' => $this->dropoffLocations[array_rand($this->dropoffLocations)],
-                'passenger_count'  => rand(1, 48),
-                'duration_days'    => $duration,
+                'pickup_datetime'  => $pickupDatetime->toDateTimeString(),
+                'dropoff_datetime' => $dropoffDatetime->toDateTimeString(),
+                'destination'      => $this->dropoffLocations[array_rand($this->dropoffLocations)],
                 'price'            => $price,
                 'notes'            => 'Demo booking — ' . ucfirst($vehicleType) . ' service.',
                 'created_at'       => $now,
@@ -365,30 +367,44 @@ class MassiveVehicleBookingSeeder extends Seeder
 
         $this->command->info("  → Seeding {$toCreate} e-vouchers...");
 
-        $clientIds    = DB::table('clients')->pluck('id')->toArray();
+        $clientIds  = DB::table('clients')->pluck('id')->toArray();
+        $userIds    = DB::table('users')->pluck('id')->toArray();
         if (empty($clientIds)) $clientIds = [1];
+        if (empty($userIds))   $userIds   = [1];
 
-        $voucherStatuses = ['active','active','active','used','used','used','expired','expired'];
+        // Voucher model: voucher_code, client_id, product_id, title, denomination,
+        //                purchase_price, valid_from, valid_until, status,
+        //                used_at, used_by_booking_id, issued_by, notes
+        $voucherStatuses = ['available','available','available','available','used','used','used','expired','expired'];
         $rows      = [];
         $now       = now()->toDateTimeString();
         $chunkSize = 1000;
         $codeTrack = [];
 
         for ($i = 0; $i < $toCreate; $i++) {
-            $status    = $voucherStatuses[array_rand($voucherStatuses)];
-            $expiredAt = Carbon::create(2025, 1, 1)->addDays(rand(0, 900));
+            $status      = $voucherStatuses[array_rand($voucherStatuses)];
+            $validFrom   = Carbon::create(2024, 1, 1)->addDays(rand(0, 500));
+            $validUntil  = $validFrom->copy()->addMonths(rand(3, 18));
+            $denomination = rand(5, 100) * 100_000; // 500k–10M
 
             $code = $this->randomVoucherCode($codeTrack);
 
             $rows[] = [
-                'code'        => $code,
-                'client_id'   => $clientIds[array_rand($clientIds)],
-                'amount'      => rand(5, 100) * 100_000, // 500k–10M in 100k steps
-                'status'      => $status,
-                'expired_at'  => $expiredAt->toDateString(),
-                'description' => $this->voucherDescs[array_rand($this->voucherDescs)],
-                'created_at'  => $now,
-                'updated_at'  => $now,
+                'voucher_code'   => $code,
+                'client_id'      => $clientIds[array_rand($clientIds)],
+                'product_id'     => null,
+                'title'          => $this->voucherTitles[array_rand($this->voucherTitles)],
+                'denomination'   => $denomination,
+                'purchase_price' => (int) ($denomination * 0.9), // 10% discount
+                'valid_from'     => $validFrom->toDateString(),
+                'valid_until'    => $validUntil->toDateString(),
+                'status'         => $status,
+                'used_at'        => $status === 'used' ? $validFrom->copy()->addDays(rand(1, 60))->toDateTimeString() : null,
+                'used_by_booking_id' => null,
+                'issued_by'      => $userIds[array_rand($userIds)],
+                'notes'          => 'Demo voucher — issued for corporate transport.',
+                'created_at'     => $now,
+                'updated_at'     => $now,
             ];
 
             if (count($rows) >= $chunkSize) {
