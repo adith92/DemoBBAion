@@ -16,10 +16,10 @@ class ClickableElementsTest extends TestCase
     public function test_elements_are_clickable_in_bookings_index()
     {
         $sales = User::factory()->create(['role' => 'sales']);
-        $user = User::factory()->create(['role' => 'manager']);
+        $user = User::factory()->create(['role' => 'gm']);
         $client = Client::factory()->create(['company_name' => 'Acme Corp', 'pic_name' => 'John Doe', 'email' => 'john@acme.com']);
         $vehicle = Vehicle::factory()->create();
-        $booking = Booking::factory()->create(['client_id' => $client->id, 'sales_id' => $sales->id, 'vehicle_id' => $vehicle->id]);
+        $booking = Booking::factory()->create(['client_id' => $client->id, 'sales_id' => $sales->id, 'vehicle_id' => $vehicle->id, 'status' => 'pending']);
 
         $response = $this->actingAs($user)->get(route('bookings.index'));
 
