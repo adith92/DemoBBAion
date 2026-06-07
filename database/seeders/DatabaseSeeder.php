@@ -249,5 +249,8 @@ class DatabaseSeeder extends Seeder
 
         // ==================== MASSIVE DEMO DATA ====================
         $this->call(DemoMassiveSeeder::class);
+
+        // ==================== MASSIVE VEHICLE + BOOKING + VOUCHER + KPI ====================
+        $this->call(MassiveVehicleBookingSeeder::class);
     }
 }

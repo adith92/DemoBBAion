@@ -89,18 +89,54 @@
     .kanban-drop-zone::-webkit-scrollbar-track { background: transparent; }
     .kanban-drop-zone::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 3px; }
     .kanban-drop-zone.sortable-over { background: rgba(0,229,255,0.04); outline: 2px dashed rgba(0,229,255,0.25); outline-offset: -2px; }
-    .kanban-card { background: rgba(19,19,36,0.92); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 14px; cursor: grab; user-select: none; transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s; }
-    .kanban-card:hover { border-color: rgba(255,255,255,0.18); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.5); }
+    /* Kanban card — adapts to dark/light via CSS vars */
+    .kanban-card {
+        background: var(--cc-card);
+        border: 1px solid var(--cc-border);
+        border-radius: 12px;
+        padding: 14px;
+        cursor: grab;
+        user-select: none;
+        transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+    .kanban-card:hover {
+        border-color: var(--cc-border-h);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+        background: var(--cc-card-hover);
+    }
+    html.dark .kanban-card { box-shadow: 0 1px 4px rgba(0,0,0,0.4); }
+    html.dark .kanban-card:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.5); }
     .kanban-card.sortable-ghost { opacity: 0.25; }
-    .kanban-card.sortable-drag  { opacity: 1; transform: rotate(1.5deg) scale(1.02); box-shadow: 0 12px 32px rgba(0,0,0,0.7); border-color: rgba(0,229,255,0.4); cursor: grabbing; }
+    .kanban-card.sortable-drag  { opacity: 1; transform: rotate(1.5deg) scale(1.02); box-shadow: 0 12px 32px rgba(0,0,0,0.25); border-color: var(--cc-accent); cursor: grabbing; }
+
+    /* Stage column headers — harmonized, works in both modes */
     .stage-header { border-radius: 12px; padding: 14px 16px; }
-    .stage-pro  { background: linear-gradient(135deg, rgba(59,130,246,0.25), rgba(59,130,246,0.12)); border: 1px solid rgba(59,130,246,0.25); }
-    .stage-prop { background: linear-gradient(135deg, rgba(245,158,11,0.25), rgba(245,158,11,0.12)); border: 1px solid rgba(245,158,11,0.25); }
-    .stage-neg  { background: linear-gradient(135deg, rgba(249,115,22,0.25), rgba(249,115,22,0.12)); border: 1px solid rgba(249,115,22,0.25); }
-    .stage-won  { background: linear-gradient(135deg, rgba(16,185,129,0.25), rgba(16,185,129,0.12)); border: 1px solid rgba(16,185,129,0.25); }
-    .stage-lost { background: linear-gradient(135deg, rgba(239,68,68,0.2),  rgba(239,68,68,0.08));  border: 1px solid rgba(239,68,68,0.2); }
-    .edit-input { background: rgba(255,255,255,0.06); border: 1px solid rgba(0,229,255,0.3); color: #e2e8f0; border-radius: 8px; padding: 6px 10px; font-size: 13px; width: 100%; outline: none; }
-    .edit-input:focus { border-color: rgba(0,229,255,0.6); box-shadow: 0 0 0 3px rgba(0,229,255,0.08); }
+    .stage-pro  { background: rgba(59,130,246,0.10); border: 1px solid rgba(59,130,246,0.20); }
+    .stage-prop { background: rgba(245,158,11,0.10); border: 1px solid rgba(245,158,11,0.20); }
+    .stage-neg  { background: rgba(249,115,22,0.10); border: 1px solid rgba(249,115,22,0.20); }
+    .stage-won  { background: rgba(16,185,129,0.10); border: 1px solid rgba(16,185,129,0.20); }
+    .stage-lost { background: rgba(239,68,68,0.08);  border: 1px solid rgba(239,68,68,0.16); }
+
+    /* Drop zone background — subtle */
+    .kanban-drop-zone { background: rgba(0,0,0,0.02); }
+    html.dark .kanban-drop-zone { background: rgba(255,255,255,0.01); }
+    /* Card text overrides for light mode */
+    html.light .kanban-card h3 { color: var(--cc-text) !important; }
+    html.light .kanban-card .text-slate-100 { color: var(--cc-text) !important; }
+    html.light .kanban-card .text-slate-200 { color: var(--cc-text) !important; }
+    html.light .kanban-card .text-slate-500,
+    html.light .kanban-card .text-slate-600 { color: var(--cc-text-muted) !important; }
+    html.light .kanban-card .border-white\/5 { border-color: rgba(0,0,0,0.08) !important; }
+    html.light .kanban-card .bg-blue-500\/20 { background: rgba(59,130,246,0.15) !important; }
+    html.light .kanban-card .text-blue-400 { color: #1d4ed8 !important; }
+
+    /* Summary bar cards in light mode */
+    html.light .kanban-summary-bar .cc-card { box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+
+    .edit-input { background: var(--cc-input-bg); border: 1px solid var(--cc-input-bd); color: var(--cc-text); border-radius: 8px; padding: 6px 10px; font-size: 13px; width: 100%; outline: none; }
+    .edit-input:focus { border-color: var(--cc-accent); box-shadow: 0 0 0 3px var(--cc-accent-dim); }
     .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(4px); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 20px; }
     .modal-box { background: #0f0f1a; border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; width: 100%; max-width: 800px; max-height: 90vh; overflow: hidden; display: flex; flex-direction: column; animation: modal-in 0.25s cubic-bezier(0.16,1,0.3,1); }
     @keyframes modal-in { from { opacity:0; transform: scale(0.95) translateY(16px); } to { opacity:1; transform: scale(1) translateY(0); } }
