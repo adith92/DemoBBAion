@@ -15,7 +15,7 @@ class LocalizationWidgetTest extends TestCase
     public function test_language_switch_updates_dashboard_locale(): void
     {
         $user = User::factory()->create([
-            'role' => 'director',
+            'role' => 'gm',
             'password' => Hash::make('password123'),
         ]);
 
@@ -39,7 +39,7 @@ class LocalizationWidgetTest extends TestCase
 
     public function test_widget_layout_saves_to_user_preferences(): void
     {
-        $user = User::factory()->create(['role' => 'director']);
+        $user = User::factory()->create(['role' => 'gm']);
 
         $widgets = [
             ['id' => 'kpi-row', 'label' => 'KPI Cards', 'visible' => false, 'order' => 1],

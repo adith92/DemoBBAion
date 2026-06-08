@@ -45,7 +45,7 @@ class ProductController extends Controller
 
     public function create()
     {
-        $this->middleware('role:gm,manager,director');
+        $this->middleware('role:gm,manager');
 
         $categories = ProductCategory::active()->orderBy('name')->get();
 
@@ -58,7 +58,7 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
-        $this->middleware('role:gm,manager,director');
+        $this->middleware('role:gm,manager');
 
         $validated = $request->validate([
             'name'                => 'required|string|max:255',

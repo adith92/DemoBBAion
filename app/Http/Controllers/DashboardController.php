@@ -30,7 +30,6 @@ class DashboardController extends Controller
         $role = $user->role ?? 'sales';
 
         return match ($role) {
-            'director'    => $this->gm(),
             'gm'          => $this->gm(),
             'manager'     => $this->manager(),
             'sales'       => $this->sales(),
@@ -38,38 +37,6 @@ class DashboardController extends Controller
             'finance'     => $this->finance(),
             default       => $this->gm(),
         };
-    }
-
-    /* ------------------------------------------------------------------ */
-    /* DIRECTOR                                                             */
-    /* ------------------------------------------------------------------ */
-    public function director()
-    {
-        $now = Carbon::now();
-        $monthStart = $now->copy()->startOfMonth();
-        $monthEnd   = $now->copy()->endOfMonth();
-
-        $pipelineValue   = Opportunity::whereNotIn('stage', ['won', 'lost'])->sum('estimated_value') ?? 0;
-        $revenueMTD      = Booking::whereBetween('created_at', [$monthStart, $monthEnd])
-                               ->where('status', 'completed')->sum('price') ?? 0;
-        $wonOps          = Opportunity::whereMonth('updated_at', $now->month)->where('stage', 'won')->count();
-        $lostOps         = Opportunity::whereMonth('updated_at', $now->month)->where('stage', 'lost')->count();
-        $winRate         = ($wonOps + $lostOps) > 0 ? round($wonOps / ($wonOps + $lostOps) * 100) : 0;
-        $pendingApprovals= ApprovalRequest::where('status', 'pending')->count();
-        $approvalQueue   = ApprovalRequest::where('status', 'pending')->latest()->take(5)->get();
-        $salesTeam       = User::where('role', 'sales')->get()->map(function ($s) use ($now) {
-            $s->won_count   = Opportunity::where('sales_id', $s->id)->whereMonth('updated_at', $now->month)->where('stage', 'won')->count();
-            $s->lost_count  = Opportunity::where('sales_id', $s->id)->whereMonth('updated_at', $now->month)->where('stage', 'lost')->count();
-            $s->pipeline    = Opportunity::where('sales_id', $s->id)->whereNotIn('stage', ['won', 'lost'])->sum('estimated_value') ?? 0;
-            $total          = $s->won_count + $s->lost_count;
-            $s->win_rate    = $total > 0 ? round($s->won_count / $total * 100) : 0;
-            return $s;
-        });
-
-        return view('dashboard.director', compact(
-            'pipelineValue', 'revenueMTD', 'winRate',
-            'pendingApprovals', 'approvalQueue', 'salesTeam'
-        ));
     }
 
     /* ------------------------------------------------------------------ */

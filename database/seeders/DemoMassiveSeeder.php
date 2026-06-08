@@ -175,36 +175,38 @@ class DemoMassiveSeeder extends Seeder
 
     private function seedProducts(): void
     {
-        if (Product::count() > 5) return;
+        $this->command->info('  → Seeding 6 produk wajib...');
 
-        $this->command->info('  → Seeding products...');
-
+        // Kategori sesuai jenisnya.
         $shortTerm = ProductCategory::firstOrCreate(['name' => 'Short Term', 'type' => 'short_term']);
         $longTerm  = ProductCategory::firstOrCreate(['name' => 'Long Term',  'type' => 'long_term']);
-        $exec      = ProductCategory::firstOrCreate(['name' => 'Executive',  'type' => 'short_term']);
+        $evoucher  = ProductCategory::firstOrCreate(['name' => 'E-Voucher',  'type' => 'evoucher']);
+        $service   = ProductCategory::firstOrCreate(['name' => 'Service',    'type' => 'short_term']);
 
+        // 6 produk fix dengan kpi_key untuk pemetaan target KPI per produk.
+        // [name, kpi_key, category_id, base_price, sku]
         $products = [
-            ['Big Bus Charter Full Day',    $shortTerm->id, 8500000,  75000000],
-            ['Big Bus Charter Half Day',    $shortTerm->id, 4500000,  45000000],
-            ['Executive Sedan Harian',      $exec->id,      1200000,  8000000],
-            ['Executive Sedan Bulanan',     $longTerm->id,  25000000, 120000000],
-            ['Medium Bus Charter',          $shortTerm->id, 5000000,  45000000],
-            ['VIP Limousine Per Jam',        $exec->id,      2500000,  20000000],
-            ['Shuttle Bus Karyawan',         $longTerm->id,  35000000, 180000000],
-            ['Airport Transfer Eksekutif',  $exec->id,      950000,   3500000],
-            ['Annual Fleet Management',     $longTerm->id,  150000000,800000000],
-            ['Corporate Roadshow Package',  $shortTerm->id, 15000000, 95000000],
+            ['Mobil Short Term', 'mobil_short', $shortTerm->id, 1_200_000,   'PRD-MOBIL-ST'],
+            ['Bis Short Term',   'bis_short',   $shortTerm->id, 5_000_000,   'PRD-BIS-ST'],
+            ['E-Voucher',        'evoucher',    $evoucher->id,  500_000,     'PRD-EVOUCHER'],
+            ['Mobil Long Term',  'mobil_long',  $longTerm->id,  25_000_000,  'PRD-MOBIL-LT'],
+            ['Bis Long Term',    'bis_long',    $longTerm->id,  35_000_000,  'PRD-BIS-LT'],
+            ['Supir',            'supir',       $service->id,   300_000,     'PRD-SUPIR'],
         ];
 
-        foreach ($products as $index => [$name, $catId, $min, $max]) {
-            Product::firstOrCreate(['name' => $name], [
-                'product_category_id' => $catId,
-                'sku'                  => 'DEMO-' . str_pad((string) ($index + 1), 3, '0', STR_PAD_LEFT),
-                'base_price'          => ($min + $max) / 2,
-                'unit'                => 'trip',
-                'is_active'           => true,
-                'description'         => $name . ' — layanan transportasi premium',
-            ]);
+        foreach ($products as [$name, $kpiKey, $catId, $price, $sku]) {
+            Product::updateOrCreate(
+                ['kpi_key' => $kpiKey],
+                [
+                    'product_category_id' => $catId,
+                    'name'                => $name,
+                    'sku'                 => $sku,
+                    'base_price'          => $price,
+                    'unit'                => 'trip',
+                    'is_active'           => true,
+                    'description'         => $name . ' — layanan transportasi Golden Bird',
+                ]
+            );
         }
     }
 
@@ -354,7 +356,7 @@ class DemoMassiveSeeder extends Seeder
             ->get(['id', 'sales_id', 'estimated_value', 'discount_percent']);
         if ($opportunities->isEmpty()) { $this->command->warn('No opps with discount for approvals.'); return; }
 
-        $approverIds = User::whereIn('role', ['manager', 'gm', 'director'])->pluck('id')->toArray();
+        $approverIds = User::whereIn('role', ['manager', 'gm'])->pluck('id')->toArray();
         if (empty($approverIds)) $approverIds = [1];
 
         $statuses = ['pending', 'pending', 'approved', 'approved', 'approved', 'rejected'];

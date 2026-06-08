@@ -12,8 +12,8 @@ class SalesTargetController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('role:director,gm,manager,sales')->only('index');
-        $this->middleware('role:director,gm,manager')->only('store');
+        $this->middleware('role:gm,manager,sales')->only('index');
+        $this->middleware('role:gm,manager')->only('store');
     }
 
     public function index(Request $request)

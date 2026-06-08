@@ -32,13 +32,13 @@ class ApprovalServiceTest extends TestCase
     }
 
     /**
-     * 10% discount, 200jt value → deal value > 200jt threshold.
-     * Expect starting level = 3 (director).
+     * 10% discount, 200jt value → deal value > 50jt threshold.
+     * Director dihapus — deal besar berhenti di GM (level 2).
      */
     public function test_determine_level_very_large_deal_200jt(): void
     {
         $level = ApprovalService::determineStartingLevel(10.0, 200_000_001);
-        $this->assertSame(3, $level);
+        $this->assertSame(2, $level);
     }
 
     // -------------------------------------------------------------------------

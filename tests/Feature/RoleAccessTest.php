@@ -22,7 +22,7 @@ class RoleAccessTest extends TestCase
     /** @test */
     public function revenue_index_route_exists_and_redirects_to_analytics(): void
     {
-        $this->actingAs($this->user('director'))
+        $this->actingAs($this->user('gm'))
             ->get(route('revenue.index'))
             ->assertRedirect(route('analytics.index'));
     }
@@ -32,7 +32,7 @@ class RoleAccessTest extends TestCase
     /** @test */
     public function analytics_page_returns_200_for_director(): void
     {
-        $this->actingAs($this->user('director'))
+        $this->actingAs($this->user('gm'))
             ->get(route('analytics.index'))
             ->assertStatus(200);
     }
@@ -73,7 +73,7 @@ class RoleAccessTest extends TestCase
     /** @test */
     public function dashboard_returns_200_for_all_roles(): void
     {
-        foreach (['director','gm','manager','sales','operational','finance'] as $role) {
+        foreach (['gm','manager','sales','operational','finance'] as $role) {
             $this->actingAs($this->user($role))
                 ->get(route('dashboard'))
                 ->assertStatus(200, "Dashboard failed for role: {$role}");
@@ -119,7 +119,7 @@ class RoleAccessTest extends TestCase
     /** @test */
     public function widgets_save_validates_payload(): void
     {
-        $this->actingAs($this->user('director'))
+        $this->actingAs($this->user('gm'))
             ->postJson(route('widgets.save'), ['widgets' => 'not-an-array'])
             ->assertStatus(422);
     }
@@ -127,7 +127,7 @@ class RoleAccessTest extends TestCase
     /** @test */
     public function widgets_save_accepts_valid_payload(): void
     {
-        $this->actingAs($this->user('director'))
+        $this->actingAs($this->user('gm'))
             ->postJson(route('widgets.save'), [
                 'widgets' => [
                     ['id' => 'kpi-row', 'visible' => true,  'order' => 1],

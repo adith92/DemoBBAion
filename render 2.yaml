@@ -1,0 +1,43 @@
+services:
+  - type: web
+    name: golden-bird-crm
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    region: oregon
+    healthCheckPath: /up
+    envVars:
+      - key: APP_NAME
+        value: "Bluebird CRM"
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: APP_KEY
+        generateValue: true
+      - key: DB_CONNECTION
+        value: sqlite
+      - key: DB_DATABASE
+        value: /var/www/html/database/database.sqlite
+      - key: SESSION_DRIVER
+        value: file
+      - key: CACHE_STORE
+        value: file
+      - key: LOG_CHANNEL
+        value: stderr
+      - key: VITE_APP_NAME
+        value: "Golden Bird CRM"
+      # Performance
+      - key: OPCACHE_ENABLE
+        value: "1"
+      - key: PHP_MEMORY_LIMIT
+        value: "256M"
+      # Queue (use sync for free tier, switch to database for paid)
+      - key: QUEUE_CONNECTION
+        value: sync
+      - key: SESSION_LIFETIME
+        value: "120"
+      # Security — hardcoded URL so APP_URL always has https:// scheme
+      # fromService.host returns bare hostname without scheme — causes 500
+      - key: APP_URL
+        value: https://goldenbirdcrm.onrender.com

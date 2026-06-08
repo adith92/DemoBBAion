@@ -4,7 +4,7 @@
 --}}
 
 @php $role = Auth::user()->role ?? ''; @endphp
-@if(in_array($role, ['director','gm','manager','sales']))
+@if(in_array($role, ['gm','manager','sales']))
 
 <div x-data="quickAddFab()" @keydown.escape.window="close()">
 

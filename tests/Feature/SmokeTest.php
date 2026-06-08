@@ -43,7 +43,7 @@ class SmokeTest extends TestCase
     /** @test */
     public function dashboard_returns_200_for_director(): void
     {
-        $this->actAs('director')->get(route('dashboard'))->assertStatus(200);
+        $this->actAs('gm')->get(route('dashboard'))->assertStatus(200);
     }
 
     /** @test */
@@ -103,7 +103,7 @@ class SmokeTest extends TestCase
     /** @test */
     public function analytics_returns_200_for_director(): void
     {
-        $this->actAs('director')->get(route('analytics.index'))->assertStatus(200);
+        $this->actAs('gm')->get(route('analytics.index'))->assertStatus(200);
     }
 
     /** @test */
@@ -157,7 +157,7 @@ class SmokeTest extends TestCase
     /** @test */
     public function products_returns_200(): void
     {
-        $this->actAs('director')->get(route('products.index'))->assertStatus(200);
+        $this->actAs('gm')->get(route('products.index'))->assertStatus(200);
     }
 
     /** @test */
@@ -207,7 +207,7 @@ class SmokeTest extends TestCase
     /** @test */
     public function revenue_index_redirects_to_analytics(): void
     {
-        $this->actAs('director')
+        $this->actAs('gm')
             ->get(route('revenue.index'))
             ->assertRedirect(route('analytics.index'));
     }
@@ -288,7 +288,7 @@ class SmokeTest extends TestCase
     /** @test */
     public function widgets_save_validates_required_fields(): void
     {
-        $this->actAs('director')
+        $this->actAs('gm')
             ->postJson(route('widgets.save'), ['widgets' => 'bad'])
             ->assertStatus(422);
     }
@@ -296,7 +296,7 @@ class SmokeTest extends TestCase
     /** @test */
     public function widgets_save_validates_widget_structure(): void
     {
-        $this->actAs('director')
+        $this->actAs('gm')
             ->postJson(route('widgets.save'), [
                 'widgets' => [['id' => 'kpi-row']], // missing visible + order
             ])
@@ -306,7 +306,7 @@ class SmokeTest extends TestCase
     /** @test */
     public function widgets_save_persists_to_database(): void
     {
-        $user = $this->user('director');
+        $user = $this->user('gm');
         $payload = [
             ['id' => 'kpi-row',  'visible' => true,  'order' => 1],
             ['id' => 'charts',   'visible' => false,  'order' => 2],
@@ -345,7 +345,7 @@ class SmokeTest extends TestCase
     /** @test */
     public function widgets_reset_returns_ok(): void
     {
-        $user = $this->user('director');
+        $user = $this->user('gm');
         WidgetPreference::create([
             'user_id' => $user->id,
             'widgets' => [['id' => 'kpi-row', 'visible' => true, 'order' => 1]],
@@ -467,7 +467,7 @@ class SmokeTest extends TestCase
     /** @test */
     public function analytics_sub_routes_all_return_200(): void
     {
-        $user = $this->user('director');
+        $user = $this->user('gm');
         foreach (['analytics.index', 'analytics.crosssell', 'analytics.pipeline', 'analytics.sales'] as $name) {
             $this->actingAs($user)
                 ->get(route($name))

@@ -26,7 +26,7 @@
             <span>{{ __('ui.dashboard') }}</span>
         </a>
 
-        @if(in_array($role, ['director','gm','manager','sales']))
+        @if(in_array($role, ['gm','manager','sales']))
         <div class="nav-section-label">{{ __('ui.sales') }}</div>
 
         <a href="{{ route('pipeline.index') }}" class="nav-item {{ Request::routeIs('pipeline*','opportunities*') ? 'active' : '' }}">
@@ -45,7 +45,7 @@
         </a>
         @endif
 
-        @if(in_array($role, ['director','gm','manager']))
+        @if(in_array($role, ['gm','manager']))
         <div class="nav-section-label">{{ __('ui.operations') }}</div>
 
         <a href="{{ route('approvals.index') }}" class="nav-item {{ Request::routeIs('approvals*') ? 'active' : '' }}">
@@ -54,7 +54,7 @@
         </a>
         @endif
 
-        @if(in_array($role, ['director','gm','manager','operational']))
+        @if(in_array($role, ['gm','manager','operational']))
         <a href="{{ route('fleet.index') }}" class="nav-item {{ Request::routeIs('fleet*','vehicles*') ? 'active' : '' }}">
             <span class="material-symbols-outlined">local_shipping</span>
             <span>{{ __('ui.fleet_armada') }}</span>
@@ -66,7 +66,7 @@
             <span>{{ __('ui.dispatch') }}</span>
         </a>
 
-        @if(in_array($role, ['director','gm','manager','finance']))
+        @if(in_array($role, ['gm','manager','finance']))
         <div class="nav-section-label">{{ __('ui.finance') }}</div>
 
         <a href="{{ route('subscriptions.index') }}" class="nav-item {{ Request::routeIs('subscriptions*') ? 'active' : '' }}">
@@ -85,7 +85,7 @@
         </a>
         @endif
 
-        @if(in_array($role, ['director','gm','manager','sales']))
+        @if(in_array($role, ['gm','manager','sales']))
         <a href="{{ route('products.index') }}" class="nav-item {{ Request::routeIs('products*') ? 'active' : '' }}">
             <span class="material-symbols-outlined">menu_book</span>
             <span>{{ __('ui.price_book') }}</span>
@@ -99,7 +99,7 @@
         </a>
         @endif
 
-        @if(in_array($role, ['director','gm','manager']))
+        @if(in_array($role, ['gm','manager']))
         <a href="{{ route('analytics.index') }}" class="nav-item {{ Request::routeIs('analytics*') ? 'active' : '' }}">
             <span class="material-symbols-outlined">query_stats</span>
             <span>{{ __('ui.reports_analytics') }}</span>
@@ -107,7 +107,7 @@
         @endif
 
         {{-- Quick Add Dropdown --}}
-        @if(in_array($role, ['director','gm','manager','sales','operational']))
+        @if(in_array($role, ['gm','manager','sales','operational']))
         <div class="nav-section-label mt-3">{{ __('ui.quick_add') ?? 'Tambah Baru' }}</div>
         <div x-data="{ open: false }" class="relative">
             <button @click="open = !open"
@@ -125,7 +125,7 @@
                  x-transition:enter-end="opacity-100 translate-y-0"
                  class="mt-1 ml-2 space-y-0.5 border-l-2 pl-3"
                  style="border-color:rgba(255,255,255,0.06)">
-                @if(in_array($role, ['director','gm','manager','sales']))
+                @if(in_array($role, ['gm','manager','sales']))
                 <a href="{{ route('opportunities.create') }}" class="nav-item text-[12px]">
                     <span class="material-symbols-outlined text-[14px]">star</span>
                     <span>Deal / Opportunity</span>
@@ -139,13 +139,13 @@
                     <span>Log Aktivitas</span>
                 </a>
                 @endif
-                @if(in_array($role, ['director','gm','manager','sales','operational']))
+                @if(in_array($role, ['gm','manager','sales','operational']))
                 <a href="{{ route('bookings.create') }}" class="nav-item text-[12px]">
                     <span class="material-symbols-outlined text-[14px]">route</span>
                     <span>Booking</span>
                 </a>
                 @endif
-                @if(in_array($role, ['director','gm','operational']))
+                @if(in_array($role, ['gm','operational']))
                 <a href="{{ route('fleet.create') }}" class="nav-item text-[12px]">
                     <span class="material-symbols-outlined text-[14px]">directions_bus</span>
                     <span>Armada</span>

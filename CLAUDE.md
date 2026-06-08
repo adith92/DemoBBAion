@@ -1,6 +1,8 @@
 # Bluebird CRM — CLAUDE.md
 > Project context untuk Claude Code & Cowork sessions. Baca ini dulu sebelum mulai.
 
+> 🔒 **WAJIB BACA DULU: [`UI_UX_LOCK.md`](./UI_UX_LOCK.md)** — Tampilan dashboard depan (Command Center) TERKUNCI. Dilarang mengubah UI/UX (warna, layout, font, struktur) tanpa izin tertulis pemilik. Hanya logika/data di belakang layar yang boleh diubah selama output visual identik.
+
 ---
 
 ## 🚌 Project Overview

@@ -11,19 +11,13 @@ class ApprovalService
     /**
      * Determine the starting approval level based on deal value first, then discount.
      *
+     * Director dihapus — GM (level 2) kini approver tertinggi.
      * Rules:
-     *   - dealValue > 200,000,000 → level 3 (director)
-     *   - dealValue > 50,000,000  → level 2 (gm)
-     *   - discount ≤ 5%           → level 1 (manager)
-     *   - discount 5–15%          → level 1 (manager, escalates to gm)
-     *   - discount > 15%          → level 1 (manager, escalates through gm to director)
+     *   - dealValue > 50,000,000  → level 2 (gm)  [termasuk deal besar >200jt]
+     *   - selain itu              → level 1 (manager)
      */
     public static function determineStartingLevel(float $discountPercent, float $dealValue): int
     {
-        if ($dealValue > 200_000_000) {
-            return 3;
-        }
-
         if ($dealValue > 50_000_000) {
             return 2;
         }
@@ -43,18 +37,16 @@ class ApprovalService
      * Return the first available user for the given approval level.
      *
      * Level 1 → manager
-     * Level 2 → gm
-     * Level 3 → director
+     * Level 2 → gm (approver tertinggi; director dihapus)
      */
     public static function getApproverForLevel(int $level): ?User
     {
         $roleMap = [
             1 => 'manager',
             2 => 'gm',
-            3 => 'director',
         ];
 
-        $role = $roleMap[$level] ?? 'director';
+        $role = $roleMap[$level] ?? 'gm';
 
         return User::where('role', $role)->first();
     }
@@ -62,16 +54,12 @@ class ApprovalService
     /**
      * Determine the maximum level needed for the given discount percentage.
      *
-     * discount ≤ 5%   → max level 1
-     * discount 5–15%  → max level 2
-     * discount > 15%  → max level 3
+     * Director dihapus — max level dibatasi 2 (GM).
+     * discount ≤ 5%   → max level 1 (manager)
+     * discount > 5%   → max level 2 (gm)
      */
     public static function determineMaxLevel(float $discountPercent): int
     {
-        if ($discountPercent > 15) {
-            return 3;
-        }
-
         if ($discountPercent > 5) {
             return 2;
         }
@@ -96,7 +84,7 @@ class ApprovalService
         $approver     = static::getApproverForLevel($level);
 
         // Escalate if no approver at current level
-        while ($approver === null && $level < 3) {
+        while ($approver === null && $level < 2) {
             $level++;
             $approver = static::getApproverForLevel($level);
         }
@@ -146,7 +134,7 @@ class ApprovalService
             $nextApprover = static::getApproverForLevel($nextLevel);
 
             // Escalate if no approver found at next level
-            while ($nextApprover === null && $nextLevel < 3) {
+            while ($nextApprover === null && $nextLevel < 2) {
                 $nextLevel++;
                 $nextApprover = static::getApproverForLevel($nextLevel);
             }

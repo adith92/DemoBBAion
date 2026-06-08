@@ -18,7 +18,7 @@ class OpportunityController extends Controller
         protected PipelineService $pipelineService,
     ) {
         $this->middleware('auth');
-        $this->middleware('role:director,gm,manager,sales');
+        $this->middleware('role:gm,manager,sales');
     }
 
     // ------------------------------------------------------------------

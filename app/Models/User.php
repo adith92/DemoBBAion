@@ -7,7 +7,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 /**
- * Role can be: director|gm|manager|sales|operational|finance
+ * Role can be: gm|manager|sales|operational|finance
+ * (Director dihapus — wewenangnya digabung ke GM sebagai pucuk pimpinan.)
  */
 class User extends Authenticatable
 {
@@ -79,9 +80,13 @@ class User extends Authenticatable
     }
 
     // Role Checks
+    /**
+     * @deprecated Director dihapus. Selalu false. Disimpan sebagai alias aman
+     * agar kode lama yang masih memanggil isDirector() tidak fatal error.
+     */
     public function isDirector(): bool
     {
-        return $this->role === 'director';
+        return false;
     }
 
     public function isGM(): bool

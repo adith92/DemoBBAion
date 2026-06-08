@@ -11,7 +11,7 @@ class PipelineController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('role:director,gm,manager,sales');
+        $this->middleware('role:gm,manager,sales');
     }
 
     public function index(Request $request)

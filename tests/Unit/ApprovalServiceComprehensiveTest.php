@@ -55,14 +55,16 @@ class ApprovalServiceComprehensiveTest extends TestCase
 
     public function test_determine_starting_level_above_200m_threshold()
     {
+        // Director dihapus — deal besar berhenti di GM (level 2).
         $level = ApprovalService::determineStartingLevel(10.0, 200_000_001);
-        expect($level)->toBeThree();
+        expect($level)->toBeTwo();
     }
 
     public function test_determine_starting_level_very_large_deal_300m()
     {
+        // Director dihapus — deal sangat besar tetap mentok di GM (level 2).
         $level = ApprovalService::determineStartingLevel(15.0, 300_000_000);
-        expect($level)->toBeThree();
+        expect($level)->toBeTwo();
     }
 
     public function test_determine_starting_level_with_zero_discount()
@@ -147,14 +149,16 @@ class ApprovalServiceComprehensiveTest extends TestCase
 
     public function test_determine_max_level_above_15_percent()
     {
+        // Director dihapus — max level kini dibatasi 2 (GM).
         $maxLevel = ApprovalService::determineMaxLevel(20.0);
-        expect($maxLevel)->toBeThree();
+        expect($maxLevel)->toBeTwo();
     }
 
     public function test_determine_max_level_very_high_discount()
     {
+        // Director dihapus — max level kini dibatasi 2 (GM).
         $maxLevel = ApprovalService::determineMaxLevel(99.0);
-        expect($maxLevel)->toBeThree();
+        expect($maxLevel)->toBeTwo();
     }
 
     // =========================================================================
@@ -181,24 +185,15 @@ class ApprovalServiceComprehensiveTest extends TestCase
         expect($approver->role)->toBe('gm');
     }
 
-    public function test_get_approver_for_level_3_returns_director()
+    public function test_get_approver_for_invalid_level_falls_back_to_gm()
     {
-        $director = User::factory()->create(['role' => 'director']);
-
-        $approver = ApprovalService::getApproverForLevel(3);
-
-        expect($approver)->not->toBeNull();
-        expect($approver->role)->toBe('director');
-    }
-
-    public function test_get_approver_for_invalid_level_returns_director()
-    {
-        $director = User::factory()->create(['role' => 'director']);
+        // Director dihapus — level tertinggi & fallback kini GM.
+        $gm = User::factory()->create(['role' => 'gm']);
 
         $approver = ApprovalService::getApproverForLevel(999);
 
         expect($approver)->not->toBeNull();
-        expect($approver->role)->toBe('director');
+        expect($approver->role)->toBe('gm');
     }
 
     public function test_get_approver_returns_null_when_no_user_exists()
@@ -267,7 +262,7 @@ class ApprovalServiceComprehensiveTest extends TestCase
     public function test_create_approval_chain_escalates_when_no_approver_at_level()
     {
         $sales = User::factory()->create(['role' => 'sales']);
-        $director = User::factory()->create(['role' => 'director']);
+        $gm = User::factory()->create(['role' => 'gm']);
         $opp = Opportunity::factory()->create([
             'sales_id' => $sales->id,
             'estimated_value' => 10_000_000,
@@ -275,9 +270,9 @@ class ApprovalServiceComprehensiveTest extends TestCase
 
         $approval = ApprovalService::createApprovalChain($opp, 3.0);
 
-        // Should escalate to director since manager doesn't exist
-        expect($approval->level)->toBe(3);
-        expect($approval->current_approver_id)->toBe($director->id);
+        // Manager tidak ada → eskalasi ke GM (level 2, approver tertinggi).
+        expect($approval->level)->toBe(2);
+        expect($approval->current_approver_id)->toBe($gm->id);
     }
 
     public function test_create_approval_chain_uses_final_value_if_estimated_value_missing()
@@ -303,7 +298,7 @@ class ApprovalServiceComprehensiveTest extends TestCase
     {
         $sales = User::factory()->create(['role' => 'sales']);
         $manager = User::factory()->create(['role' => 'manager']);
-        $approver = User::factory()->create(['role' => 'director']);
+        $approver = User::factory()->create(['role' => 'gm']);
 
         $opp = Opportunity::factory()->create([
             'sales_id' => $sales->id,
@@ -333,7 +328,7 @@ class ApprovalServiceComprehensiveTest extends TestCase
         $sales = User::factory()->create(['role' => 'sales']);
         $manager = User::factory()->create(['role' => 'manager']);
         $gm = User::factory()->create(['role' => 'gm']);
-        $approver = User::factory()->create(['role' => 'director']);
+        $approver = User::factory()->create(['role' => 'gm']);
 
         $opp = Opportunity::factory()->create([
             'sales_id' => $sales->id,
@@ -363,7 +358,7 @@ class ApprovalServiceComprehensiveTest extends TestCase
     {
         $sales = User::factory()->create(['role' => 'sales']);
         $gm = User::factory()->create(['role' => 'gm']);
-        $approver = User::factory()->create(['role' => 'director']);
+        $approver = User::factory()->create(['role' => 'gm']);
 
         $opp = Opportunity::factory()->create([
             'sales_id' => $sales->id,
@@ -395,7 +390,7 @@ class ApprovalServiceComprehensiveTest extends TestCase
     {
         $sales = User::factory()->create(['role' => 'sales']);
         $manager = User::factory()->create(['role' => 'manager']);
-        $approver = User::factory()->create(['role' => 'director']);
+        $approver = User::factory()->create(['role' => 'gm']);
 
         $opp = Opportunity::factory()->create(['sales_id' => $sales->id]);
 
@@ -415,7 +410,7 @@ class ApprovalServiceComprehensiveTest extends TestCase
     public function test_reject_does_not_create_next_approval()
     {
         $sales = User::factory()->create(['role' => 'sales']);
-        $approver = User::factory()->create(['role' => 'director']);
+        $approver = User::factory()->create(['role' => 'gm']);
 
         $opp = Opportunity::factory()->create(['sales_id' => $sales->id]);
 

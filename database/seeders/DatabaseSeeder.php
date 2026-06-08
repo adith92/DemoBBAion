@@ -26,17 +26,51 @@ class DatabaseSeeder extends Seeder
             return;
         }
 
-        // ==================== 8 USERS ====================
-        $users = [
-            User::create(['name' => 'Bapak Direktur', 'email' => 'director@goldenbird.co.id', 'password' => bcrypt('password123'), 'role' => 'director']),
-            User::create(['name' => 'Budi Santoso', 'email' => 'gm@goldenbird.co.id', 'password' => bcrypt('password123'), 'role' => 'gm']),
-            User::create(['name' => 'Ratna Dewi', 'email' => 'manager@goldenbird.co.id', 'password' => bcrypt('password123'), 'role' => 'manager']),
-            User::create(['name' => 'Andi Pratama', 'email' => 'sales1@goldenbird.co.id', 'password' => bcrypt('password123'), 'role' => 'sales']),
-            User::create(['name' => 'Sari Dewi', 'email' => 'sales2@goldenbird.co.id', 'password' => bcrypt('password123'), 'role' => 'sales']),
-            User::create(['name' => 'Reza Firmansyah', 'email' => 'sales3@goldenbird.co.id', 'password' => bcrypt('password123'), 'role' => 'sales']),
-            User::create(['name' => 'Hendra Wijaya', 'email' => 'ops@goldenbird.co.id', 'password' => bcrypt('password123'), 'role' => 'operational']),
-            User::create(['name' => 'Maya Kusuma', 'email' => 'finance@goldenbird.co.id', 'password' => bcrypt('password123'), 'role' => 'finance']),
+        // ==================== USERS: 1 GM + 5 MANAGER × 3 SALES + OPS + FINANCE ====================
+        // Hierarki: GM (pucuk pimpinan) → 5 Sales Manager → masing-masing 3 Sales Representative.
+        // Director DIHAPUS — wewenangnya digabung ke GM.
+        $gm = User::create([
+            'name' => 'Budi Santoso', 'email' => 'gm@goldenbird.co.id',
+            'password' => bcrypt('password123'), 'role' => 'gm',
+        ]);
+
+        // 5 Sales Manager + nama 3 sales untuk masing-masing tim.
+        $teams = [
+            ['manager' => 'Ratna Dewi',      'email' => 'manager1@goldenbird.co.id', 'sales' => ['Andi Pratama', 'Sari Dewi', 'Reza Firmansyah']],
+            ['manager' => 'Bambang Wibowo',  'email' => 'manager2@goldenbird.co.id', 'sales' => ['Dewi Lestari', 'Fajar Nugroho', 'Gita Permata']],
+            ['manager' => 'Citra Anggraini', 'email' => 'manager3@goldenbird.co.id', 'sales' => ['Hadi Saputra', 'Indah Sari', 'Joko Prabowo']],
+            ['manager' => 'Dimas Prasetyo',  'email' => 'manager4@goldenbird.co.id', 'sales' => ['Kartika Maharani', 'Lukman Hakim', 'Mira Susanti']],
+            ['manager' => 'Eka Wahyuni',     'email' => 'manager5@goldenbird.co.id', 'sales' => ['Nanda Pratiwi', 'Oscar Tanjung', 'Putri Rahayu']],
         ];
+
+        $salesUsers = [];     // semua sales representative
+        $managerUsers = [];    // semua manager
+        $salesSeq = 1;
+        foreach ($teams as $tIdx => $team) {
+            $manager = User::create([
+                'name' => $team['manager'], 'email' => $team['email'],
+                'password' => bcrypt('password123'), 'role' => 'manager',
+                'manager_id' => $gm->id,
+            ]);
+            $managerUsers[] = $manager;
+
+            foreach ($team['sales'] as $sIdx => $salesName) {
+                $level = ['junior', 'senior', 'key_account'][$sIdx] ?? 'junior';
+                $salesUsers[] = User::create([
+                    'name' => $salesName,
+                    'email' => 'sales' . $salesSeq . '@goldenbird.co.id',
+                    'password' => bcrypt('password123'), 'role' => 'sales',
+                    'manager_id' => $manager->id, 'sales_level' => $level,
+                ]);
+                $salesSeq++;
+            }
+        }
+
+        $ops     = User::create(['name' => 'Hendra Wijaya', 'email' => 'ops@goldenbird.co.id', 'password' => bcrypt('password123'), 'role' => 'operational']);
+        $finance = User::create(['name' => 'Maya Kusuma', 'email' => 'finance@goldenbird.co.id', 'password' => bcrypt('password123'), 'role' => 'finance']);
+
+        // ID sales dinamis untuk dipakai blok di bawah (client/booking assignment).
+        $sales_ids = collect($salesUsers)->pluck('id')->all();
 
         // ==================== 3 POOLS ====================
         Pool::create(['name' => 'Pool Jakarta', 'location' => 'Tanjung Priok, Jakarta', 'capacity' => 15, 'notes' => 'Pool utama Jakarta']);
@@ -77,7 +111,8 @@ class DatabaseSeeder extends Seeder
             ['PT Bank BRI', 'Banking', 'Jakarta'],
         ];
 
-        $sales_ids = [4, 5, 6]; // sales1, sales2, sales3
+        // $sales_ids sudah di-set dinamis di blok USERS (15 sales).
+        $salesCount = count($sales_ids);
         foreach ($companies as $idx => $company) {
             Client::create([
                 'company_name' => $company[0],
@@ -87,7 +122,7 @@ class DatabaseSeeder extends Seeder
                 'address' => $company[2],
                 'industry' => $company[1],
                 'status' => 'active',
-                'assigned_sales_id' => $sales_ids[$idx % 3],
+                'assigned_sales_id' => $sales_ids[$idx % $salesCount],
                 'notes' => 'Client ' . ($idx + 1),
             ]);
         }
@@ -154,7 +189,7 @@ class DatabaseSeeder extends Seeder
             $vehicle = Vehicle::inRandomOrder()->first();
             $driver = Driver::inRandomOrder()->first();
             $sales = User::where('role', 'sales')->inRandomOrder()->first();
-            $created_by = User::find(random_int(1, 6));
+            $created_by = $sales;
             
             $pickup = Carbon::now()->subDays(random_int(1, 180))->setHour(random_int(7, 17));
             $dropoff = (clone $pickup)->addHours(random_int(2, 8));

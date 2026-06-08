@@ -33,11 +33,6 @@ class ApprovalTest extends TestCase
         return User::factory()->create(['role' => 'gm']);
     }
 
-    protected function makeDirectorUser(): User
-    {
-        return User::factory()->create(['role' => 'director']);
-    }
-
     protected function makeOpportunity(User $sales, array $overrides = []): Opportunity
     {
         $client = Client::factory()->create(['assigned_sales_id' => $sales->id]);
@@ -89,7 +84,6 @@ class ApprovalTest extends TestCase
         $sales    = $this->makeSalesUser();
         $manager  = $this->makeManagerUser();
         $gm       = $this->makeGMUser();
-        $director = $this->makeDirectorUser();
 
         $opp = $this->makeOpportunity($sales, ['estimated_value' => 10_000_000]);
 

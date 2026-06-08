@@ -399,9 +399,9 @@
 
             {{-- ⚡ 1-CLICK DEMO LOGIN --}}
             <button type="button" class="btn-demo mb-5"
-                onclick="document.querySelector('[name=email]').value='director@goldenbird.co.id';document.querySelector('[name=password]').value='password123';document.getElementById('login-form').submit();">
+                onclick="document.querySelector('[name=email]').value='gm@goldenbird.co.id';document.querySelector('[name=password]').value='password123';document.getElementById('login-form').submit();">
                 <span class="material-symbols-outlined text-[16px]">bolt</span>
-                1-Click Demo Login (Director)
+                1-Click Demo Login (GM)
             </button>
 
             {{-- Error --}}
@@ -448,10 +448,10 @@
             <div class="grid grid-cols-2 gap-2">
                 @php
                 $demos = [
-                    ['label'=>'Director HQ',    'email'=>'director@goldenbird.co.id', 'icon'=>'👔', 'color'=>'#99c2ff'],
                     ['label'=>'General Manager', 'email'=>'gm@goldenbird.co.id',       'icon'=>'🏢', 'color'=>'#66a3ff'],
-                    ['label'=>'Manager',         'email'=>'manager@goldenbird.co.id',  'icon'=>'📊', 'color'=>'#34d399'],
-                    ['label'=>'Sales Officer',   'email'=>'sales@goldenbird.co.id',    'icon'=>'💼', 'color'=>'#fbbf24'],
+                    ['label'=>'Sales Manager',   'email'=>'manager1@goldenbird.co.id', 'icon'=>'📊', 'color'=>'#34d399'],
+                    ['label'=>'Sales Officer',   'email'=>'sales1@goldenbird.co.id',   'icon'=>'💼', 'color'=>'#fbbf24'],
+                    ['label'=>'Finance',         'email'=>'finance@goldenbird.co.id',  'icon'=>'💰', 'color'=>'#a78bfa'],
                 ];
                 @endphp
                 @foreach($demos as $d)
