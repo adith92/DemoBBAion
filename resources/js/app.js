@@ -631,6 +631,14 @@ window.CRM_Widget = {
         { id: 'recent-books',   label: '🚌 Recent Bookings',    visible: true,  order: 7 },
         { id: 'approval-q',     label: '✅ Approval Queue',     visible: true,  order: 8 },
         { id: 'charts-section', label: '📉 Analytics Charts',   visible: true,  order: 9 },
+        // Manager Widgets
+        { id: 'team-overview',  label: '👥 Ringkasan Tim',      visible: true,  order: 10 },
+        { id: 'pipeline-breakdown', label: '📋 Pipeline Tim',   visible: true,  order: 11 },
+        { id: 'kpi-achievement',label: '🎯 KPI Tim',            visible: true,  order: 12 },
+        { id: 'recent-activities',label: '📅 Aktivitas Tim',    visible: true,  order: 13 },
+        // Finance Widgets
+        { id: 'finance-summary',label: '💰 Financial Summary',  visible: true,  order: 14 },
+        { id: 'finance-overdue',label: '⚠️ Overdue Invoices',   visible: true,  order: 15 },
     ],
 
     _t(key) {
@@ -666,6 +674,12 @@ window.CRM_Widget = {
             'recent-books': 'Recent Bookings',
             'approval-q': 'Approval Queue',
             'charts-section': 'Analytics Charts',
+            'team-overview': 'Team Overview',
+            'pipeline-breakdown': 'Pipeline Breakdown',
+            'kpi-achievement': 'KPI Achievement',
+            'recent-activities': 'Recent Activities',
+            'finance-summary': 'Financial Summary',
+            'finance-overdue': 'Overdue Invoices',
         } : {
             'kpi-row': 'Kartu KPI',
             'quick-shortcuts': 'Shortcut Cepat',
@@ -676,6 +690,12 @@ window.CRM_Widget = {
             'recent-books': 'Booking Terbaru',
             'approval-q': 'Antrean Approval',
             'charts-section': 'Grafik Analitik',
+            'team-overview': 'Ringkasan Tim',
+            'pipeline-breakdown': 'Pipeline Tim',
+            'kpi-achievement': 'Pencapaian KPI',
+            'recent-activities': 'Aktivitas Tim',
+            'finance-summary': 'Ringkasan Keuangan',
+            'finance-overdue': 'Faktur Jatuh Tempo',
         };
 
         return labels[widget.id] || widget.label;
@@ -762,7 +782,8 @@ window.CRM_Widget = {
     _renderList() {
         const list = document.getElementById('widget-list');
         if (!list) return;
-        list.innerHTML = this.widgets.map(w => `
+        const availableWidgets = this.widgets.filter(w => document.getElementById('widget-' + w.id) !== null);
+        list.innerHTML = availableWidgets.map(w => `
             <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--cc-border);">
                 <span style="color:var(--cc-text-muted);font-size:16px;cursor:default;">⠿</span>
                 <span style="flex:1;font-size:13px;font-weight:500;color:var(--cc-text);">${this._label(w)}</span>

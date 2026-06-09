@@ -11,8 +11,8 @@
     {{-- Header --}}
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-            <h1 class="text-2xl font-bold text-slate-900">Produk</h1>
-            <p class="text-sm text-slate-500 mt-0.5">Katalog produk dan layanan Golden Bird</p>
+            <h1 class="text-2xl font-bold" style="color:var(--cc-text)">Produk</h1>
+            <p class="text-sm mt-0.5" style="color:var(--cc-text-muted)">Katalog produk dan layanan Golden Bird</p>
         </div>
         @if(auth()->user()->isGM() || auth()->user()->isManager() || auth()->user()->isDirector())
         <a href="{{ route('products.create') }}"
@@ -42,7 +42,7 @@
     @endif
 
     {{-- Search + Filter Bar --}}
-    <div class="cc-card rounded-2xl border border-slate-100 shadow-sm p-4">
+    <div class="glass-panel cc-card rounded-2xl shadow-sm p-4">
         <form method="GET" action="{{ route('products.index') }}" class="flex flex-col sm:flex-row gap-3">
 
             {{-- Search --}}
@@ -55,17 +55,17 @@
                     name="q"
                     value="{{ request('q') }}"
                     placeholder="Cari nama produk atau SKU..."
-                    class="w-full pl-9 pr-4 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    class="w-full pl-9 pr-4 py-2 text-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-black/20 border border-white/10 text-white placeholder-slate-400"
                 >
             </div>
 
             <button type="submit"
-                    class="px-4 py-2 bg-slate-800 text-white text-sm font-semibold rounded-lg hover:bg-slate-700 cursor-pointer transition-colors">
+                    class="px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 cursor-pointer transition-colors">
                 Cari
             </button>
             @if(request('q') || request('type'))
             <a href="{{ route('products.index') }}"
-               class="px-4 py-2 border border-slate-200 text-slate-600 text-sm rounded-lg hover:bg-slate-50 cursor-pointer transition-colors text-center">
+               class="px-4 py-2 bg-slate-700/50 border border-white/10 text-white text-sm rounded-lg hover:bg-slate-700 cursor-pointer transition-colors text-center">
                 Reset
             </a>
             @endif
@@ -91,36 +91,36 @@
     </div>
 
     {{-- Table --}}
-    <div class="cc-card rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+    <div class="glass-panel cc-card rounded-2xl shadow-sm overflow-hidden border border-white/10">
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
                 <thead>
-                    <tr class="bg-slate-50 border-b border-slate-100">
-                        <th class="text-left px-5 py-3.5 text-xs font-semibold text-slate-500 uppercase tracking-wide">SKU</th>
-                        <th class="text-left px-5 py-3.5 text-xs font-semibold text-slate-500 uppercase tracking-wide">Nama Produk</th>
-                        <th class="text-left px-5 py-3.5 text-xs font-semibold text-slate-500 uppercase tracking-wide hidden md:table-cell">Kategori</th>
-                        <th class="text-right px-5 py-3.5 text-xs font-semibold text-slate-500 uppercase tracking-wide">Harga Dasar</th>
-                        <th class="text-center px-5 py-3.5 text-xs font-semibold text-slate-500 uppercase tracking-wide hidden sm:table-cell">Unit</th>
-                        <th class="text-center px-5 py-3.5 text-xs font-semibold text-slate-500 uppercase tracking-wide">Status</th>
-                        <th class="text-right px-5 py-3.5 text-xs font-semibold text-slate-500 uppercase tracking-wide">Aksi</th>
+                    <tr class="bg-black/20 border-b border-white/10">
+                        <th class="text-left px-5 py-3.5 text-xs font-semibold uppercase tracking-wide" style="color:var(--cc-text-muted)">SKU</th>
+                        <th class="text-left px-5 py-3.5 text-xs font-semibold uppercase tracking-wide" style="color:var(--cc-text-muted)">Nama Produk</th>
+                        <th class="text-left px-5 py-3.5 text-xs font-semibold uppercase tracking-wide hidden md:table-cell" style="color:var(--cc-text-muted)">Kategori</th>
+                        <th class="text-right px-5 py-3.5 text-xs font-semibold uppercase tracking-wide" style="color:var(--cc-text-muted)">Harga Dasar</th>
+                        <th class="text-center px-5 py-3.5 text-xs font-semibold uppercase tracking-wide hidden sm:table-cell" style="color:var(--cc-text-muted)">Unit</th>
+                        <th class="text-center px-5 py-3.5 text-xs font-semibold uppercase tracking-wide" style="color:var(--cc-text-muted)">Status</th>
+                        <th class="text-right px-5 py-3.5 text-xs font-semibold uppercase tracking-wide" style="color:var(--cc-text-muted)">Aksi</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-50">
+                <tbody class="divide-y divide-white/5">
                     @forelse($products as $product)
-                    <tr class="hover:bg-slate-50/50 transition-colors">
+                    <tr class="hover:bg-white/5 transition-colors">
                         <td class="px-5 py-3.5">
-                            <span class="font-mono text-xs text-slate-500 bg-slate-100 px-2 py-0.5 rounded">
+                            <span class="font-mono text-xs px-2 py-0.5 rounded" style="background:var(--cc-sidebar);color:var(--cc-text)">
                                 {{ $product->sku }}
                             </span>
                         </td>
                         <td class="px-5 py-3.5">
                             <div>
                                 <a href="{{ route('products.show', $product->id) }}"
-                                   class="font-semibold text-slate-800 hover:text-blue-700 cursor-pointer transition-colors">
+                                   class="font-semibold hover:text-blue-400 cursor-pointer transition-colors" style="color:var(--cc-text)">
                                     {{ $product->name }}
                                 </a>
                                 @if($product->description)
-                                <p class="text-xs text-slate-400 mt-0.5 line-clamp-1">{{ $product->description }}</p>
+                                <p class="text-xs mt-0.5 line-clamp-1" style="color:var(--cc-text-muted)">{{ $product->description }}</p>
                                 @endif
                             </div>
                         </td>
@@ -149,12 +149,12 @@
                             @endif
                         </td>
                         <td class="px-5 py-3.5 text-right">
-                            <span class="text-sm font-bold text-slate-900">
+                            <span class="text-sm font-bold text-emerald-400 font-mono">
                                 Rp {{ number_format((float)$product->base_price, 0, ',', '.') }}
                             </span>
                         </td>
                         <td class="px-5 py-3.5 text-center hidden sm:table-cell">
-                            <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">
+                            <span class="text-xs px-2 py-0.5 rounded font-medium" style="background:var(--cc-sidebar);color:var(--cc-text-muted)">
                                 {{ $product->unit }}
                             </span>
                         </td>

@@ -5,8 +5,16 @@
 @section('content')
 <div class="space-y-6">
 
+    <div class="flex items-center justify-between mb-2">
+        <h2 class="text-xl font-bold" style="color:var(--cc-text)">Ringkasan Tim</h2>
+        <button onclick="CRM_Widget && CRM_Widget.open()" class="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-white/10 hover:bg-white/5 transition-colors text-sm font-semibold" style="color:var(--cc-text)">
+            <span class="material-symbols-outlined text-[18px]">tune</span>
+            Kustomisasi Dashboard
+        </button>
+    </div>
+
     {{-- Team Overview Cards --}}
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div id="widget-team-overview" class="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <div class="cc-card rounded-xl border border-gray-200 p-5 shadow-sm">
             <p class="text-xs text-gray-500 uppercase tracking-wide font-semibold">Pipeline Tim</p>
             <p class="text-2xl font-bold text-blue-700 mt-1">
@@ -37,7 +45,7 @@
     </div>
 
     {{-- Charts Section --}}
-    <div class="cc-card rounded-xl border border-gray-200 shadow-sm p-5 mb-6">
+    <div id="widget-revenue-chart" class="cc-card rounded-xl border border-gray-200 shadow-sm p-5 mb-6">
         <h3 class="font-semibold text-gray-800 mb-4" style="color:var(--cc-text)">Revenue Trend (6 Months) - Seluruh Tim</h3>
         <div id="revenueChart" class="min-h-[300px]"></div>
     </div>
@@ -47,7 +55,7 @@
         {{-- Pipeline Stage Bars per Sales --}}
         <div class="lg:col-span-2 space-y-6">
 
-            <div class="cc-card rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+            <div id="widget-pipeline-breakdown" class="cc-card rounded-xl border border-gray-200 shadow-sm overflow-hidden">
                 <div class="px-5 py-4 border-b border-gray-100">
                     <h3 class="font-semibold text-gray-800">Pipeline per Sales (Stage Breakdown)</h3>
                 </div>
@@ -106,7 +114,7 @@
             </div>
 
             {{-- KPI Achievement Table --}}
-            <div class="cc-card rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+            <div id="widget-kpi-achievement" class="cc-card rounded-xl border border-gray-200 shadow-sm overflow-hidden">
                 <div class="px-5 py-4 border-b border-gray-100">
                     <h3 class="font-semibold text-gray-800">KPI Tim - {{ now()->format('F Y') }}</h3>
                 </div>
@@ -156,7 +164,7 @@
         <div class="space-y-6">
 
             {{-- Pending Approvals (level-1) --}}
-            <div class="cc-card rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+            <div id="widget-approval-q" class="cc-card rounded-xl border border-gray-200 shadow-sm overflow-hidden">
                 <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
                     <h3 class="font-semibold text-gray-800">Approval Level-1</h3>
                     @if($pendingApprovals > 0)
@@ -185,7 +193,7 @@
             </div>
 
             {{-- Recent Team Activities --}}
-            <div class="cc-card rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+            <div id="widget-recent-activities" class="cc-card rounded-xl border border-gray-200 shadow-sm overflow-hidden">
                 <div class="px-5 py-4 border-b border-gray-100">
                     <h3 class="font-semibold text-gray-800">Aktivitas Terbaru Tim</h3>
                 </div>
@@ -227,6 +235,8 @@
 
         </div>
     </div>
+
+
 
 </div>
 

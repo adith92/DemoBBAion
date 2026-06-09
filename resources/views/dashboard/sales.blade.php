@@ -8,29 +8,25 @@
     {{-- Revenue KPIs --}}
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
 
-        <a href="{{ route('finance.index', ['filter' => 'today']) }}" class="group block cc-card rounded-lg shadow p-6 border-l-4 border-blue-500 hover:shadow-md hover:bg-blue-50 transition-all">
+        <div class="group block cc-card rounded-lg shadow p-6 border-l-4 border-blue-500 transition-all">
             <p class="text-gray-500 text-sm">My Revenue Today</p>
             <p class="text-2xl font-bold text-gray-900 mt-1">{{ \App\Helpers\FormatHelper::formatIDR($todayRevenue) }}</p>
-            <p class="text-xs text-blue-600 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">View invoices →</p>
-        </a>
+        </div>
 
-        <a href="{{ route('finance.index', ['filter' => 'week']) }}" class="group block cc-card rounded-lg shadow p-6 border-l-4 border-indigo-500 hover:shadow-md hover:bg-indigo-50 transition-all">
+        <div class="group block cc-card rounded-lg shadow p-6 border-l-4 border-indigo-500 transition-all">
             <p class="text-gray-500 text-sm">My Revenue Week</p>
             <p class="text-2xl font-bold text-gray-900 mt-1">{{ \App\Helpers\FormatHelper::formatIDR($weekRevenue) }}</p>
-            <p class="text-xs text-indigo-600 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">View invoices →</p>
-        </a>
+        </div>
 
-        <a href="{{ route('finance.index', ['filter' => 'month']) }}" class="group block cc-card rounded-lg shadow p-6 border-l-4 border-purple-500 hover:shadow-md hover:bg-purple-50 transition-all">
+        <div class="group block cc-card rounded-lg shadow p-6 border-l-4 border-purple-500 transition-all">
             <p class="text-gray-500 text-sm">My Revenue Month</p>
             <p class="text-2xl font-bold text-gray-900 mt-1">{{ \App\Helpers\FormatHelper::formatIDR($monthRevenue) }}</p>
-            <p class="text-xs text-purple-600 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">View invoices →</p>
-        </a>
+        </div>
 
-        <a href="{{ route('finance.index', ['filter' => 'year']) }}" class="group block cc-card rounded-lg shadow p-6 border-l-4 border-green-500 hover:shadow-md hover:bg-green-50 transition-all">
+        <div class="group block cc-card rounded-lg shadow p-6 border-l-4 border-green-500 transition-all">
             <p class="text-gray-500 text-sm">My Revenue Year</p>
             <p class="text-2xl font-bold text-gray-900 mt-1">{{ \App\Helpers\FormatHelper::formatIDR($yearRevenue) }}</p>
-            <p class="text-xs text-green-600 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">View invoices →</p>
-        </a>
+        </div>
     </div>
 
     {{-- Operational KPIs --}}

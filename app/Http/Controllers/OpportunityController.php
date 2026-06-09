@@ -239,6 +239,28 @@ class OpportunityController extends Controller
                 ]);
             }
 
+            // Validasi transisi mundur khusus untuk role 'sales'
+            if (auth()->user()->role === 'sales') {
+                $stageOrder = [
+                    'call_meeting' => 1,
+                    'prospecting' => 2,
+                    'proposal' => 3,
+                    'negotiation' => 4,
+                    'won' => 5,
+                    'lost' => 6
+                ];
+                
+                $oldIdx = $stageOrder[$oldStage] ?? 0;
+                $newIdx = $stageOrder[$validated['stage']] ?? 0;
+                
+                if ($newIdx < $oldIdx && !in_array($validated['stage'], ['won', 'lost'])) {
+                    if ($request->wantsJson()) {
+                        return response()->json(['ok' => false, 'message' => "Gagal: Membutuhkan Persetujuan Sales Manager untuk mundur dari tahapan ini."], 403);
+                    }
+                    return back()->withErrors(['stage' => "Membutuhkan Persetujuan Sales Manager untuk mundur ke tahapan {$validated['stage']}."]);
+                }
+            }
+
             // Log stage transition as activity
             ActivityLog::create([
                 'sales_id'       => auth()->id(),

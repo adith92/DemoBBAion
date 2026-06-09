@@ -51,11 +51,11 @@ class SalesTargetController extends Controller
                 'userId' => $t->user_id,
                 'productTargets' => [
                     'Mobil Short Term' => (float)$t->target_revenue * 0.4,
-                    'Mobil Long Term' => (float)$t->target_revenue * 0.2,
-                    'Bus Pariwisata' => (float)$t->target_revenue * 0.15,
-                    'Shuttle Bus' => (float)$t->target_revenue * 0.1,
-                    'E-Voucher' => (float)$t->target_revenue * 0.05,
-                    'Mobil Box/Blind Van' => (float)$t->target_revenue * 0.1,
+                    'Bis Short Term'   => (float)$t->target_revenue * 0.2,
+                    'Mobil Long Term'  => (float)$t->target_revenue * 0.15,
+                    'Bis Long Term'    => (float)$t->target_revenue * 0.1,
+                    'E-Voucher'        => (float)$t->target_revenue * 0.1,
+                    'Supir'            => (float)$t->target_revenue * 0.05,
                 ]
             ];
         });

@@ -5,7 +5,7 @@
 @section('content')
 <div class="space-y-6">
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div id="widget-kpi-row" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
 
         <a href="{{ route('finance.index', ['filter' => 'today']) }}" class="group block cc-card rounded-lg shadow p-6 border-l-4 border-blue-500 hover:shadow-md hover:bg-blue-50 transition-all">
             <p class="text-gray-500 text-sm">Today Revenue</p>
@@ -32,13 +32,13 @@
         </a>
     </div>
 
-    <div class="cc-card rounded-lg shadow p-6">
+    <div id="widget-finance-summary" class="cc-card rounded-lg shadow p-6">
         <h3 class="text-lg font-semibold text-gray-900">Financial Summary</h3>
         <p class="text-gray-500 mt-2 text-sm">Total Paid This Month: <strong class="text-green-600">{{ \App\Helpers\FormatHelper::formatIDR($paidThisMonth) }}</strong></p>
     </div>
 
     @if($overdueInvoices->count())
-    <div class="cc-card rounded-lg shadow p-6">
+    <div id="widget-finance-overdue" class="cc-card rounded-lg shadow p-6">
         <div class="flex justify-between items-center mb-4">
             <h3 class="text-lg font-semibold text-gray-900">⚠️ Overdue Invoices</h3>
             <a href="{{ route('finance.index', ['status' => 'overdue']) }}" class="text-red-600 hover:text-red-800 text-sm font-medium">View all →</a>

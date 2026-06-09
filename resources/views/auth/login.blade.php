@@ -399,9 +399,9 @@
 
             {{-- ⚡ 1-CLICK DEMO LOGIN --}}
             <button type="button" class="btn-demo mb-5"
-                onclick="document.querySelector('[name=email]').value='gm@goldenbird.co.id';document.querySelector('[name=password]').value='password123';document.getElementById('login-form').submit();">
+                onclick="document.querySelector('[name=email]').value='manager@demo.crm';document.querySelector('[name=password]').value='password';document.getElementById('login-form').submit();">
                 <span class="material-symbols-outlined text-[16px]">bolt</span>
-                1-Click Demo Login (GM)
+                1-Click Demo Login (Manager)
             </button>
 
             {{-- Error --}}
@@ -448,19 +448,21 @@
             <div class="grid grid-cols-2 gap-2">
                 @php
                 $demos = [
-                    ['label'=>'General Manager', 'email'=>'gm@goldenbird.co.id',       'icon'=>'🏢', 'color'=>'#66a3ff'],
-                    ['label'=>'Sales Manager',   'email'=>'manager1@goldenbird.co.id', 'icon'=>'📊', 'color'=>'#34d399'],
-                    ['label'=>'Sales Officer',   'email'=>'sales1@goldenbird.co.id',   'icon'=>'💼', 'color'=>'#fbbf24'],
-                    ['label'=>'Finance',         'email'=>'finance@goldenbird.co.id',  'icon'=>'💰', 'color'=>'#a78bfa'],
+                    ['label'=>'General Manager', 'email'=>'gm@demo.crm',       'icon'=>'🏢', 'color'=>'#66a3ff'],
+                    ['label'=>'Sales Manager',   'email'=>'manager@demo.crm', 'icon'=>'📊', 'color'=>'#34d399'],
+                    ['label'=>'Sales A (Tim Manager)',   'email'=>'sales1@demo.crm',   'icon'=>'💼', 'color'=>'#fbbf24'],
+                    ['label'=>'Sales B (Tim Manager)',   'email'=>'sales2@demo.crm',   'icon'=>'💼', 'color'=>'#fbbf24'],
+                    ['label'=>'Sales C (Tim Manager)',   'email'=>'sales3@demo.crm',   'icon'=>'💼', 'color'=>'#fbbf24'],
+                    ['label'=>'Finance',         'email'=>'finance@demo.crm',  'icon'=>'💰', 'color'=>'#a78bfa'],
                 ];
                 @endphp
                 @foreach($demos as $d)
-                <div class="demo-pill"
-                     onclick="document.querySelector('[name=email]').value='{{ $d['email'] }}';document.querySelector('[name=password]').value='password123';">
-                    <span class="text-sm">{{ $d['icon'] }}</span>
+                <div class="demo-pill flex items-center gap-3 p-3 rounded-xl border border-white/10 bg-white/5 cursor-pointer hover:bg-white/10 transition-colors"
+                     onclick="document.querySelector('[name=email]').value='{{ $d['email'] }}';document.querySelector('[name=password]').value='password';document.getElementById('login-form').submit();">
+                    <span class="text-xl">{{ $d['icon'] }}</span>
                     <div>
-                        <div class="text-[10px] font-bold" style="color:{{ $d['color'] }};">{{ $d['label'] }}</div>
-                        <div class="text-[9px] font-mono" style="color:#1e3a6e;">password123</div>
+                        <div class="text-[11px] font-bold" style="color:{{ $d['color'] }};">{{ $d['label'] }}</div>
+                        <div class="text-[9px] font-mono text-slate-400 mt-0.5">{{ $d['email'] }}</div>
                     </div>
                 </div>
                 @endforeach

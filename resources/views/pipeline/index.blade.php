@@ -444,7 +444,7 @@ function pipelineManager() {
 
         formatIDR(val) {
             if(!val) val = 0;
-            return 'Rp ' + parseInt(val).toLocaleString('id-ID');
+            return 'Rp ' + parseInt(val).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
         },
 
         formatDate(iso, time = false) {
@@ -488,7 +488,7 @@ function pipelineManager() {
         handlePriceInput(p, event) {
             let val = parseInt(event.target.value.replace(/[^0-9]/g, '')) || 0;
             p.estimatedValue = val;
-            p.formattedPrice = val > 0 ? val.toLocaleString('id-ID') : '';
+            p.formattedPrice = val > 0 ? val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : '';
         },
 
         openHistoryModal(deal) {
@@ -519,7 +519,7 @@ function pipelineManager() {
             this.editingDeal = JSON.parse(JSON.stringify(deal));
             // Initialize formattedPrice for editing
             if(this.editingDeal.products) {
-                this.editingDeal.products.forEach(p => p.formattedPrice = (p.estimatedValue || 0).toLocaleString('id-ID'));
+                this.editingDeal.products.forEach(p => p.formattedPrice = (p.estimatedValue || 0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."));
             }
             this.targetStage = newStage;
             this.subType = 'Call';
@@ -546,10 +546,10 @@ function pipelineManager() {
                     lost_reason: this.editingDeal.lost_reason
                 };
 
-                let url = '{{ route("pipeline.store") }}';
+                let url = '{{ route("opportunities.store") }}';
                 let method = 'POST';
                 if(this.modalMode === 'edit-stage') {
-                    url = '/pipeline/' + this.editingDeal.id;
+                    url = `/opportunities/${this.editingDeal.id}`;
                     payload._method = 'PUT';
                 }
 

@@ -27,6 +27,14 @@ class WidgetPreference extends Model
             ['id' => 'recent-books',  'label' => '🚌 Recent Bookings',     'visible' => true,  'order' => 7],
             ['id' => 'approval-q',    'label' => '✅ Approval Queue',      'visible' => true,  'order' => 8],
             ['id' => 'charts-section','label' => '📉 Analytics Charts',    'visible' => true,  'order' => 9],
+            // Manager Widgets
+            ['id' => 'team-overview', 'label' => '👥 Ringkasan Tim',       'visible' => true,  'order' => 10],
+            ['id' => 'pipeline-breakdown', 'label' => '📋 Pipeline Tim',   'visible' => true,  'order' => 11],
+            ['id' => 'kpi-achievement','label' => '🎯 KPI Tim',            'visible' => true,  'order' => 12],
+            ['id' => 'recent-activities','label' => '📅 Aktivitas Tim',    'visible' => true,  'order' => 13],
+            // Finance Widgets
+            ['id' => 'finance-summary','label' => '💰 Financial Summary',  'visible' => true,  'order' => 14],
+            ['id' => 'finance-overdue','label' => '⚠️ Overdue Invoices',   'visible' => true,  'order' => 15],
         ];
     }
 
