@@ -107,6 +107,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/widgets/reset', [WidgetController::class, 'reset'])->name('widgets.reset');
         Route::get('/activities/upcoming', [ActivityLogController::class, 'apiUpcoming'])->middleware('role:gm,manager,sales');
         Route::get('/opportunities/by-client/{client}', [OpportunityController::class, 'byClient'])->middleware('role:gm,manager,sales');
+        Route::get('/opportunities/{opportunity}/history', [OpportunityController::class, 'getHistory'])->middleware('role:gm,manager,sales');
     });
 });
 

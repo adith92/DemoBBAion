@@ -576,12 +576,25 @@ function pipelineManager() {
             p.formattedPrice = val > 0 ? val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : '';
         },
 
-        openHistoryModal(deal) {
+        async openHistoryModal(deal) {
             this.editingDeal = JSON.parse(JSON.stringify(deal));
             this.modalMode = 'history';
-            this.modalTitle = 'Deal History';
+            this.modalTitle = 'Loading History...';
             this.expandedHistoryId = null;
             this.isModalOpen = true;
+
+            try {
+                const res = await fetch(`/api/opportunities/${deal.id}/history`);
+                const data = await res.json();
+                this.editingDeal.history_timeline = data.history_timeline || [];
+                if(typeof this.editingDeal.history_timeline === 'string') {
+                    this.editingDeal.history_timeline = JSON.parse(this.editingDeal.history_timeline);
+                }
+                this.modalTitle = 'Deal History';
+            } catch (e) {
+                console.error('Error fetching history:', e);
+                this.modalTitle = 'Error loading history';
+            }
         },
 
         openCreateModal() {

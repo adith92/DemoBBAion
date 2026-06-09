@@ -486,6 +486,19 @@ class OpportunityController extends Controller
     }
 
     // ------------------------------------------------------------------
+    // Get History Timeline
+    // ------------------------------------------------------------------
+
+    public function getHistory(Opportunity $opportunity)
+    {
+        $this->authorizeView($opportunity);
+
+        return response()->json([
+            'history_timeline' => $opportunity->history_timeline ?? []
+        ]);
+    }
+
+    // ------------------------------------------------------------------
     // 360° view data (GET, JSON)
     // ------------------------------------------------------------------
 

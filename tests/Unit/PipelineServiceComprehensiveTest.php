@@ -4,9 +4,12 @@ namespace Tests\Unit;
 
 use App\Services\PipelineService;
 use Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class PipelineServiceComprehensiveTest extends TestCase
 {
+    use RefreshDatabase;
+
     protected PipelineService $service;
 
     protected function setUp(): void
@@ -311,4 +314,61 @@ class PipelineServiceComprehensiveTest extends TestCase
         expect($this->service->canTransition('negotiation', 'won'))->toBeTrue();
     }
 
+    public function test_is_recurring_detects_long_term_products()
+    {
+        $opportunity = new \App\Models\Opportunity([
+            'products' => [
+                ['category' => 'Mobil Long Term', 'quantity' => 1, 'estimatedValue' => 1000000]
+            ]
+        ]);
+
+        $reflection = new \ReflectionClass(PipelineService::class);
+        $method = $reflection->getMethod('isRecurring');
+        $method->setAccessible(true);
+
+        expect($method->invoke($this->service, $opportunity))->toBeTrue();
+    }
+
+    public function test_is_recurring_returns_false_for_short_term_only()
+    {
+        $opportunity = new \App\Models\Opportunity([
+            'products' => [
+                ['category' => 'Mobil Short Term', 'quantity' => 1, 'estimatedValue' => 1000000]
+            ]
+        ]);
+
+        $reflection = new \ReflectionClass(PipelineService::class);
+        $method = $reflection->getMethod('isRecurring');
+        $method->setAccessible(true);
+
+        expect($method->invoke($this->service, $opportunity))->toBeFalse();
+    }
+
+    public function test_trigger_won_actions_creates_subscription_with_end_date()
+    {
+        $client = \App\Models\Client::factory()->create();
+        $sales = \App\Models\User::factory()->create(['role' => 'sales']);
+        
+        $opportunity = \App\Models\Opportunity::create([
+            'title' => 'Test Recurring Opportunity',
+            'client_id' => $client->id,
+            'sales_id' => $sales->id,
+            'stage' => 'won',
+            'estimated_value' => 5000000,
+            'products' => [
+                ['category' => 'Mobil Long Term', 'quantity' => 1, 'estimatedValue' => 5000000]
+            ]
+        ]);
+
+        $subscription = $this->service->triggerWonActions($opportunity);
+
+        expect($subscription)->toBeInstanceOf(\App\Models\Subscription::class);
+        expect($subscription->client_id)->toBe($client->id);
+        expect((float) $subscription->monthly_rate)->toBe(5000000.0);
+        expect($subscription->end_date->toDateString())->toBe(now()->addYear()->toDateString());
+        $this->assertDatabaseHas('subscriptions', [
+            'id' => $subscription->id,
+            'client_id' => $client->id,
+        ]);
+    }
 }

@@ -82,7 +82,19 @@ class PipelineService
      */
     protected function isRecurring(Opportunity $opportunity): bool
     {
-        return isset($opportunity->type) && $opportunity->type === 'recurring';
+        if (isset($opportunity->type) && $opportunity->type === 'recurring') {
+            return true;
+        }
+
+        if (is_array($opportunity->products)) {
+            foreach ($opportunity->products as $p) {
+                if (isset($p['category']) && str_contains($p['category'], 'Long Term')) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -95,6 +107,7 @@ class PipelineService
             'client_id'      => $opportunity->client_id,
             'monthly_rate'   => $this->getOpportunityAmount($opportunity),
             'start_date'     => now(),
+            'end_date'       => now()->addYear(),
             'status'         => 'active',
         ]);
     }

@@ -21,7 +21,7 @@ class PipelineController extends Controller
         $stages = ['call_meeting', 'prospecting', 'proposal', 'negotiation', 'won', 'lost'];
 
         // Build base query scoped by role
-        $baseQuery = Opportunity::with(['client', 'sales', 'product', 'activityLogs'])
+        $baseQuery = Opportunity::with(['client:id,company_name', 'sales:id,name'])
             ->when($user->isSales(), fn ($q) => $q->where('sales_id', $user->id))
             ->when($user->isManager(), function ($q) use ($user) {
                 $teamIds = User::where('manager_id', $user->id)->where('role', 'sales')->pluck('id');
@@ -43,26 +43,17 @@ class PipelineController extends Controller
             default      => $baseQuery->orderByDesc('updated_at'),
         };
 
-        $allOpps = $baseQuery->get();
-
         // Paginated opportunities for Alpine.js (to have ->items() method)
-        $opportunities = $baseQuery->paginate(1000);
+        $opportunities = $baseQuery->paginate(100);
+        $opportunities->getCollection()->transform(function ($opp) {
+            $opp->makeHidden(['history_timeline', 'notes']);
+            return $opp;
+        });
 
         // Fetch clients scoped by user role
         $clients = \App\Models\Client::when($user->isSales(), fn($q) => $q->where('assigned_sales_id', $user->id))
             ->orderBy('company_name')
             ->get();
-
-        // Group by stage, build kanban structure
-        $kanban = [];
-        foreach ($stages as $stage) {
-            $stageOpps = $allOpps->where('stage', $stage)->values();
-            $kanban[$stage] = [
-                'opportunities' => $stageOpps,
-                'count'         => $stageOpps->count(),
-                'total_value'   => $stageOpps->sum(fn ($o) => (float) ($o->estimated_value ?? 0)),
-            ];
-        }
 
         // Sales users for filter dropdown
         $salesUsers = collect();
@@ -74,6 +65,6 @@ class PipelineController extends Controller
             }
         }
 
-        return view('pipeline.index', compact('kanban', 'stages', 'salesUsers', 'sortBy', 'clients', 'opportunities'));
+        return view('pipeline.index', compact('stages', 'salesUsers', 'sortBy', 'clients', 'opportunities'));
     }
 }
