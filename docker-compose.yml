@@ -1,0 +1,19 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: golden-bird-crm
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./database/database.sqlite:/var/www/html/database/database.sqlite
+    environment:
+      - APP_NAME=Golden Bird CRM
+      - APP_ENV=production
+      - APP_KEY=base64:Z8R+mog9qhjwZfZY7AH38hMI7ExEhrmr1CvLE1nuyHQ=
+      - APP_DEBUG=false
+      - APP_URL=http://82.153.226.21
+      - DB_CONNECTION=sqlite
+      - DB_DATABASE=/var/www/html/database/database.sqlite
