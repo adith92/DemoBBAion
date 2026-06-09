@@ -67,10 +67,51 @@ class DashboardController extends Controller
         $todayRevenue  = Booking::whereDate('created_at', $today)
                             ->where('status', 'completed')->sum('price');
 
+        // Tambahan data performa sales untuk GM
+        $users = User::all()->map(function($u) {
+            return [
+                'id' => $u->id,
+                'name' => $u->name,
+                'role' => $u->role === 'sales' ? 'Sales' : ($u->role === 'manager' ? 'Manager' : 'GM'),
+                'managerId' => $u->manager_id,
+            ];
+        });
+
+        $deals = Opportunity::all()->map(function($d) {
+            return [
+                'id' => $d->id,
+                'salesId' => $d->sales_id,
+                'stage' => $d->stage === 'won' ? 'Won' : ($d->stage === 'lost' ? 'Lost' : 'Active'),
+                'actualValue' => (float)$d->final_value,
+                'estimatedValue' => (float)$d->estimated_value,
+                'products' => $d->products,
+            ];
+        });
+
+        $year  = now()->year;
+        $month = now()->month;
+        $dbTargets = \App\Models\SalesTarget::where('period_year', $year)
+            ->where('period_month', $month)
+            ->get();
+
+        $targets = $dbTargets->map(function($t) {
+            return [
+                'userId' => $t->user_id,
+                'productTargets' => [
+                    'Mobil Short Term' => (float)$t->target_revenue * 0.4,
+                    'Bis Short Term'   => (float)$t->target_revenue * 0.2,
+                    'Mobil Long Term'  => (float)$t->target_revenue * 0.15,
+                    'Bis Long Term'    => (float)$t->target_revenue * 0.1,
+                    'E-Voucher'        => (float)$t->target_revenue * 0.1,
+                    'Supir'            => (float)$t->target_revenue * 0.05,
+                ]
+            ];
+        });
+
         return view('dashboard.gm', compact(
             'pendingPO', 'availableVehicles', 'pendingDispatch', 'upcomingMeetings',
             'totalMonthlyRevenue', 'completedBookings', 'avgRevenuePerBooking',
-            'activeClients', 'todayRevenue'
+            'activeClients', 'todayRevenue', 'users', 'deals', 'targets'
         ));
     }
 

@@ -352,6 +352,15 @@ class OpportunityController extends Controller
             ]);
         }
 
+        // Proteksi Lost ke Won bagi role sales
+        if ($opportunity->stage === 'lost' && $validated['stage'] === 'won') {
+            if (auth()->user()->role === 'sales') {
+                return back()->withErrors([
+                    'stage' => "Mengubah status dari Lost ke Won membutuhkan persetujuan Sales Manager.",
+                ]);
+            }
+        }
+
         // Log the stage advance as an activity
         ActivityLog::create([
             'sales_id'       => auth()->id(),
@@ -445,6 +454,16 @@ class OpportunityController extends Controller
                 'ok'      => false,
                 'message' => "Transisi dari {$fromStage} ke {$toStage} tidak diizinkan.",
             ], 422);
+        }
+
+        // Proteksi Lost ke Won bagi role sales
+        if ($fromStage === 'lost' && $toStage === 'won') {
+            if (auth()->user()->role === 'sales') {
+                return response()->json([
+                    'ok'      => false,
+                    'message' => "Mengubah status dari Lost ke Won membutuhkan persetujuan Sales Manager.",
+                ], 403);
+            }
         }
 
         $updates = ['stage' => $toStage];
@@ -567,8 +586,26 @@ class OpportunityController extends Controller
     protected function authorizeEdit(Opportunity $opportunity): void
     {
         $user = auth()->user();
-        if ($user->role !== 'sales' || $opportunity->sales_id !== $user->id) {
-            abort(403, 'Akses ditolak: Hanya Sales pemilik yang dapat mengedit.');
+
+        // GM has full edit access
+        if ($user->isGM()) {
+            return;
         }
+
+        // Manager can edit if the opportunity belongs to a subordinate sales rep
+        if ($user->isManager()) {
+            $opportunityOwner = User::find($opportunity->sales_id);
+            if ($opportunityOwner && $opportunityOwner->manager_id === $user->id) {
+                return;
+            }
+            abort(403, 'Akses ditolak: Hanya Manager dari Sales pemilik yang dapat mengedit.');
+        }
+
+        // Sales can only edit if they are the owner
+        if ($user->isSales() && $opportunity->sales_id === $user->id) {
+            return;
+        }
+
+        abort(403, 'Akses ditolak: Anda tidak memiliki wewenang untuk mengedit oportunitas ini.');
     }
 }

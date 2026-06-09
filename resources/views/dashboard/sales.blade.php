@@ -77,7 +77,7 @@
     <div class="grid-stack-item" gs-id="w-funnel-chart" gs-x="0" gs-y="4" gs-w="6" gs-h="5">
         <div class="grid-stack-item-content">
             <div class="cc-card rounded-xl shadow p-5 h-full">
-                <h3 class="text-base font-semibold mb-3" style="color:var(--cc-text)">Pipeline Funnel</h3>
+                <h3 class="text-base font-semibold mb-3" style="color:var(--cc-text)">Sales Pipeline</h3>
                 <div id="funnelChart" style="min-height:280px"></div>
             </div>
         </div>

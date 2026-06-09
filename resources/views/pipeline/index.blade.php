@@ -165,7 +165,10 @@
             @foreach($stages as $key => $label)
             <div class="kanban-column glass-panel" data-stage="{{ $key }}">
                 <div class="p-4 border-b border-white/5 flex items-center justify-between shrink-0">
-                    <h3 class="font-bold text-[var(--cc-text)] text-sm tracking-wide">{{ $label }}</h3>
+                    <div class="flex flex-col min-w-0 pr-2">
+                        <h3 class="font-bold text-[var(--cc-text)] text-sm tracking-wide truncate">{{ $label }}</h3>
+                        <span class="text-[10px] font-mono text-emerald-400 font-bold mt-0.5" x-text="formatIDR(getStageValueSum('{{ $key }}'))"></span>
+                    </div>
                     <span class="text-xs font-bold text-slate-400 bg-black/20 px-2.5 py-0.5 rounded-full border border-white/5" x-text="getDealCount('{{ $key }}')">0</span>
                 </div>
                 
@@ -493,6 +496,13 @@ function pipelineManager() {
             return this.filteredDeals(stage).length;
         },
 
+        getStageValueSum(stage) {
+            return this.filteredDeals(stage).reduce((sum, d) => {
+                let val = parseFloat(d.stage === 'won' ? d.final_value : d.estimated_value) || 0;
+                return sum + val;
+            }, 0);
+        },
+
         formatIDR(val) {
             if(!val) val = 0;
             return 'Rp ' + parseInt(val).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
@@ -668,6 +678,19 @@ function pipelineManager() {
                         
                         // Find deal
                         const deal = self.rawDeals.find(d => d.id == dealId);
+                        
+                        // Check if transition is lost -> won and user is sales
+                        const userRole = '{{ auth()->user()->role }}';
+                        if (deal.stage === 'lost' && newStage === 'won' && userRole === 'sales') {
+                            // Revert DOM instantly
+                            evt.from.insertBefore(itemEl, evt.from.children[evt.oldIndex]);
+                            if (typeof CRM_Toast !== 'undefined') {
+                                CRM_Toast.show('Membutuhkan Persetujuan Sales Manager untuk mengubah Lost menjadi Won.', 'error');
+                            } else {
+                                alert('Membutuhkan Persetujuan Sales Manager untuk mengubah Lost menjadi Won.');
+                            }
+                            return;
+                        }
                         
                         // Revert DOM instantly
                         evt.from.insertBefore(itemEl, evt.from.children[evt.oldIndex]);

@@ -203,4 +203,103 @@ class PipelineTest extends TestCase
         $response->assertDontSee('Opp For Sales Two');
         $response->assertSee('Opp For Sales One');
     }
+
+    /**
+     * Sales user cannot advance a lost opportunity to won.
+     */
+    public function test_sales_cannot_advance_lost_to_won(): void
+    {
+        $sales  = $this->makeSalesUser();
+        $client = $this->makeClient($sales);
+
+        $opportunity = Opportunity::factory()->create([
+            'sales_id'  => $sales->id,
+            'client_id' => $client->id,
+            'stage'     => 'lost',
+        ]);
+
+        $response = $this->actingAs($sales)
+            ->withSession(['_token' => 'test-token'])
+            ->post("/opportunities/{$opportunity->id}/advance-stage", [
+                'stage'  => 'won',
+                '_token' => 'test-token',
+            ]);
+
+        $response->assertSessionHasErrors(['stage']);
+        $this->assertEquals('lost', $opportunity->fresh()->stage);
+    }
+
+    /**
+     * Manager or GM user CAN advance a lost opportunity to won.
+     */
+    public function test_manager_can_advance_lost_to_won(): void
+    {
+        $manager = User::factory()->create(['role' => 'manager']);
+        $sales   = $this->makeSalesUser(['manager_id' => $manager->id]);
+        $client  = $this->makeClient($sales);
+
+        $opportunity = Opportunity::factory()->create([
+            'sales_id'  => $sales->id,
+            'client_id' => $client->id,
+            'stage'     => 'lost',
+        ]);
+
+        $response = $this->actingAs($manager)
+            ->withSession(['_token' => 'test-token'])
+            ->post("/opportunities/{$opportunity->id}/advance-stage", [
+                'stage'  => 'won',
+                '_token' => 'test-token',
+            ]);
+
+        $response->assertRedirect();
+        $response->assertSessionHasNoErrors();
+        $this->assertEquals('won', $opportunity->fresh()->stage);
+    }
+
+    /**
+     * Sales user cannot move a lost opportunity to won via move-stage JSON endpoint.
+     */
+    public function test_sales_cannot_move_lost_to_won(): void
+    {
+        $sales  = $this->makeSalesUser();
+        $client = $this->makeClient($sales);
+
+        $opportunity = Opportunity::factory()->create([
+            'sales_id'  => $sales->id,
+            'client_id' => $client->id,
+            'stage'     => 'lost',
+        ]);
+
+        $response = $this->actingAs($sales)
+            ->patchJson("/opportunities/{$opportunity->id}/move-stage", [
+                'stage' => 'won',
+            ]);
+
+        $response->assertStatus(403);
+        $this->assertEquals('lost', $opportunity->fresh()->stage);
+    }
+
+    /**
+     * Manager or GM user CAN move a lost opportunity to won via move-stage JSON endpoint.
+     */
+    public function test_manager_can_move_lost_to_won(): void
+    {
+        $manager = User::factory()->create(['role' => 'manager']);
+        $sales   = $this->makeSalesUser(['manager_id' => $manager->id]);
+        $client  = $this->makeClient($sales);
+
+        $opportunity = Opportunity::factory()->create([
+            'sales_id'  => $sales->id,
+            'client_id' => $client->id,
+            'stage'     => 'lost',
+        ]);
+
+        $response = $this->actingAs($manager)
+            ->patchJson("/opportunities/{$opportunity->id}/move-stage", [
+                'stage' => 'won',
+            ]);
+
+        $response->assertOk();
+        $this->assertEquals('won', $opportunity->fresh()->stage);
+    }
 }

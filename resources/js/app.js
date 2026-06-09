@@ -624,23 +624,52 @@ window.CRM_Widget = {
     _saveTimer: null,
 
     _defaults: [
-        { id: 'kpi-row',        label: '📊 KPI Cards',         visible: true,  order: 1 },
-        { id: 'quick-shortcuts',label: '⚡ Quick Shortcuts',    visible: true,  order: 2 },
-        { id: 'exec-summary',   label: '🤖 Executive Summary',  visible: true,  order: 3 },
-        { id: 'fleet-league',   label: '🏆 Fleet League',       visible: true,  order: 4 },
-        { id: 'revenue-chart',  label: '📈 Revenue Chart',      visible: true,  order: 5 },
-        { id: 'sales-ranking',  label: '🥇 Sales Ranking',      visible: true,  order: 6 },
-        { id: 'recent-books',   label: '🚌 Recent Bookings',    visible: true,  order: 7 },
-        { id: 'approval-q',     label: '✅ Approval Queue',     visible: true,  order: 8 },
-        { id: 'charts-section', label: '📉 Analytics Charts',   visible: true,  order: 9 },
+        // GM Widgets (with widget- prefix)
+        { id: 'widget-kpi-row',        label: '📊 KPI Cards',         visible: true,  order: 1 },
+        { id: 'widget-quick-shortcuts',label: '⚡ Quick Shortcuts',    visible: true,  order: 2 },
+        { id: 'widget-exec-summary',   label: '🤖 Executive Summary',  visible: true,  order: 3 },
+        { id: 'widget-fleet-league',   label: '🏆 Fleet League',       visible: true,  order: 4 },
+        { id: 'widget-revenue-chart',  label: '📈 Revenue Chart',      visible: true,  order: 5 },
+        { id: 'widget-sales-ranking',  label: '🥇 Sales Ranking',      visible: true,  order: 6 },
+        { id: 'widget-recent-books',   label: '🚌 Recent Bookings',    visible: true,  order: 7 },
+        { id: 'widget-approval-q',     label: '✅ Approval Queue',     visible: true,  order: 8 },
+        { id: 'widget-charts-section', label: '📉 Analytics Charts',   visible: true,  order: 9 },
+
+        // Sales Widgets
+        { id: 'w-revenue-today',   label: '💰 My Revenue Today',     visible: true,  order: 10 },
+        { id: 'w-revenue-week',    label: '💵 My Revenue Week',      visible: true,  order: 11 },
+        { id: 'w-revenue-month',   label: '📅 My Revenue Month',     visible: true,  order: 12 },
+        { id: 'w-revenue-year',    label: '🏆 My Revenue Year',      visible: true,  order: 13 },
+        { id: 'w-active-bookings', label: '🚌 Active Bookings',      visible: true,  order: 14 },
+        { id: 'w-my-clients',      label: '👥 My Clients',           visible: true,  order: 15 },
+        { id: 'w-new-booking',     label: '➕ New Booking Button',   visible: true,  order: 16 },
+        { id: 'w-funnel-chart',    label: '📊 Sales Pipeline Chart', visible: true,  order: 17 },
+        { id: 'w-revenue-chart',   label: '📈 Revenue Trend Chart',  visible: true,  order: 18 },
+        { id: 'w-recent-bookings', label: '📋 Recent Bookings Table',visible: true,  order: 19 },
+
         // Manager Widgets
-        { id: 'team-overview',  label: '👥 Ringkasan Tim',      visible: true,  order: 10 },
-        { id: 'pipeline-breakdown', label: '📋 Pipeline Tim',   visible: true,  order: 11 },
-        { id: 'kpi-achievement',label: '🎯 KPI Tim',            visible: true,  order: 12 },
-        { id: 'recent-activities',label: '📅 Aktivitas Tim',    visible: true,  order: 13 },
+        { id: 'w-pipeline-tim',        label: '👥 Pipeline Value',     visible: true,  order: 20 },
+        { id: 'w-won-alltime',         label: '🏆 Won Deals Count',    visible: true,  order: 21 },
+        { id: 'w-approval-l1',         label: '✅ Pending Approvals',  visible: true,  order: 22 },
+        { id: 'w-anggota-tim',         label: '📋 Team Members list',  visible: true,  order: 23 },
+        { id: 'w-pipeline-breakdown',  label: '📊 Team Pipeline Chart',visible: true,  order: 24 },
+        { id: 'w-approval-queue',      label: '📋 Approval Request Queue', visible: true,  order: 25 },
+        { id: 'w-recent-activities',   label: '📅 Team Recent Activities', visible: true,  order: 26 },
+        { id: 'w-kpi-achievement',     label: '🎯 KPI Achievement Chart',  visible: true,  order: 27 },
+
         // Finance Widgets
-        { id: 'finance-summary',label: '💰 Financial Summary',  visible: true,  order: 14 },
-        { id: 'finance-overdue',label: '⚠️ Overdue Invoices',   visible: true,  order: 15 },
+        { id: 'w-today-revenue',   label: '💰 Today\'s Paid Revenue', visible: true,  order: 28 },
+        { id: 'w-month-revenue',   label: '💵 Month\'s Paid Revenue', visible: true,  order: 29 },
+        { id: 'w-pending-invoice', label: '📋 Pending Unpaid Invoices', visible: true,  order: 30 },
+        { id: 'w-outstanding',     label: '⚠️ Outstanding Invoices Value', visible: true,  order: 31 },
+        { id: 'w-finance-summary', label: '📈 Month Revenue Trend Chart',  visible: true,  order: 32 },
+        { id: 'w-overdue',         label: '🚨 Overdue Invoices List',  visible: true,  order: 33 },
+
+        // Operational Widgets
+        { id: 'w-available-fleet', label: '🚗 Available Fleet Vehicles', visible: true,  order: 34 },
+        { id: 'w-on-trip',         label: '🛣️ On Trip Fleet Vehicles', visible: true,  order: 35 },
+        { id: 'w-maintenance',     label: '🔧 Maintenance Fleet Vehicles', visible: true,  order: 36 },
+        { id: 'w-active-trips',    label: '📋 Active Dispatch Bookings', visible: true,  order: 37 }
     ],
 
     _t(key) {
@@ -667,40 +696,99 @@ window.CRM_Widget = {
 
     _label(widget) {
         const labels = document.documentElement.lang === 'en' ? {
-            'kpi-row': 'KPI Cards',
-            'quick-shortcuts': 'Quick Shortcuts',
-            'exec-summary': 'Executive Summary',
-            'fleet-league': 'Fleet League',
-            'revenue-chart': 'Revenue Chart',
-            'sales-ranking': 'Sales Ranking',
-            'recent-books': 'Recent Bookings',
-            'approval-q': 'Approval Queue',
-            'charts-section': 'Analytics Charts',
-            'team-overview': 'Team Overview',
-            'pipeline-breakdown': 'Pipeline Breakdown',
-            'kpi-achievement': 'KPI Achievement',
-            'recent-activities': 'Recent Activities',
-            'finance-summary': 'Financial Summary',
-            'finance-overdue': 'Overdue Invoices',
+            'widget-kpi-row': 'KPI Cards',
+            'widget-quick-shortcuts': 'Quick Shortcuts',
+            'widget-exec-summary': 'Executive Summary',
+            'widget-fleet-league': 'Fleet League',
+            'widget-revenue-chart': 'Revenue Chart',
+            'widget-sales-ranking': 'Sales Performance',
+            'widget-recent-books': 'Recent Bookings',
+            'widget-approval-q': 'Approval Queue',
+            'widget-charts-section': 'Analytics Charts',
+
+            'w-revenue-today': 'My Revenue Today',
+            'w-revenue-week': 'My Revenue Week',
+            'w-revenue-month': 'My Revenue Month',
+            'w-revenue-year': 'My Revenue Year',
+            'w-active-bookings': 'Active Bookings',
+            'w-my-clients': 'My Clients',
+            'w-new-booking': 'New Booking Button',
+            'w-funnel-chart': 'Sales Pipeline',
+            'w-revenue-chart': 'Revenue Trend',
+            'w-recent-bookings': 'Recent Bookings',
+
+            'w-pipeline-tim': 'Team Pipeline Value',
+            'w-won-alltime': 'Team Won Deals',
+            'w-approval-l1': 'Pending Approvals',
+            'w-anggota-tim': 'Team Members',
+            'w-pipeline-breakdown': 'Team Pipeline Breakdown',
+            'w-approval-queue': 'Approval Queue Table',
+            'w-recent-activities': 'Recent Activities',
+            'w-kpi-achievement': 'KPI Achievements',
+
+            'w-today-revenue': 'Today\'s Revenue',
+            'w-month-revenue': 'Month\'s Revenue',
+            'w-pending-invoice': 'Pending Invoices',
+            'w-outstanding': 'Outstanding Value',
+            'w-finance-summary': 'Financial Summary',
+            'w-overdue': 'Overdue Invoices',
+
+            'w-available-fleet': 'Available Fleet',
+            'w-on-trip': 'On Trip Vehicles',
+            'w-maintenance': 'Under Maintenance',
+            'w-active-trips': 'Active Bookings'
         } : {
-            'kpi-row': 'Kartu KPI',
-            'quick-shortcuts': 'Shortcut Cepat',
-            'exec-summary': 'Executive Summary',
-            'fleet-league': 'Fleet League',
-            'revenue-chart': 'Grafik Revenue',
-            'sales-ranking': 'Ranking Sales',
-            'recent-books': 'Booking Terbaru',
-            'approval-q': 'Antrean Approval',
-            'charts-section': 'Grafik Analitik',
-            'team-overview': 'Ringkasan Tim',
-            'pipeline-breakdown': 'Pipeline Tim',
-            'kpi-achievement': 'Pencapaian KPI',
-            'recent-activities': 'Aktivitas Tim',
-            'finance-summary': 'Ringkasan Keuangan',
-            'finance-overdue': 'Faktur Jatuh Tempo',
+            'widget-kpi-row': 'Kartu KPI Utama',
+            'widget-quick-shortcuts': 'Shortcut Cepat',
+            'widget-exec-summary': 'Executive Summary',
+            'widget-fleet-league': 'Klasemen Fleet',
+            'widget-revenue-chart': 'Grafik Pendapatan',
+            'widget-sales-ranking': 'Sales Performance',
+            'widget-recent-books': 'Booking Terbaru',
+            'widget-approval-q': 'Antrean Persetujuan',
+            'widget-charts-section': 'Grafik Analitik',
+
+            'w-revenue-today': 'Pendapatan Hari Ini',
+            'w-revenue-week': 'Pendapatan Minggu Ini',
+            'w-revenue-month': 'Pendapatan Bulan Ini',
+            'w-revenue-year': 'Pendapatan Tahun Ini',
+            'w-active-bookings': 'Booking Aktif',
+            'w-my-clients': 'Klien Saya',
+            'w-new-booking': 'Tombol Booking Baru',
+            'w-funnel-chart': 'Sales Pipeline',
+            'w-revenue-chart': 'Tren Pendapatan',
+            'w-recent-bookings': 'Tabel Booking Terbaru',
+
+            'w-pipeline-tim': 'Nilai Pipeline Tim',
+            'w-won-alltime': 'Deal Tim Berhasil',
+            'w-approval-l1': 'Persetujuan Pending',
+            'w-anggota-tim': 'Daftar Anggota Tim',
+            'w-pipeline-breakdown': 'Breakdown Pipeline Tim',
+            'w-approval-queue': 'Antrean Persetujuan',
+            'w-recent-activities': 'Aktivitas Terbaru',
+            'w-kpi-achievement': 'Pencapaian KPI',
+
+            'w-today-revenue': 'Pendapatan Hari Ini',
+            'w-month-revenue': 'Pendapatan Bulan Ini',
+            'w-pending-invoice': 'Faktur Pending',
+            'w-outstanding': 'Total Piutang',
+            'w-finance-summary': 'Ringkasan Keuangan',
+            'w-overdue': 'Faktur Jatuh Tempo',
+
+            'w-available-fleet': 'Armada Tersedia',
+            'w-on-trip': 'Armada Sedang Jalan',
+            'w-maintenance': 'Armada Perbaikan',
+            'w-active-trips': 'Daftar Booking Aktif'
         };
 
         return labels[widget.id] || widget.label;
+    },
+
+    _findWidgetEl(id) {
+        return document.querySelector(`[gs-id="widget-${id}"]`) ||
+               document.querySelector(`[gs-id="${id}"]`) ||
+               document.getElementById('widget-' + id) ||
+               document.getElementById(id);
     },
 
     init() {
@@ -738,7 +826,7 @@ window.CRM_Widget = {
 
     _applyVisibility() {
         this.widgets.forEach(w => {
-            const el = document.getElementById('widget-' + w.id);
+            const el = this._findWidgetEl(w.id);
             if (el) el.style.display = w.visible ? '' : 'none';
         });
     },
@@ -784,7 +872,7 @@ window.CRM_Widget = {
     _renderList() {
         const list = document.getElementById('widget-list');
         if (!list) return;
-        const availableWidgets = this.widgets.filter(w => document.getElementById('widget-' + w.id) !== null);
+        const availableWidgets = this.widgets.filter(w => this._findWidgetEl(w.id) !== null);
         list.innerHTML = availableWidgets.map(w => `
             <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--cc-border);">
                 <span style="color:var(--cc-text-muted);font-size:16px;cursor:default;">⠿</span>

@@ -83,7 +83,7 @@ $stageBadge = [
 
             <div class="flex items-center gap-2 flex-shrink-0">
                 {{-- Advance Stage --}}
-                @if(!in_array($opportunity->stage, ['won', 'lost']) && count($nextStages) > 0)
+                @if((!in_array($opportunity->stage, ['won', 'lost']) || ($opportunity->stage === 'lost' && (auth()->user()->isManager() || auth()->user()->isGM()))) && count($nextStages) > 0)
                 <button
                     @click="showAdvanceForm = !showAdvanceForm"
                     class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition-colors duration-200 cursor-pointer">

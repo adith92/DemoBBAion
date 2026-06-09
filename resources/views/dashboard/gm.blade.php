@@ -381,37 +381,79 @@
         </div>
     </div>
 
-    {{-- ===== Sales Ranking (1/3 width) ===== --}}
+    {{-- ===== Sales Ranking / Performance (1/3 width) ===== --}}
     <div class="grid-stack-item" gs-id="widget-sales-ranking" gs-x="8" gs-y="14" gs-w="4" gs-h="5">
         <div class="grid-stack-item-content">
-            <div class="cc-card p-5 h-full overflow-auto">
-                <div class="flex items-center justify-between mb-4">
+            <div class="cc-card p-5 h-full overflow-auto flex flex-col" x-data="gmPerformanceWidget()" x-init="init()">
+                
+                {{-- Header --}}
+                <div class="flex items-center justify-between mb-4 shrink-0">
                     <div class="flex items-center gap-2">
-                        <span class="material-symbols-outlined text-[18px]" style="color:#a78bfa;">military_tech</span>
-                        <span class="text-xs font-bold uppercase tracking-widest" style="color:#94a3b8;">{{ __('ui.sales_ranking') }}</span>
+                        <span class="material-symbols-outlined text-[18px] text-amber-500">military_tech</span>
+                        <span class="text-xs font-bold uppercase tracking-widest text-[var(--cc-text-muted)]">Sales Performance</span>
                     </div>
-                    <a href="{{ route('kpi.index') }}" class="text-[10px] font-semibold" style="color:#3b82f6;">KPI →</a>
+                    <a href="{{ route('kpi.index') }}" class="text-[10px] font-semibold text-blue-500 hover:underline">KPI Detail →</a>
                 </div>
-                @php
-                $sellers = [
-                    ['name'=>'Andi Pratama','rev'=>'Rp 740 Jt','closing'=>'38%','medal'=>'🥇','color'=>'#f59e0b'],
-                    ['name'=>'Sari Dewi','rev'=>'Rp 615 Jt','closing'=>'34%','medal'=>'🥈','color'=>'#94a3b8'],
-                    ['name'=>'Reza Firmansyah','rev'=>'Rp 480 Jt','closing'=>'29%','medal'=>'🥉','color'=>'#cd7c2f'],
-                    ['name'=>'Maya Corp.','rev'=>'Rp 355 Jt','closing'=>'24%','medal'=>'4','color'=>'#475569'],
-                ];
-                @endphp
-                <div class="space-y-1">
-                    @foreach($sellers as $s)
-                    <div class="rank-row">
-                        <span class="text-base flex-shrink-0">{{ $s['medal'] }}</span>
-                        <div class="flex-grow min-w-0">
-                            <a href="{{ route('kpi.index') }}" class="text-xs font-semibold dashboard-link truncate" style="color:#101828;">{{ $s['name'] }}</a>
-                            <div class="text-[10px]" style="color:#475569;">Closing {{ $s['closing'] }}</div>
+
+                {{-- Widget Content (Scrollable) --}}
+                <div class="space-y-3 flex-grow overflow-y-auto pr-1 custom-scrollbar">
+                    <template x-for="(manager, mIdx) in managerLeaderboard" :key="manager.user.id">
+                        <div class="rounded-xl border border-white/5 bg-white/5 p-3 space-y-2.5 transition duration-200">
+                            
+                            {{-- Manager Row --}}
+                            <div class="flex items-center justify-between cursor-pointer" @click="selectedManagerId = (selectedManagerId === manager.user.id ? null : manager.user.id)">
+                                <div class="flex items-center gap-2.5 min-w-0">
+                                    <span class="w-6 h-6 rounded-lg font-bold text-xs flex items-center justify-center border border-white/5" 
+                                          :class="mIdx === 0 ? 'bg-amber-500/20 text-amber-300' : (mIdx === 1 ? 'bg-slate-400/20 text-slate-300' : 'bg-slate-800 text-slate-400')"
+                                          x-text="mIdx + 1"></span>
+                                    <div class="min-w-0">
+                                        <p class="text-xs font-bold text-[var(--cc-text)] truncate" x-text="manager.user.name"></p>
+                                        <p class="text-[9px] text-[var(--cc-text-muted)] font-semibold uppercase tracking-wider mt-0.5" 
+                                           x-text="manager.reps.length + ' Reps'"></p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div class="text-right">
+                                        <p class="text-xs font-bold text-emerald-400 font-mono" x-text="formatIDR(manager.revenue)"></p>
+                                        <p class="text-[9px] text-indigo-400 font-bold" x-text="getPercentage(manager.revenue, manager.target) + '% Target'"></p>
+                                    </div>
+                                    <span class="material-symbols-outlined text-[16px] text-slate-400 transition-transform duration-200"
+                                          :class="{'rotate-180': selectedManagerId === manager.user.id}">expand_more</span>
+                                </div>
+                            </div>
+
+                            {{-- Subordinates (Reps) List --}}
+                            <div x-show="selectedManagerId === manager.user.id" x-collapse class="pl-8 space-y-2 border-l border-white/10 mt-1">
+                                <template x-for="(rep, rIdx) in manager.reps" :key="rep.user.id">
+                                    <div class="flex items-center justify-between text-xs py-1 hover:bg-white/5 rounded-lg px-2 -mx-2 transition-colors">
+                                        <div class="min-w-0 flex items-center gap-2">
+                                            <span class="text-[10px] text-slate-400 font-bold" x-text="(rIdx+1) + '.'"></span>
+                                            <span class="font-medium text-[var(--cc-text-muted)] truncate" x-text="rep.user.name"></span>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-xs font-mono font-semibold text-[var(--cc-text)]" x-text="formatIDR(rep.revenue)"></span>
+                                            
+                                            {{-- Performance badge --}}
+                                            <span class="text-[9px] font-bold px-1.5 py-0.5 rounded-full border"
+                                                  :class="getPercentage(rep.revenue, rep.target) >= 100 ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 
+                                                          (getPercentage(rep.revenue, rep.target) >= 50 ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' : 
+                                                                                                          'bg-rose-500/10 text-rose-400 border-rose-500/20')"
+                                                  x-text="getPercentage(rep.revenue, rep.target) + '%'"></span>
+                                        </div>
+                                    </div>
+                                </template>
+                                <template x-if="manager.reps.length === 0">
+                                    <p class="text-[10px] text-slate-500 italic py-1">No sales reps under this manager</p>
+                                </template>
+                            </div>
+
                         </div>
-                        <div class="text-xs font-bold flex-shrink-0" style="color:{{ $s['color'] }};">{{ $s['rev'] }}</div>
-                    </div>
-                    @endforeach
+                    </template>
+                    <template x-if="managerLeaderboard.length === 0">
+                        <div class="text-center text-xs text-slate-500 py-6">No performance data available</div>
+                    </template>
                 </div>
+
             </div>
         </div>
     </div>
@@ -582,5 +624,83 @@ document.addEventListener('DOMContentLoaded', function() {
         if (window.CRM_Sparkline) CRM_Sparkline.render(s.id, s.data, s.color);
     });
 });
+
+function gmPerformanceWidget() {
+    return {
+        users: @json($users),
+        deals: @json($deals),
+        targets: @json($targets),
+        
+        managerLeaderboard: [],
+        selectedManagerId: null,
+
+        init() {
+            this.calculatePerformance();
+        },
+
+        calculatePerformance() {
+            // Managers
+            let managers = {};
+            this.users.filter(u => u.role === 'Manager').forEach(u => {
+                managers[u.id] = { user: u, revenue: 0, target: 0, reps: [] };
+            });
+
+            // Sales reps
+            let reps = {};
+            this.users.filter(u => u.role === 'Sales').forEach(u => {
+                reps[u.id] = { user: u, revenue: 0, target: 0, managerId: u.managerId };
+            });
+
+            // Calculate revenue from Won deals
+            this.deals.forEach(d => {
+                if (d.stage === 'Won' && reps[d.salesId]) {
+                    reps[d.salesId].revenue += (d.actualValue || 0);
+                }
+            });
+
+            // Calculate target
+            this.targets.forEach(t => {
+                if (reps[t.userId]) {
+                    let targetSum = Object.values(t.productTargets).reduce((a, b) => a + b, 0);
+                    reps[t.userId].target += targetSum;
+                }
+            });
+
+            // Group reps under managers and aggregate manager revenue/target
+            Object.values(reps).forEach(rep => {
+                if (rep.managerId && managers[rep.managerId]) {
+                    managers[rep.managerId].reps.push(rep);
+                    managers[rep.managerId].revenue += rep.revenue;
+                    managers[rep.managerId].target += rep.target;
+                }
+            });
+
+            // Sort reps inside managers
+            Object.values(managers).forEach(m => {
+                m.reps.sort((a, b) => b.revenue - a.revenue);
+            });
+
+            // Sort managers by team revenue
+            this.managerLeaderboard = Object.values(managers)
+                .sort((a, b) => b.revenue - a.revenue);
+        },
+
+        formatIDR(val) {
+            if (!val) return 'Rp 0';
+            if (val >= 1000000000) {
+                return 'Rp ' + (val / 1000000000).toFixed(1) + 'M';
+            }
+            if (val >= 1000000) {
+                return 'Rp ' + (val / 1000000).toFixed(0) + 'Jt';
+            }
+            return 'Rp ' + parseInt(val).toLocaleString('id-ID');
+        },
+
+        getPercentage(actual, target) {
+            if (!target) return 0;
+            return Math.round((actual / target) * 100);
+        }
+    }
+}
 </script>
 @endpush
