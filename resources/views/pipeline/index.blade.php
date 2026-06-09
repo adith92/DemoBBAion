@@ -363,6 +363,7 @@
                          data-deal-stage="{{ $opp->stage }}"
                          data-deal-num="{{ $opp->opp_number }}"
                          data-stage="{{ $opp->stage }}"
+                         data-value="{{ $opp->estimated_value ?? 0 }}"
                          x-show="matchesSearch('{{ addslashes($opp->title) }}','{{ addslashes($opp->client->company_name ?? '') }}')"
                     >
                         @php
@@ -733,27 +734,43 @@
         </div>
     </div>
 
-    {{-- ── LOST REASON DIALOG ── --}}
-    <div x-show="lostDialog.open"
+    {{-- ── STAGE TRANSITION DIALOG ── --}}
+    <div x-show="transitionDialog.open"
          class="modal-overlay" style="display:none;"
-         @click.self="lostDialog.open=false; lostDialog.revertFn && lostDialog.revertFn()">
-        <div class="modal-box max-w-sm" @click.stop>
+         @click.self="transitionDialog.open=false; transitionDialog.revertFn && transitionDialog.revertFn()">
+        <div class="modal-box max-w-md" @click.stop>
             <div class="px-6 py-4" style="border-bottom:1px solid rgba(255,255,255,0.06);">
                 <h3 class="text-[14px] font-bold text-slate-100 flex items-center gap-2">
-                    <span class="material-symbols-outlined text-red-400 text-[18px]">cancel</span>
-                    Tandai sebagai Kalah
+                    <span class="material-symbols-outlined text-[#00e5ff] text-[18px]">move_up</span>
+                    Pindah Stage: <span class="text-[#00e5ff]" x-text="stageLabel(transitionDialog.pendingStage)"></span>
                 </h3>
             </div>
             <div class="p-6 space-y-4">
-                <div>
-                    <label class="dark-label block mb-1.5">Alasan Kalah *</label>
-                    <textarea x-model="lostDialog.reason" rows="3" class="edit-input resize-none" placeholder="Harga terlalu tinggi, kalah dari kompetitor..."></textarea>
+                <div class="bg-blue-500/10 border border-blue-500/20 rounded-xl p-3 mb-2">
+                    <div class="text-[11px] text-blue-400 font-bold uppercase mb-1">Deal</div>
+                    <div class="text-sm text-slate-200 font-semibold" x-text="transitionDialog.title"></div>
                 </div>
-                <div class="flex gap-3">
-                    <button @click="confirmLost()" class="btn-primary flex-1" style="background:rgba(239,68,68,0.2);color:#f87171;border:1px solid rgba(239,68,68,0.3);">
-                        <span class="material-symbols-outlined text-[16px]">cancel</span>Konfirmasi Kalah
+
+                <div>
+                    <label class="dark-label block mb-1.5">Estimasi Nilai Terbaru (Rp)</label>
+                    <input x-model="transitionDialog.estimated_value" type="number" min="0" class="edit-input" placeholder="0"/>
+                </div>
+
+                <div>
+                    <label class="dark-label block mb-1.5">Catatan Progres</label>
+                    <textarea x-model="transitionDialog.notes" rows="2" class="edit-input resize-none" placeholder="Catatan aktivitas ini..."></textarea>
+                </div>
+
+                <div x-show="transitionDialog.pendingStage === 'lost'">
+                    <label class="dark-label block mb-1.5 text-red-400">Alasan Kalah *</label>
+                    <textarea x-model="transitionDialog.lost_reason" rows="2" class="edit-input resize-none border-red-500/30 focus:border-red-500" placeholder="Harga terlalu tinggi, dll..."></textarea>
+                </div>
+
+                <div class="flex gap-3 pt-2">
+                    <button @click="confirmTransition()" class="btn-primary flex-1">
+                        <span class="material-symbols-outlined text-[16px]">save</span>Simpan & Pindah
                     </button>
-                    <button @click="lostDialog.open=false; lostDialog.revertFn && lostDialog.revertFn()" class="btn-secondary">Batal</button>
+                    <button @click="transitionDialog.open=false; transitionDialog.revertFn && transitionDialog.revertFn()" class="btn-secondary">Batal</button>
                 </div>
             </div>
         </div>
@@ -773,7 +790,7 @@ function kanbanBoard() {
         filterStage: '',
         editModal: { open:false, saving:false, id:null, title:'', estimated_value:'', expected_close_date:'', notes:'', pax:'' },
         modal360:  { open:false, loading:false, id:null, data:null, tab:'info' },
-        lostDialog:{ open:false, reason:'', pendingId:null, pendingStage:null, revertFn:null },
+        transitionDialog:{ open:false, pendingId:null, pendingStage:null, title:'', estimated_value:'', notes:'', lost_reason:'', revertFn:null },
         _toastTimer: null,
 
         init() {
@@ -825,6 +842,8 @@ function kanbanBoard() {
                         const oppId    = card.dataset.id;
                         const newStage = newZone.dataset.stage;
                         const oldStage = card.dataset.stage;
+                        const oppTitle = card.dataset.dealTitle;
+                        const oppValue = card.dataset.value;
 
                         if (newStage === oldStage) return;
 
@@ -834,35 +853,49 @@ function kanbanBoard() {
                             card.dataset.stage = oldStage;
                         };
 
-                        if (newStage === 'lost') {
-                            this.lostDialog = { open:true, reason:'', pendingId:oppId, pendingStage:newStage, revertFn };
-                            return;
-                        }
-
-                        card.dataset.stage = newStage;
-                        this.doMoveStage(oppId, newStage, null, revertFn);
+                        this.transitionDialog = { 
+                            open:true, 
+                            pendingId:oppId, 
+                            pendingStage:newStage, 
+                            title:oppTitle,
+                            estimated_value:oppValue || '',
+                            notes:'',
+                            lost_reason:'',
+                            revertFn 
+                        };
                     },
                 });
             });
         },
 
-        async doMoveStage(oppId, newStage, lostReason, revertFn) {
+        async doMoveStage(oppId, newStage, payload, revertFn) {
             const token = document.querySelector('meta[name="csrf-token"]').content;
-            const body  = { stage: newStage };
-            if (lostReason) body.lost_reason = lostReason;
-
+            
             try {
                 const res  = await fetch(`/opportunities/${oppId}/move-stage`, {
                     method: 'PATCH',
                     headers: { 'Content-Type':'application/json', 'X-CSRF-TOKEN':token, 'Accept':'application/json' },
-                    body: JSON.stringify(body),
+                    body: JSON.stringify(payload),
                 });
                 const data = await res.json();
                 if (!res.ok || !data.ok) { revertFn && revertFn(); this.toast(data.message ?? 'Gagal.', 'error'); return; }
+                
+                // Update DOM value data attribute
+                const card = document.querySelector(`.kanban-card[data-id="${oppId}"]`);
+                if (card && payload.estimated_value) {
+                    card.dataset.value = payload.estimated_value;
+                    
+                    // Note: This only updates the data attribute, not the rendered HTML of the value.
+                    // The easiest fix is to let the user see the updated value in 360 view or board refresh,
+                    // but we can also manually update the rendered text if needed.
+                    const valEl = card.querySelector('.text-[13px].font-bold.text-slate-100');
+                    if (valEl) valEl.textContent = 'Rp ' + new Intl.NumberFormat('id-ID').format(payload.estimated_value);
+                }
+
                 this.updateColumnCounts(data.summary);
                 this.toast(data.message, 'success');
                 // 🎊 Konfetti celebration when deal moves to Won!
-                if (body.stage === 'won') {
+                if (payload.stage === 'won') {
                     if (window.CRM_Confetti) CRM_Confetti.fire();
                 }
             } catch(e) {
@@ -871,13 +904,25 @@ function kanbanBoard() {
             }
         },
 
-        confirmLost() {
-            if (!this.lostDialog.reason.trim()) { this.toast('Alasan wajib diisi.','error'); return; }
-            const { pendingId, pendingStage, reason, revertFn } = this.lostDialog;
+        confirmTransition() {
+            const { pendingId, pendingStage, estimated_value, notes, lost_reason, revertFn } = this.transitionDialog;
+            
+            if (pendingStage === 'lost' && !lost_reason.trim()) { 
+                this.toast('Alasan kalah wajib diisi.','error'); 
+                return; 
+            }
+
             const card = document.querySelector(`.kanban-card[data-id="${pendingId}"]`);
             if (card) card.dataset.stage = pendingStage;
-            this.lostDialog.open = false;
-            this.doMoveStage(pendingId, pendingStage, reason, revertFn);
+            
+            this.transitionDialog.open = false;
+            
+            this.doMoveStage(pendingId, pendingStage, {
+                stage: pendingStage,
+                estimated_value: estimated_value || null,
+                notes: notes || null,
+                lost_reason: lost_reason || null
+            }, revertFn);
         },
 
         openEdit(id, title, value, closeDate, notes, pax) {
@@ -933,7 +978,7 @@ function kanbanBoard() {
         closeModal() {
             this.modal360.open = false;
             this.editModal.open = false;
-            if (this.lostDialog.open) { this.lostDialog.revertFn && this.lostDialog.revertFn(); this.lostDialog.open = false; }
+            if (this.transitionDialog.open) { this.transitionDialog.revertFn && this.transitionDialog.revertFn(); this.transitionDialog.open = false; }
         },
 
         matchesSearch(title, client) {

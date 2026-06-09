@@ -317,8 +317,10 @@ class OpportunityController extends Controller
         $this->authorizeEdit($opportunity);
 
         $validated = $request->validate([
-            'stage'       => 'required|in:call_meeting,prospecting,proposal,negotiation,won,lost',
-            'lost_reason' => 'nullable|string|max:500',
+            'stage'           => 'required|in:call_meeting,prospecting,proposal,negotiation,won,lost',
+            'lost_reason'     => 'nullable|string|max:500',
+            'estimated_value' => 'nullable|numeric|min:0',
+            'notes'           => 'nullable|string',
         ]);
 
         $fromStage = $opportunity->stage;
@@ -337,6 +339,10 @@ class OpportunityController extends Controller
 
         $updates = ['stage' => $toStage];
 
+        if (isset($validated['estimated_value'])) {
+            $updates['estimated_value'] = $validated['estimated_value'];
+        }
+
         if ($toStage === 'lost') {
             $updates['lost_reason']       = $validated['lost_reason'] ?? 'Dipindah via Kanban';
             $updates['actual_close_date'] = now()->toDateString();
@@ -348,13 +354,18 @@ class OpportunityController extends Controller
 
         $opportunity->update($updates);
 
+        $activityNotes = "Dipindah via drag-drop kanban";
+        if (!empty($validated['notes'])) {
+            $activityNotes = $validated['notes'];
+        }
+
         ActivityLog::create([
             'sales_id'       => auth()->id(),
             'client_id'      => $opportunity->client_id,
             'opportunity_id' => $opportunity->id,
             'type'           => 'follow_up',
             'subject'        => "Kanban: {$fromStage} → {$toStage}",
-            'notes'          => "Dipindah via drag-drop kanban",
+            'notes'          => $activityNotes,
             'activity_date'  => now(),
         ]);
 
@@ -375,6 +386,9 @@ class OpportunityController extends Controller
             'message' => "Deal dipindah ke {$toStage}.",
             'stage'   => $toStage,
             'summary' => $summary,
+            'opportunity' => [
+                'estimated_value' => $opportunity->estimated_value
+            ]
         ]);
     }
 
