@@ -832,12 +832,107 @@ window.CRM_Widget = {
 };
 
 /* ════════════════════════════════════════════════════════════
+   12. RESIZABLE TABLE COLUMNS
+   ════════════════════════════════════════════════════════════ */
+window.CRM_TableResize = {
+    init() {
+        if (window.innerWidth <= 768) return; // Disable resizing on mobile
+
+        const tables = document.querySelectorAll('table[data-resizable], table.resizable-table');
+        tables.forEach((table, tableIndex) => {
+            const tableId = table.getAttribute('data-table-id') || `table-${window.location.pathname}-${tableIndex}`;
+            const cols = table.querySelectorAll('thead th');
+            const savedWidths = JSON.parse(localStorage.getItem(`table-widths-${tableId}`) || '{}');
+
+            // Apply 'table-layout: fixed' to ensure strict column widths are respected
+            table.style.tableLayout = 'fixed';
+
+            cols.forEach((col, colIndex) => {
+                // Apply saved width if it exists
+                if (savedWidths[colIndex]) {
+                    col.style.width = savedWidths[colIndex];
+                }
+
+                // Add resize handle element to all columns except the last one
+                if (colIndex < cols.length - 1) {
+                    // Ensure the header cell is relative positioned
+                    if (window.getComputedStyle(col).position === 'static') {
+                        col.style.position = 'relative';
+                    }
+
+                    const handle = document.createElement('div');
+                    handle.className = 'resize-handle';
+                    handle.style.cssText = `
+                        position: absolute;
+                        top: 0;
+                        right: 0;
+                        bottom: 0;
+                        width: 6px;
+                        cursor: col-resize;
+                        user-select: none;
+                        z-index: 10;
+                        transition: background-color 0.15s;
+                    `;
+                    
+                    // Hover states
+                    handle.addEventListener('mouseenter', () => handle.style.backgroundColor = 'rgba(59, 130, 246, 0.4)');
+                    handle.addEventListener('mouseleave', () => {
+                        if (!handle.classList.contains('resizing')) {
+                            handle.style.backgroundColor = 'transparent';
+                        }
+                    });
+
+                    col.appendChild(handle);
+
+                    let startX, startWidth;
+
+                    handle.addEventListener('mousedown', e => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        startX = e.clientX;
+                        startWidth = col.offsetWidth;
+                        handle.classList.add('resizing');
+                        handle.style.backgroundColor = 'rgba(59, 130, 246, 0.7)';
+
+                        const onMouseMove = ev => {
+                            const newWidth = Math.max(50, startWidth + (ev.clientX - startX));
+                            col.style.width = `${newWidth}px`;
+                        };
+
+                        const onMouseUp = () => {
+                            handle.classList.remove('resizing');
+                            handle.style.backgroundColor = 'transparent';
+                            document.removeEventListener('mousemove', onMouseMove);
+                            document.removeEventListener('mouseup', onMouseUp);
+                            
+                            // Save all current column widths to localStorage
+                            const currentWidths = {};
+                            cols.forEach((th, idx) => {
+                                if (th.style.width) {
+                                    currentWidths[idx] = th.style.width;
+                                }
+                            });
+                            localStorage.setItem(`table-widths-${tableId}`, JSON.stringify(currentWidths));
+                        };
+
+                        document.addEventListener('mousemove', onMouseMove);
+                        document.addEventListener('mouseup', onMouseUp);
+                    });
+                }
+            });
+        });
+    }
+};
+
+/* ════════════════════════════════════════════════════════════
    INIT — runs after Alpine stores are registered
    ════════════════════════════════════════════════════════════ */
 document.addEventListener('DOMContentLoaded', () => {
     CRM_Keys.init();
     Alpine.store('notif')._updateBadge();
     CRM_Widget.init();
+    CRM_TableResize.init(); // Initialize resizable columns
 });
 
 Alpine.start();

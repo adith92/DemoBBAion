@@ -17,7 +17,7 @@
     </div>
 
     <div class="overflow-x-auto">
-        <table class="w-full text-sm">
+        <table class="w-full text-sm resizable-table" data-table-id="clients-table">
             <thead class="border-b bg-gray-50">
                 <tr class="text-gray-600">
                     <th class="text-left py-3 px-4">Company</th>

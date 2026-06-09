@@ -49,7 +49,7 @@
     {{-- Table --}}
     <div class="cc-card rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="w-full text-sm">
+            <table class="w-full text-sm resizable-table" data-table-id="opportunities-table">
                 <thead class="bg-slate-50 border-b border-slate-200">
                     <tr class="text-left text-[11px] font-bold text-slate-500 uppercase tracking-wider">
                         <th class="px-5 py-3">Opportunity</th>

@@ -113,10 +113,19 @@ class SubscriptionController extends Controller
             ->with('success', 'Kontrak berlangganan berhasil diperbarui.');
     }
 
-    public function terminate(Subscription $subscription)
+    public function terminate(Request $request, Subscription $subscription)
     {
         if ($subscription->status === 'terminated') {
             return back()->with('error', 'Kontrak sudah diterminasi.');
+        }
+
+        $request->validate([
+            'pin' => 'required|string|size:6',
+        ]);
+
+        $user = auth()->user();
+        if (!\Illuminate\Support\Facades\Hash::check($request->pin, $user->billing_pin)) {
+            return back()->with('error', 'PIN Konfirmasi Terminasi salah.');
         }
 
         $subscription->update([

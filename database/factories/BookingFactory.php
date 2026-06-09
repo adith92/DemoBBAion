@@ -27,7 +27,7 @@ class BookingFactory extends Factory
             'destination'      => fake()->city() . ', ' . fake()->state(),
             'vehicle_type'     => fake()->randomElement(['sedan', 'suv', 'van', 'bus', 'truck', 'minibus']),
             'price'            => fake()->randomFloat(2, 500000, 10000000),
-            'status'           => fake()->randomElement(['pending', 'confirmed', 'in_progress', 'completed', 'cancelled']),
+            'status'           => fake()->randomElement(['pending', 'confirmed', 'on_trip', 'completed', 'cancelled']),
             'notes'            => fake()->optional(0.5)->sentence(),
         ];
     }

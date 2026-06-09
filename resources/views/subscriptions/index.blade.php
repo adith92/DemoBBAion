@@ -93,7 +93,7 @@
 
     {{-- Table --}}
     <div class="overflow-x-auto">
-        <table class="w-full text-sm">
+        <table class="w-full text-sm resizable-table" data-table-id="subscriptions-table">
             <thead class="bg-[var(--cc-bg-muted)] border-b">
                 <tr class="text-[var(--cc-text-muted)] text-left">
                     <th class="py-3 px-4">Sub #</th>
@@ -174,14 +174,11 @@
                             <a href="{{ route('subscriptions.show', $sub) }}"
                                class="text-blue-600 hover:text-blue-800 text-xs hover:underline">Detail</a>
                             @if($sub->status === 'active')
-                            <form method="POST" action="{{ route('subscriptions.terminate', $sub) }}" class="inline">
-                                @csrf
-                                <button type="submit"
-                                        onclick="return confirm('Terminasi kontrak {{ $sub->sub_number }}?')"
-                                        class="text-red-600 hover:text-red-800 text-xs hover:underline">
-                                    Terminasi
-                                </button>
-                            </form>
+                            <button type="button"
+                                    onclick="openTerminationModal('{{ route('subscriptions.terminate', $sub) }}', '{{ $sub->sub_number }}')"
+                                    class="text-red-600 hover:text-red-800 text-xs hover:underline">
+                                Terminasi
+                            </button>
                             @endif
                         </div>
                     </td>
@@ -204,4 +201,174 @@
 
     @include('subscriptions.charts')
 </div>
+
+<!-- Modal PIN Terminasi -->
+<div id="termination-pin-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden" role="dialog" aria-modal="true">
+    <!-- Backdrop -->
+    <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" onclick="closeTerminationModal()"></div>
+
+    <!-- Modal Content Wrapper -->
+    <div class="relative bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 max-w-md w-full mx-4 overflow-hidden transform transition-all duration-300 scale-95 opacity-0" id="termination-modal-box">
+        <!-- Header -->
+        <div class="p-6 pb-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-gradient-to-r from-red-500/10 to-transparent">
+            <div class="flex items-center gap-2.5">
+                <div class="w-9 h-9 rounded-xl bg-red-100 dark:bg-red-900/30 flex items-center justify-center text-red-600">
+                    <span class="material-symbols-outlined text-[20px]">warning</span>
+                </div>
+                <div>
+                    <h3 class="text-base font-bold text-slate-900 dark:text-white">Terminasi Kontrak</h3>
+                    <p class="text-xs text-slate-400 font-medium font-mono" id="termination-sub-number">GB-2026-0001</p>
+                </div>
+            </div>
+            <button type="button" onclick="closeTerminationModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors">
+                <span class="material-symbols-outlined text-[18px]">close</span>
+            </button>
+        </div>
+
+        <!-- Form -->
+        <form id="termination-form" method="POST" action="" class="p-6 space-y-5">
+            @csrf
+            <p class="text-sm text-slate-500 dark:text-slate-400 leading-relaxed text-center">
+                Silakan masukkan <strong>PIN 6-digit</strong> Anda untuk mengonfirmasi terminasi kontrak ini.
+            </p>
+
+            <!-- PIN Inputs -->
+            <div class="flex justify-center gap-2" id="pin-input-container">
+                @for ($i = 0; $i < 6; $i++)
+                <input type="password" 
+                       maxlength="1" 
+                       pattern="[0-9]" 
+                       inputmode="numeric" 
+                       required 
+                       class="w-12 h-12 text-center text-2xl font-bold rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all"
+                       data-index="{{ $i }}"
+                       autocomplete="off">
+                @endfor
+            </div>
+            
+            <!-- Hidden input to store full pin before submit -->
+            <input type="hidden" name="pin" id="full-pin-value">
+
+            <!-- Error message area -->
+            <div id="pin-error-msg" class="text-xs text-red-500 text-center font-semibold hidden">
+                PIN harus berupa 6 digit angka!
+            </div>
+
+            <!-- Actions -->
+            <div class="flex gap-3 pt-2">
+                <button type="button" onclick="closeTerminationModal()" class="flex-1 px-4 py-2.5 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 font-semibold text-sm transition-colors">
+                    Batal
+                </button>
+                <button type="submit" class="flex-1 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl font-semibold text-sm shadow-lg shadow-red-500/20 hover:shadow-red-600/30 transition-all">
+                    Konfirmasi Terminasi
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@push('scripts')
+<script>
+    function openTerminationModal(actionUrl, subNumber) {
+        const modal = document.getElementById('termination-pin-modal');
+        const modalBox = document.getElementById('termination-modal-box');
+        const form = document.getElementById('termination-form');
+        const subNumberText = document.getElementById('termination-sub-number');
+        const errorMsg = document.getElementById('pin-error-msg');
+        
+        form.action = actionUrl;
+        subNumberText.textContent = subNumber;
+        
+        // Clear inputs
+        const inputs = document.querySelectorAll('#pin-input-container input');
+        inputs.forEach(input => input.value = '');
+        document.getElementById('full-pin-value').value = '';
+        errorMsg.classList.add('hidden');
+        
+        // Show modal with animation
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+            modalBox.classList.remove('scale-95', 'opacity-0');
+            modalBox.classList.add('scale-100', 'opacity-100');
+            inputs[0].focus();
+        }, 20);
+    }
+
+    function closeTerminationModal() {
+        const modal = document.getElementById('termination-pin-modal');
+        const modalBox = document.getElementById('termination-modal-box');
+        
+        modalBox.classList.remove('scale-100', 'opacity-100');
+        modalBox.classList.add('scale-95', 'opacity-0');
+        setTimeout(() => {
+            modal.classList.add('hidden');
+        }, 150);
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const inputs = document.querySelectorAll('#pin-input-container input');
+        const form = document.getElementById('termination-form');
+        const errorMsg = document.getElementById('pin-error-msg');
+
+        // Handle Auto-focus flow
+        inputs.forEach((input, index) => {
+            // Only allow numbers
+            input.addEventListener('keypress', function(e) {
+                if (!/[0-9]/.test(e.key)) {
+                    e.preventDefault();
+                }
+            });
+
+            input.addEventListener('input', function() {
+                if (input.value.length === 1 && index < inputs.length - 1) {
+                    inputs[index + 1].focus();
+                }
+                updateFullPin();
+            });
+
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Backspace') {
+                    if (input.value === '' && index > 0) {
+                        inputs[index - 1].focus();
+                        inputs[index - 1].value = '';
+                    } else {
+                        input.value = '';
+                    }
+                    updateFullPin();
+                }
+            });
+
+            // Allow paste of 6 digits
+            input.addEventListener('paste', function(e) {
+                const pasteData = (e.clipboardData || window.clipboardData).getData('text');
+                if (/^\d{6}$/.test(pasteData)) {
+                    pasteData.split('').forEach((char, idx) => {
+                        if (inputs[idx]) {
+                            inputs[idx].value = char;
+                        }
+                    });
+                    inputs[5].focus();
+                    updateFullPin();
+                    e.preventDefault();
+                }
+            });
+        });
+
+        function updateFullPin() {
+            const pinVal = Array.from(inputs).map(inp => inp.value).join('');
+            document.getElementById('full-pin-value').value = pinVal;
+        }
+
+        form.addEventListener('submit', function(e) {
+            const pinVal = document.getElementById('full-pin-value').value;
+            if (pinVal.length !== 6 || !/^\d{6}$/.test(pinVal)) {
+                e.preventDefault();
+                errorMsg.classList.remove('hidden');
+                errorMsg.textContent = 'PIN harus berupa 6 digit angka!';
+            }
+        });
+    });
+</script>
+@endpush
+
 @endsection

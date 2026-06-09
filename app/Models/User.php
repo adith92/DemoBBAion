@@ -22,11 +22,13 @@ class User extends Authenticatable
         'manager_id',
         'sales_level',
         'dashboard_settings',
+        'billing_pin',
     ];
 
     protected $hidden = [
         'password',
         'remember_token',
+        'billing_pin',
     ];
 
     protected $casts = [
