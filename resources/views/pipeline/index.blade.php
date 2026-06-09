@@ -314,10 +314,10 @@
                                         <select x-model="p.category" class="w-[90%] bg-transparent text-sm text-white font-bold outline-none">
                                             <option class="text-slate-900" value="Mobil Short Term">Mobil Short Term</option>
                                             <option class="text-slate-900" value="Mobil Long Term">Mobil Long Term</option>
-                                            <option class="text-slate-900" value="Bus Pariwisata">Bus Pariwisata</option>
-                                            <option class="text-slate-900" value="Shuttle Bus">Shuttle Bus</option>
+                                            <option class="text-slate-900" value="Bis Short Term">Bis Short Term</option>
+                                            <option class="text-slate-900" value="Bis Long Term">Bis Long Term</option>
                                             <option class="text-slate-900" value="E-Voucher">E-Voucher</option>
-                                            <option class="text-slate-900" value="Mobil Box/Blind Van">Mobil Box/Blind Van</option>
+                                            <option class="text-slate-900" value="Supir">Supir</option>
                                         </select>
                                         <div class="flex gap-2">
                                             <div class="w-20">

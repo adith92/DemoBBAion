@@ -45,6 +45,14 @@ class PipelineController extends Controller
 
         $allOpps = $baseQuery->get();
 
+        // Paginated opportunities for Alpine.js (to have ->items() method)
+        $opportunities = $baseQuery->paginate(1000);
+
+        // Fetch clients scoped by user role
+        $clients = \App\Models\Client::when($user->isSales(), fn($q) => $q->where('assigned_sales_id', $user->id))
+            ->orderBy('company_name')
+            ->get();
+
         // Group by stage, build kanban structure
         $kanban = [];
         foreach ($stages as $stage) {
@@ -66,6 +74,6 @@ class PipelineController extends Controller
             }
         }
 
-        return view('pipeline.index', compact('kanban', 'stages', 'salesUsers', 'sortBy'));
+        return view('pipeline.index', compact('kanban', 'stages', 'salesUsers', 'sortBy', 'clients', 'opportunities'));
     }
 }

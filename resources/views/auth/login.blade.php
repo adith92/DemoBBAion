@@ -7,6 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -397,13 +398,6 @@
                 <p class="text-sm" style="color:#2d4a7a;">Masuk ke Golden Bird CRM Command Center</p>
             </div>
 
-            {{-- ⚡ 1-CLICK DEMO LOGIN --}}
-            <button type="button" class="btn-demo mb-5"
-                onclick="document.querySelector('[name=email]').value='manager@demo.crm';document.querySelector('[name=password]').value='password';document.getElementById('login-form').submit();">
-                <span class="material-symbols-outlined text-[16px]">bolt</span>
-                1-Click Demo Login (Manager)
-            </button>
-
             {{-- Error --}}
             @if($errors->any())
             <div class="mb-4 flex items-center gap-2 px-3 py-3 rounded-lg text-xs font-semibold"
@@ -413,59 +407,63 @@
             </div>
             @endif
 
-            {{-- Login Form --}}
-            <form id="login-form" method="POST" action="{{ route('login') }}" class="space-y-4">
-                @csrf
-                <div>
-                    <label class="lbl">Email</label>
-                    <input type="email" name="email" value="{{ old('email') }}" required
-                           autocomplete="email" autofocus class="inp"
-                           placeholder="you@goldenbird.co.id"/>
-                </div>
-                <div>
-                    <label class="lbl">Password</label>
-                    <input type="password" name="password" required
-                           autocomplete="current-password" class="inp"
-                           placeholder="••••••••"/>
-                </div>
-                <div class="flex items-center justify-between">
-                    <label class="flex items-center gap-2 cursor-pointer">
-                        <input type="checkbox" name="remember"
-                               style="accent-color:#0066ff;width:14px;height:14px;">
-                        <span class="text-xs" style="color:#2d4a7a;">Remember me</span>
-                    </label>
-                </div>
-                <button type="submit" class="btn-primary">
-                    <span class="material-symbols-outlined text-[17px]">login</span>
-                    Masuk Command Center
-                </button>
-            </form>
+            {{-- Login Form via Dynamic Dropdown --}}
+            <div x-data="{
+                users: @js($users),
+                selectedRole: '',
+                selectedEmail: '',
+                selectedPassword: '',
+                get filteredUsers() {
+                    if (!this.selectedRole) return [];
+                    return this.users.filter(u => u.role === this.selectedRole);
+                },
+                updateAccount(email) {
+                    this.selectedEmail = email;
+                    this.selectedPassword = email.endsWith('@demo.crm') ? 'password' : 'password123';
+                }
+            }">
+                <form id="login-form" method="POST" action="{{ route('login') }}" class="space-y-4">
+                    @csrf
+                    
+                    <input type="hidden" name="email" :value="selectedEmail">
+                    <input type="hidden" name="password" :value="selectedPassword">
 
-            {{-- Divider --}}
-            <div class="divider my-5">atau demo lainnya</div>
-
-            {{-- Demo Accounts Grid --}}
-            <div class="grid grid-cols-2 gap-2">
-                @php
-                $demos = [
-                    ['label'=>'General Manager', 'email'=>'gm@demo.crm',       'icon'=>'🏢', 'color'=>'#66a3ff'],
-                    ['label'=>'Sales Manager',   'email'=>'manager@demo.crm', 'icon'=>'📊', 'color'=>'#34d399'],
-                    ['label'=>'Sales A (Tim Manager)',   'email'=>'sales1@demo.crm',   'icon'=>'💼', 'color'=>'#fbbf24'],
-                    ['label'=>'Sales B (Tim Manager)',   'email'=>'sales2@demo.crm',   'icon'=>'💼', 'color'=>'#fbbf24'],
-                    ['label'=>'Sales C (Tim Manager)',   'email'=>'sales3@demo.crm',   'icon'=>'💼', 'color'=>'#fbbf24'],
-                    ['label'=>'Finance',         'email'=>'finance@demo.crm',  'icon'=>'💰', 'color'=>'#a78bfa'],
-                ];
-                @endphp
-                @foreach($demos as $d)
-                <div class="demo-pill flex items-center gap-3 p-3 rounded-xl border border-white/10 bg-white/5 cursor-pointer hover:bg-white/10 transition-colors"
-                     onclick="document.querySelector('[name=email]').value='{{ $d['email'] }}';document.querySelector('[name=password]').value='password';document.getElementById('login-form').submit();">
-                    <span class="text-xl">{{ $d['icon'] }}</span>
                     <div>
-                        <div class="text-[11px] font-bold" style="color:{{ $d['color'] }};">{{ $d['label'] }}</div>
-                        <div class="text-[9px] font-mono text-slate-400 mt-0.5">{{ $d['email'] }}</div>
+                        <label class="lbl">Kategori Jabatan</label>
+                        <select x-model="selectedRole" @change="selectedEmail = ''; selectedPassword = ''" class="inp" style="background-color: rgba(0, 20, 60, 0.95);">
+                            <option class="text-slate-900" value="">-- Pilih Kategori Jabatan --</option>
+                            <option class="text-slate-900" value="gm">🏢 General Manager (GM)</option>
+                            <option class="text-slate-900" value="manager">📊 Sales Manager</option>
+                            <option class="text-slate-900" value="sales">💼 Sales Representative</option>
+                            <option class="text-slate-900" value="finance">💰 Finance</option>
+                            <option class="text-slate-900" value="operational">⚙️ Operational (Ops)</option>
+                        </select>
                     </div>
-                </div>
-                @endforeach
+
+                    <div x-show="selectedRole" x-transition class="space-y-1">
+                        <label class="lbl">Pilih Akun / Nama</label>
+                        <select @change="updateAccount($event.target.value)" class="inp" style="background-color: rgba(0, 20, 60, 0.95);">
+                            <option class="text-slate-900" value="">-- Pilih Nama Akun --</option>
+                            <template x-for="u in filteredUsers" :key="u.email">
+                                <option class="text-slate-900" :value="u.email" x-text="u.manager_name ? `${u.name} (Tim: ${u.manager_name})` : u.name"></option>
+                            </template>
+                        </select>
+                    </div>
+
+                    <div class="flex items-center justify-between" x-show="selectedEmail">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="remember"
+                                   style="accent-color:#0066ff;width:14px;height:14px;">
+                            <span class="text-xs" style="color:#2d4a7a;">Remember me</span>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn-primary mt-2" :disabled="!selectedEmail"
+                            :class="!selectedEmail ? 'opacity-50 cursor-not-allowed' : ''">
+                        <span class="material-symbols-outlined text-[17px]">login</span>
+                        Masuk Command Center
+                    </button>
+                </form>
             </div>
 
             {{-- Footer --}}

@@ -95,8 +95,8 @@ class DemoMassiveSeeder extends Seeder
 
     private function seedUsers(): void
     {
-        if (User::where('role', 'sales')->count() >= 3) {
-            $this->command->info('  ↳ Users already exist, skipping.');
+        if (User::where('email', 'gm@demo.crm')->exists()) {
+            $this->command->info('  ↳ Demo users already exist, skipping.');
             return;
         }
 

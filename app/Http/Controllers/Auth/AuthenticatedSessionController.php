@@ -15,7 +15,16 @@ class AuthenticatedSessionController extends Controller
      */
     public function create(): View
     {
-        return view('auth.login');
+        $users = \App\Models\User::with('manager')->get()->map(function ($u) {
+            return [
+                'name' => $u->name,
+                'email' => $u->email,
+                'role' => $u->role,
+                'manager_name' => $u->manager?->name ?? null,
+            ];
+        });
+
+        return view('auth.login', compact('users'));
     }
 
     /**
