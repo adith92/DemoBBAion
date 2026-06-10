@@ -99,13 +99,46 @@ class KpiTest extends TestCase
     }
 
     /** @test */
-    public function activities_actuals_always_return_zero(): void
+    public function activities_actuals_calculated_dynamically_from_database(): void
     {
         $sales  = $this->makeSalesUser();
         $target = $this->ensureTarget($sales);
+        $client = $this->makeClient($sales);
 
         $this->assertEquals(0, $target->actual_meetings);
         $this->assertEquals(0, $target->actual_calls);
         $this->assertEquals(0, $target->actual_visits);
+
+        // Create a meeting log
+        \App\Models\ActivityLog::create([
+            'sales_id' => $sales->id,
+            'client_id' => $client->id,
+            'type' => 'meeting',
+            'subject' => 'Test Meeting',
+            'activity_date' => now(),
+        ]);
+
+        // Create a call log
+        \App\Models\ActivityLog::create([
+            'sales_id' => $sales->id,
+            'client_id' => $client->id,
+            'type' => 'call',
+            'subject' => 'Test Call',
+            'activity_date' => now(),
+        ]);
+
+        // Create a visit log
+        \App\Models\ActivityLog::create([
+            'sales_id' => $sales->id,
+            'client_id' => $client->id,
+            'type' => 'visit',
+            'subject' => 'Test Visit',
+            'activity_date' => now(),
+        ]);
+
+        $this->assertEquals(1, $target->fresh()->actual_meetings);
+        $this->assertEquals(1, $target->fresh()->actual_calls);
+        // Note: visits logic combines 'visit' and 'meeting' so 1 + 1 = 2
+        $this->assertEquals(2, $target->fresh()->actual_visits);
     }
 }

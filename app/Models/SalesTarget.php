@@ -112,17 +112,35 @@ class SalesTarget extends Model
 
     protected function actualMeetings(): Attribute
     {
-        return Attribute::make(get: fn () => 0);
+        return Attribute::make(
+            get: fn () => \App\Models\ActivityLog::where('sales_id', $this->user_id)
+                ->where('type', 'meeting')
+                ->whereYear('activity_date', $this->period_year)
+                ->whereMonth('activity_date', $this->period_month)
+                ->count()
+        );
     }
 
     protected function actualCalls(): Attribute
     {
-        return Attribute::make(get: fn () => 0);
+        return Attribute::make(
+            get: fn () => \App\Models\ActivityLog::where('sales_id', $this->user_id)
+                ->where('type', 'call')
+                ->whereYear('activity_date', $this->period_year)
+                ->whereMonth('activity_date', $this->period_month)
+                ->count()
+        );
     }
 
     protected function actualVisits(): Attribute
     {
-        return Attribute::make(get: fn () => 0);
+        return Attribute::make(
+            get: fn () => \App\Models\ActivityLog::where('sales_id', $this->user_id)
+                ->whereIn('type', ['visit', 'meeting'])
+                ->whereYear('activity_date', $this->period_year)
+                ->whereMonth('activity_date', $this->period_month)
+                ->count()
+        );
     }
 
     // Static helpers

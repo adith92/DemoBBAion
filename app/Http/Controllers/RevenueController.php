@@ -20,7 +20,7 @@ class RevenueController extends Controller
         $period = $request->get('period', 'monthly');
         $user = auth()->user();
 
-        $query = Booking::where('status', 'completed');
+        $query = \App\Models\Opportunity::where('stage', 'won');
         
         if ($user->isSales()) {
             $query->where('sales_id', $user->id);
@@ -43,9 +43,9 @@ class RevenueController extends Controller
     {
         abort_if(!auth()->user()->isGM(), 403);
 
-        $data = Booking::where('status', 'completed')
+        $data = \App\Models\Opportunity::where('stage', 'won')
             ->with('sales:id,name')
-            ->selectRaw('sales_id, SUM(price) as total_revenue, COUNT(*) as total_bookings')
+            ->selectRaw('sales_id, SUM(COALESCE(final_value, estimated_value, 0)) as total_revenue, COUNT(*) as total_bookings')
             ->groupBy('sales_id')
             ->orderByDesc('total_revenue')
             ->get()
@@ -55,7 +55,7 @@ class RevenueController extends Controller
                     'sales_name' => $item->sales->name ?? 'Unknown',
                     'total_revenue' => (int)$item->total_revenue,
                     'total_bookings' => $item->total_bookings,
-                    'avg_per_booking' => (int)($item->total_revenue / $item->total_bookings),
+                    'avg_per_booking' => $item->total_bookings > 0 ? (int)($item->total_revenue / $item->total_bookings) : 0,
                 ];
             });
 
@@ -68,36 +68,36 @@ class RevenueController extends Controller
      * MySQL   → DATE_FORMAT(col, fmt)  [%Y-%m-%d / %Y-%m / %Y-%u / %Y]
      * PgSQL   → TO_CHAR(col, fmt)      [YYYY-MM-DD / YYYY-MM / YYYY]
      */
-    private function dateExpr(string $type): string
+    private function dateExpr(string $type, string $column = 'created_at'): string
     {
         $driver = \DB::connection()->getDriverName();
 
         return match (true) {
             $driver === 'pgsql' => match ($type) {
-                'day'   => "TO_CHAR(created_at, 'YYYY-MM-DD')",
-                'week'  => "TO_CHAR(created_at, 'IYYY-IW')",
-                'month' => "TO_CHAR(created_at, 'YYYY-MM')",
-                'year'  => "TO_CHAR(created_at, 'YYYY')",
+                'day'   => "TO_CHAR({$column}, 'YYYY-MM-DD')",
+                'week'  => "TO_CHAR({$column}, 'IYYY-IW')",
+                'month' => "TO_CHAR({$column}, 'YYYY-MM')",
+                'year'  => "TO_CHAR({$column}, 'YYYY')",
             },
             $driver === 'mysql' || $driver === 'mariadb' => match ($type) {
-                'day'   => "DATE_FORMAT(created_at, '%Y-%m-%d')",
-                'week'  => "DATE_FORMAT(created_at, '%Y-%u')",
-                'month' => "DATE_FORMAT(created_at, '%Y-%m')",
-                'year'  => "DATE_FORMAT(created_at, '%Y')",
+                'day'   => "DATE_FORMAT({$column}, '%Y-%m-%d')",
+                'week'  => "DATE_FORMAT({$column}, '%Y-%u')",
+                'month' => "DATE_FORMAT({$column}, '%Y-%m')",
+                'year'  => "DATE_FORMAT({$column}, '%Y')",
             },
             default => match ($type) { // sqlite
-                'day'   => "STRFTIME('%Y-%m-%d', created_at)",
-                'week'  => "STRFTIME('%Y-%W', created_at)",
-                'month' => "STRFTIME('%Y-%m', created_at)",
-                'year'  => "STRFTIME('%Y', created_at)",
+                'day'   => "STRFTIME('%Y-%m-%d', {$column})",
+                'week'  => "STRFTIME('%Y-%W', {$column})",
+                'month' => "STRFTIME('%Y-%m', {$column})",
+                'year'  => "STRFTIME('%Y', {$column})",
             },
         };
     }
 
     private function getDailyRevenue($query)
     {
-        return $query->where('created_at', '>=', Carbon::now()->subDays(30))
-            ->selectRaw($this->dateExpr('day') . " as date, SUM(price) as total")
+        return $query->where('actual_close_date', '>=', Carbon::now()->subDays(30))
+            ->selectRaw($this->dateExpr('day', 'actual_close_date') . " as date, SUM(COALESCE(final_value, estimated_value, 0)) as total")
             ->groupBy('date')
             ->orderBy('date')
             ->get();
@@ -105,8 +105,8 @@ class RevenueController extends Controller
 
     private function getWeeklyRevenue($query)
     {
-        return $query->where('created_at', '>=', Carbon::now()->subWeeks(12))
-            ->selectRaw($this->dateExpr('week') . " as week, SUM(price) as total")
+        return $query->where('actual_close_date', '>=', Carbon::now()->subWeeks(12))
+            ->selectRaw($this->dateExpr('week', 'actual_close_date') . " as week, SUM(COALESCE(final_value, estimated_value, 0)) as total")
             ->groupBy('week')
             ->orderBy('week')
             ->get();
@@ -114,8 +114,8 @@ class RevenueController extends Controller
 
     private function getMonthlyRevenue($query)
     {
-        return $query->where('created_at', '>=', Carbon::now()->subMonths(12))
-            ->selectRaw($this->dateExpr('month') . " as month, SUM(price) as total")
+        return $query->where('actual_close_date', '>=', Carbon::now()->subMonths(12))
+            ->selectRaw($this->dateExpr('month', 'actual_close_date') . " as month, SUM(COALESCE(final_value, estimated_value, 0)) as total")
             ->groupBy('month')
             ->orderBy('month')
             ->get();
@@ -123,7 +123,7 @@ class RevenueController extends Controller
 
     private function getYearlyRevenue($query)
     {
-        return $query->selectRaw($this->dateExpr('year') . " as year, SUM(price) as total")
+        return $query->selectRaw($this->dateExpr('year', 'actual_close_date') . " as year, SUM(COALESCE(final_value, estimated_value, 0)) as total")
             ->groupBy('year')
             ->orderBy('year')
             ->get();
