@@ -497,10 +497,10 @@ document.addEventListener('DOMContentLoaded', function() {
     new Chart(ctx.getContext('2d'), {
         type: 'bar',
         data: {
-            labels: @json($weeklyLabels ?? ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']),
+            labels: {!! json_encode($weeklyLabels ?? ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']) !!},
             datasets: [{
                 label: 'Revenue (Jt)',
-                data: @json($weeklyRevenue ?? [320, 410, 285, 520, 475, 240, 190]),
+                data: {!! json_encode($weeklyRevenue ?? [320, 410, 285, 520, 475, 240, 190]) !!},
                 backgroundColor: [
                     'rgba(59,130,246,0.5)',
                     'rgba(59,130,246,0.5)',
@@ -559,11 +559,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // ── KPI Sparklines ──
     const sparks = [
-        { id: 'spark-revenue',   data: @json($sparkRevenue ?? [210,240,285,310,295,340,380,395,420,440,460,484]), color: '#1468a8' },
-        { id: 'spark-bookings',  data: @json($sparkBookings ?? [180,195,210,230,225,248,260,255,270,248,265,280]), color: '#60a5fa' },
-        { id: 'spark-fleet',     data: @json($sparkFleet ?? [65,68,70,72,69,71,74,72,75,73,72,74]),            color: '#34d399' },
-        { id: 'spark-clients',   data: @json($sparkClients ?? [100,104,108,110,112,115,116,118,120,122,125,128]), color: '#a78bfa' },
-        { id: 'spark-invoice',   data: @json($sparkInvoice ?? [280,310,340,360,395,420,410,430,440,420,415,420]), color: '#fbbf24' },
+        { id: 'spark-revenue',   data: {!! json_encode($sparkRevenue ?? [210,240,285,310,295,340,380,395,420,440,460,484]) !!}, color: '#1468a8' },
+        { id: 'spark-bookings',  data: {!! json_encode($sparkBookings ?? [180,195,210,230,225,248,260,255,270,248,265,280]) !!}, color: '#60a5fa' },
+        { id: 'spark-fleet',     data: {!! json_encode($sparkFleet ?? [65,68,70,72,69,71,74,72,75,73,72,74]) !!},            color: '#34d399' },
+        { id: 'spark-clients',   data: {!! json_encode($sparkClients ?? [100,104,108,110,112,115,116,118,120,122,125,128]) !!}, color: '#a78bfa' },
+        { id: 'spark-invoice',   data: {!! json_encode($sparkInvoice ?? [280,310,340,360,395,420,410,430,440,420,415,420]) !!}, color: '#fbbf24' },
     ];
     sparks.forEach(s => {
         if (window.CRM_Sparkline) CRM_Sparkline.render(s.id, s.data, s.color);
@@ -572,9 +572,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function gmPerformanceWidget() {
     return {
-        users: @json($users),
-        deals: @json($deals),
-        targets: @json($targets),
+        users: {!! json_encode($users) !!},
+        deals: {!! json_encode($deals) !!},
+        targets: {!! json_encode($targets) !!},
         
         managerLeaderboard: [],
         selectedManagerId: null,

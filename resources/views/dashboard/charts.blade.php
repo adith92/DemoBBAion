@@ -156,12 +156,12 @@ document.addEventListener('DOMContentLoaded', function() {
         new Chart(ctx7, {
             type: 'bar',
             data: {
-                labels: @json($days7Labels ?? ['Sen 1/6','Sel 2/6','Rab 3/6','Kam 4/6','Jum 5/6','Sab 6/6','Min 7/6']),
+                labels: {!! json_encode($days7Labels ?? ['Sen 1/6','Sel 2/6','Rab 3/6','Kam 4/6','Jum 5/6','Sab 6/6','Min 7/6']) !!},
                 datasets: [
                     {
                         type: 'line',
                         label: 'Revenue (Jt Rp)',
-                        data: @json($days7Revenue ?? [320, 415, 285, 524, 478, 245, 190]),
+                        data: {!! json_encode($days7Revenue ?? [320, 415, 285, 524, 478, 245, 190]) !!},
                         borderColor: '#00e5ff',
                         backgroundColor: 'rgba(0,229,255,0.07)',
                         borderWidth: 2.5,
@@ -178,7 +178,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     {
                         type: 'bar',
                         label: 'Deals Closed',
-                        data: @json($days7Deals ?? [3, 5, 2, 8, 6, 4, 1]),
+                        data: {!! json_encode($days7Deals ?? [3, 5, 2, 8, 6, 4, 1]) !!},
                         backgroundColor: 'rgba(167,139,250,0.35)',
                         borderColor: 'rgba(167,139,250,0.7)',
                         borderWidth: 1,
@@ -220,10 +220,10 @@ document.addEventListener('DOMContentLoaded', function() {
         new Chart(ctxDonut, {
             type: 'doughnut',
             data: {
-                labels: @json($pipelineLabels ?? ['Prospecting','Proposal','Negotiation','Won','Lost']),
+                labels: {!! json_encode($pipelineLabels ?? ['Prospecting','Proposal','Negotiation','Won','Lost']) !!},
                 datasets: [{
-                    data: @json($pipelinePct ?? [35, 25, 20, 15, 5]),
-                    backgroundColor: @json($pipelineColors ?? ['#6366f1','#f59e0b','#f97316','#10b981','#ef4444']),
+                    data: {!! json_encode($pipelinePct ?? [35, 25, 20, 15, 5]) !!},
+                    backgroundColor: {!! json_encode($pipelineColors ?? ['#6366f1','#f59e0b','#f97316','#10b981','#ef4444']) !!},
                     borderColor: isDark() ? '#09090f' : '#f0f0fa',
                     borderWidth: 3,
                     hoverOffset: 6,
@@ -251,13 +251,13 @@ document.addEventListener('DOMContentLoaded', function() {
         new Chart(ctxLeaders, {
             type: 'bar',
             data: {
-                labels: @json($salesLeaderboardLabels ?? ['Andi P.','Sari D.','Reza F.','Hendra W.','Budi H.']),
+                labels: {!! json_encode($salesLeaderboardLabels ?? ['Andi P.','Sari D.','Reza F.','Hendra W.','Budi H.']) !!},
                 datasets: [
                     {
                         label: 'Revenue (Jt)',
-                        data: @json($salesLeaderboardData ?? [740, 615, 480, 355, 290]),
-                        backgroundColor: @json($salesLeaderboardColors ?? ['rgba(245,158,11,0.7)','rgba(148,163,184,0.6)','rgba(180,83,9,0.6)','rgba(99,102,241,0.55)','rgba(99,102,241,0.4)']),
-                        borderColor: @json($salesLeaderboardColors ?? ['rgba(245,158,11,0.9)','rgba(148,163,184,0.8)','rgba(180,83,9,0.8)','rgba(99,102,241,0.75)','rgba(99,102,241,0.6)']),
+                        data: {!! json_encode($salesLeaderboardData ?? [740, 615, 480, 355, 290]) !!},
+                        backgroundColor: {!! json_encode($salesLeaderboardColors ?? ['rgba(245,158,11,0.7)','rgba(148,163,184,0.6)','rgba(180,83,9,0.6)','rgba(99,102,241,0.55)','rgba(99,102,241,0.4)']) !!},
+                        borderColor: {!! json_encode($salesLeaderboardColors ?? ['rgba(245,158,11,0.9)','rgba(148,163,184,0.8)','rgba(180,83,9,0.8)','rgba(99,102,241,0.75)','rgba(99,102,241,0.6)']) !!},
                         borderWidth: 1,
                         borderRadius: 5,
                         borderSkipped: false,
@@ -290,9 +290,9 @@ document.addEventListener('DOMContentLoaded', function() {
         new Chart(ctxAct, {
             type: 'doughnut',
             data: {
-                labels: @json($activityChartLabels ?? ['Call','Email','Meeting','Proposal','Follow-up']),
+                labels: {!! json_encode($activityChartLabels ?? ['Call','Email','Meeting','Proposal','Follow-up']) !!},
                 datasets: [{
-                    data: @json($activityChartData ?? [24, 18, 12, 8, 15]),
+                    data: {!! json_encode($activityChartData ?? [24, 18, 12, 8, 15]) !!},
                     backgroundColor: ['#3b82f6','#8b5cf6','#10b981','#f59e0b','#ec4899'],
                     borderColor: isDark() ? '#09090f' : '#f0f0fa',
                     borderWidth: 3,
