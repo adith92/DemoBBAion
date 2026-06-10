@@ -33,13 +33,6 @@ class PipelineController extends Controller
             $baseQuery->where('sales_id', $request->filter_sales);
         }
 
-        // Filter by year (default to current year)
-        $year = (int) $request->get('year', date('Y'));
-        $baseQuery->where(function ($q) use ($year) {
-            $q->whereYear('expected_close_date', $year)
-              ->orWhereYear('actual_close_date', $year);
-        });
-
         // Sort within each column
         $sortBy = $request->get('sort_by', 'updated');
         $baseQuery = match ($sortBy) {

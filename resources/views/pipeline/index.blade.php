@@ -124,18 +124,8 @@
     
     {{-- HEADER --}}
     <div class="mb-6 flex items-center justify-between shrink-0">
-        <div class="flex items-center gap-4">
+        <div>
             <h1 class="text-3xl font-bold tracking-tight text-[var(--cc-text)] mb-1">Sales Pipeline</h1>
-            
-            {{-- Tab Pemisah Tahun --}}
-            <div class="flex items-center gap-1 bg-[var(--cc-border)]/20 p-1 rounded-xl border border-[var(--cc-border)]">
-                @foreach([2024, 2025, 2026, 2027] as $y)
-                    <a href="?year={{ $y }}&sort_by={{ request('sort_by') }}&filter_sales={{ request('filter_sales') }}" 
-                       class="px-3 py-1.5 text-xs font-semibold rounded-lg transition-all duration-200 {{ request('year', date('Y')) == $y ? 'bg-indigo-600 text-white font-bold shadow-md shadow-indigo-600/10' : 'text-[var(--cc-text-muted)] hover:text-[var(--cc-text)]' }}">
-                        {{ $y }}
-                    </a>
-                @endforeach
-            </div>
         </div>
         <div class="flex items-center gap-3 flex-wrap">
             {{-- Search --}}
@@ -193,29 +183,76 @@
                 
                 <div class="kanban-drop-zone custom-scrollbar" id="col-{{ $key }}">
                     <template x-for="deal in filteredDeals('{{ $key }}')" :key="deal.id">
-                        <div class="kanban-card kanban-card-panel group relative cursor-pointer hover:shadow-md transition-all duration-200" 
-                             :data-id="deal.id"
-                             @click="openDetailModal(deal)">
-                            
-                            {{-- Header --}}
-                            <div class="flex justify-between items-start mb-1">
+                        <div class="kanban-card kanban-card-panel group relative" :data-id="deal.id">
+                            {{-- Clickable Header to Expand/Collapse --}}
+                            <div class="flex justify-between items-start mb-1 cursor-pointer" @click="deal.expanded = !deal.expanded">
                                 <h4 class="font-bold text-[var(--cc-text)] text-sm leading-tight pr-4" x-text="deal.client_name"></h4>
-                                <span class="text-xs font-mono font-bold text-emerald-500 shrink-0" x-text="formatIDR(deal.stage === 'won' ? deal.final_value : deal.estimated_value)"></span>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs font-mono font-bold text-emerald-500" x-text="formatIDR(deal.stage === 'won' ? deal.final_value : deal.estimated_value)"></span>
+                                    <svg class="w-4 h-4 text-[var(--cc-text-muted)] transition-transform duration-200" :class="{'rotate-180': deal.expanded}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                </div>
                             </div>
 
-                            {{-- Title & Age --}}
-                            <div class="flex justify-between items-center text-[10px] text-[var(--cc-text-muted)] mt-1.5">
+                            {{-- Quick Info (Always Visible) --}}
+                            <div class="flex justify-between items-center text-[10px] text-[var(--cc-text-muted)] mt-1 cursor-pointer" @click="deal.expanded = !deal.expanded">
                                 <span class="truncate pr-2 max-w-[70%]" x-text="deal.title"></span>
                                 <span class="font-semibold px-1.5 py-0.5 rounded bg-[var(--cc-border)]/40 text-[9px] text-[var(--cc-text-muted)] shrink-0" x-text="getStageAgeString(deal.stage_changed_at || deal.updated_at)"></span>
                             </div>
-
-                            {{-- Footer/Products snippet --}}
-                            <div class="flex items-center justify-between mt-3 pt-2 border-t border-[var(--cc-border)]/40">
-                                <div class="flex items-center gap-1 min-w-0">
-                                    <div class="w-3.5 h-3.5 rounded border border-[var(--cc-border)] bg-[var(--cc-border)] flex items-center justify-center text-[8px] font-bold text-[var(--cc-text)] uppercase shrink-0" x-text="deal.sales_name.charAt(0)"></div>
-                                    <span class="text-[10px] text-[var(--cc-text-muted)] truncate" x-text="deal.sales_name"></span>
+                            
+                            {{-- Expanded Details --}}
+                            <div x-show="deal.expanded" x-collapse x-transition>
+                                <div class="mt-3 mb-2 space-y-1.5 border-t border-[var(--cc-border)]/50 pt-2">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-[10px] font-bold text-indigo-400 uppercase tracking-widest">Detail Deal</span>
+                                        <div class="flex items-center gap-1 text-[10px] text-[var(--cc-text-muted)] font-medium whitespace-nowrap">
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                            <span x-text="formatDate(deal.created_at)"></span>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-1.5">
+                                        <div class="w-4 h-4 rounded border border-[var(--cc-border)] bg-[var(--cc-border)] flex items-center justify-center text-[9px] font-bold text-[var(--cc-text)]" x-text="deal.sales_name.charAt(0)"></div>
+                                        <span class="text-xs text-[var(--cc-text-muted)] truncate" x-text="deal.sales_name"></span>
+                                    </div>
                                 </div>
-                                <span class="text-[9px] font-bold text-indigo-400 uppercase tracking-widest">Detail →</span>
+                                
+                                <div class="flex items-center justify-between mt-3 mb-2">
+                                    <div class="flex flex-wrap gap-1">
+                                        <template x-for="p in (deal.products || [])" :key="p.id">
+                                            <span class="inline-flex items-center rounded-lg bg-indigo-500/20 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-indigo-300 ring-1 ring-inset ring-indigo-500/30">
+                                                <span x-text="(p.quantity > 1 ? p.quantity + 'x ' : '') + p.category"></span>
+                                            </span>
+                                        </template>
+                                    </div>
+                                </div>
+
+                                <div class="flex gap-2">
+                                    <button @click.stop="openHistoryModal(deal)"
+                                            class="text-[10px] font-bold text-[var(--cc-text-muted)] hover:text-indigo-400 flex items-center gap-1.5 transition-colors uppercase tracking-widest mt-2">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                        History
+                                    </button>
+                                </div>
+                                
+                                <template x-if="deal.stage === 'lost' && deal.lost_reason">
+                                    <div class="mt-2 text-[10px] text-rose-300 bg-rose-500/20 p-2 rounded-lg flex items-start gap-1 border border-rose-500/20">
+                                        <svg class="w-3 h-3 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                        <span x-text="deal.lost_reason"></span>
+                                    </div>
+                                </template>
+
+                                 <template x-if="currentUserRole === 'sales' && deal.sales_id === currentUserId">
+                                    <div class="mt-3 pt-3 border-t border-[var(--cc-border)] flex items-center justify-between" @click.stop>
+                                        <span class="text-[10px] font-bold text-[var(--cc-text-muted)] uppercase tracking-widest">Update Stage:</span>
+                                        <select :value="deal.stage" @change="openStageModal(deal, $event.target.value)" class="rounded-lg border border-[var(--cc-border)] bg-[var(--cc-modal-bg)] px-2 py-1 text-xs text-[var(--cc-text)] outline-none focus:border-indigo-500">
+                                            <option class="text-slate-900" value="call_meeting">Call/Meeting</option>
+                                            <option class="text-slate-900" value="prospecting">Prospecting</option>
+                                            <option class="text-slate-900" value="proposal">Proposal</option>
+                                            <option class="text-slate-900" value="negotiation">Negotiation</option>
+                                            <option class="text-slate-900" value="won">Won</option>
+                                            <option class="text-slate-900" value="lost">Lost</option>
+                                        </select>
+                                    </div>
+                                </template>
                             </div>
                         </div>
                     </template>
@@ -227,97 +264,14 @@
 
     {{-- MODALS --}}
     <div x-show="isModalOpen" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-[var(--cc-overlay)] backdrop-blur-sm p-4">
-        <div class="w-full rounded-3xl bg-[var(--cc-modal-bg)] shadow-2xl border border-[var(--cc-border)] flex flex-col transition-all duration-300"
-             :class="modalMode === 'view-detail' ? 'max-w-2xl' : 'max-w-md'"
-             @click.away="closeModal()">
+        <div class="w-full max-w-md rounded-3xl bg-[var(--cc-modal-bg)] shadow-2xl border border-[var(--cc-border)] flex flex-col" @click.away="closeModal()">
             
             <div class="p-6 border-b border-[var(--cc-border)]">
                 <h2 class="text-lg font-bold text-[var(--cc-text)]" x-text="modalTitle"></h2>
             </div>
             
-            <div class="p-6 space-y-4 max-h-[65vh] overflow-y-auto custom-scrollbar">
+            <div class="p-6 space-y-4 max-h-[60vh] overflow-y-auto custom-scrollbar">
                 
-                {{-- DETAIL DEAL VIEW --}}
-                <template x-if="modalMode === 'view-detail'">
-                    <div class="space-y-5">
-                        <!-- Deal Info -->
-                        <div class="grid grid-cols-2 gap-4 bg-[var(--cc-surface)] p-4 rounded-2xl border border-[var(--cc-border)]">
-                            <div>
-                                <span class="text-[10px] font-bold text-[var(--cc-text-muted)] uppercase tracking-wider">Client / Perusahaan</span>
-                                <p class="text-sm font-bold text-[var(--cc-text)] mt-0.5" x-text="editingDeal.client_name"></p>
-                            </div>
-                            <div>
-                                <span class="text-[10px] font-bold text-[var(--cc-text-muted)] uppercase tracking-wider">Nilai Deal</span>
-                                <p class="text-sm font-bold text-emerald-400 mt-0.5" x-text="formatIDR(editingDeal.stage === 'won' ? editingDeal.final_value : editingDeal.estimated_value)"></p>
-                            </div>
-                            <div>
-                                <span class="text-[10px] font-bold text-[var(--cc-text-muted)] uppercase tracking-wider">Sales Owner</span>
-                                <p class="text-xs text-[var(--cc-text)] mt-0.5" x-text="editingDeal.sales_name"></p>
-                            </div>
-                            <div>
-                                <span class="text-[10px] font-bold text-[var(--cc-text-muted)] uppercase tracking-wider">Expected Close Date</span>
-                                <p class="text-xs text-[var(--cc-text)] mt-0.5" x-text="formatDate(editingDeal.expected_close_date)"></p>
-                            </div>
-                        </div>
-
-                        <!-- Products -->
-                        <div x-show="editingDeal.products && editingDeal.products.length > 0">
-                            <h4 class="text-xs font-bold text-[var(--cc-text-muted)] uppercase tracking-widest mb-2">Produk/Layanan</h4>
-                            <div class="space-y-2">
-                                <template x-for="p in editingDeal.products" :key="p.id">
-                                    <div class="flex justify-between items-center text-xs bg-[var(--cc-surface)] px-3 py-2 rounded-xl border border-[var(--cc-border)]">
-                                        <div>
-                                            <span class="font-bold text-[var(--cc-text)]" x-text="p.category"></span>
-                                            <span class="text-[var(--cc-text-muted)] ml-1" x-text="'x' + (p.quantity || 1)"></span>
-                                            <template x-if="p.details">
-                                                <p class="text-[10px] text-[var(--cc-text-muted)] mt-0.5" x-text="p.details"></p>
-                                            </template>
-                                        </div>
-                                        <span class="font-mono text-emerald-400 font-bold" x-text="formatIDR(p.estimatedValue * (p.quantity || 1))"></span>
-                                    </div>
-                                </template>
-                            </div>
-                        </div>
-
-                        <!-- History Timeline -->
-                        <div>
-                            <h4 class="text-xs font-bold text-[var(--cc-text-muted)] uppercase tracking-widest mb-3">Timeline Perjalanan Deal</h4>
-                            <div class="space-y-4 max-h-[25vh] overflow-y-auto pr-1 custom-scrollbar">
-                                <template x-if="!editingDeal.history_timeline || editingDeal.history_timeline.length === 0">
-                                    <p class="text-xs text-[var(--cc-text-muted)] text-center py-2">Belum ada riwayat aktivitas.</p>
-                                </template>
-                                <template x-for="entry in (editingDeal.history_timeline || [])" :key="entry.id">
-                                    <div class="relative pl-5 pb-3 border-l border-[var(--cc-border)] last:border-0 last:pb-0">
-                                        <div class="absolute left-[-4px] top-1.5 w-2 h-2 rounded-full bg-indigo-500"></div>
-                                        <div class="flex justify-between items-start">
-                                            <div>
-                                                <span class="text-xs font-bold text-[var(--cc-text)]" x-text="stageLabel(entry.stage)"></span>
-                                                <span class="text-[10px] text-[var(--cc-text-muted)] block" x-text="formatDate(entry.timestamp, true)"></span>
-                                            </div>
-                                            <span class="text-[10px] text-[var(--cc-text-muted)]" x-text="entry.note"></span>
-                                        </div>
-                                    </div>
-                                </template>
-                            </div>
-                        </div>
-
-                        <!-- Update Stage action if sales owner -->
-                        <template x-if="currentUserRole === 'sales' && editingDeal.sales_id === currentUserId">
-                            <div class="pt-4 border-t border-[var(--cc-border)] flex items-center justify-between">
-                                <span class="text-xs font-bold text-[var(--cc-text-muted)] uppercase tracking-widest">Pindahkan Stage:</span>
-                                <select :value="editingDeal.stage" @change="openStageModal(editingDeal, $event.target.value)" class="rounded-xl border border-[var(--cc-border)] bg-[var(--cc-modal-bg)] px-3 py-1.5 text-xs text-[var(--cc-text)] outline-none focus:border-indigo-500">
-                                    <option class="text-slate-900" value="call_meeting">Call/Meeting</option>
-                                    <option class="text-slate-900" value="prospecting">Prospecting</option>
-                                    <option class="text-slate-900" value="proposal">Proposal</option>
-                                    <option class="text-slate-900" value="negotiation">Negotiation</option>
-                                    <option class="text-slate-900" value="won">Won</option>
-                                    <option class="text-slate-900" value="lost">Lost</option>
-                                </select>
-                            </div>
-                        </template>
-                    </div>
-                </template>
-
                 {{-- HISTORY VIEW --}}
                 <template x-if="modalMode === 'history'">
                     <div class="space-y-4">
@@ -662,28 +616,6 @@ function pipelineManager() {
             } catch (e) {
                 console.error('Error fetching history:', e);
                 this.modalTitle = 'Error loading history';
-            }
-        },
-
-        async openDetailModal(deal) {
-            this.editingDeal = JSON.parse(JSON.stringify(deal));
-            this.modalMode = 'view-detail';
-            this.modalTitle = 'Detail Deal: ' + deal.opp_number;
-            this.expandedHistoryId = null;
-            this.isModalOpen = true;
-            this.targetStage = deal.stage;
-            this.subType = 'Call';
-            this.note = '';
-
-            try {
-                const res = await fetch(`/api/opportunities/${deal.id}/history`);
-                const data = await res.json();
-                this.editingDeal.history_timeline = data.history_timeline || [];
-                if(typeof this.editingDeal.history_timeline === 'string') {
-                    this.editingDeal.history_timeline = JSON.parse(this.editingDeal.history_timeline);
-                }
-            } catch (e) {
-                console.error('Error fetching history:', e);
             }
         },
 
