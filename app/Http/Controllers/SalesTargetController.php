@@ -31,13 +31,14 @@ class SalesTargetController extends Controller
             ];
         });
 
-        $deals = \App\Models\Opportunity::all()->map(function($d) {
+        $deals = \App\Models\Opportunity::with('product')->get()->map(function($d) {
             return [
                 'id' => $d->id,
                 'salesId' => $d->sales_id,
                 'stage' => $d->stage === 'won' ? 'Won' : ($d->stage === 'lost' ? 'Lost' : 'Active'),
                 'actualValue' => (float)$d->final_value,
                 'estimatedValue' => (float)$d->estimated_value,
+                'productName' => $d->product->name ?? '',
                 'products' => $d->products, // JSON array
             ];
         });
