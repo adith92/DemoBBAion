@@ -46,21 +46,90 @@
 </div>
 
 {{-- KPI Cards --}}
-<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-    <a href="{{ route('finance.index', ['status' => 'paid']) }}" class="kpi-card kpi-emerald block group">
-        <p class="kpi-label">Total Paid</p>
-        <p class="kpi-value text-emerald-500">{{ \App\Helpers\FormatHelper::formatIDR($stats['total_spend']) }}</p>
-        <p class="text-[10px] font-bold mt-2 text-emerald-600 opacity-0 group-hover:opacity-100 transition-opacity">View paid invoices →</p>
-    </a>
+<div class="mb-6">
+    <h3 class="text-xs font-bold uppercase tracking-wider text-[var(--cc-text-muted)] mb-3">Rangkuman Deal & Transaksi</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+        {{-- Opportunity KPIs --}}
+        <div class="kpi-card kpi-cyan">
+            <p class="kpi-label">Jumlah Transaksi (Won)</p>
+            <p class="kpi-value text-sky-500">{{ $stats['won_deals_count'] }} won</p>
+        </div>
 
-    <div class="kpi-card kpi-gold">
-        <p class="kpi-label">Pending</p>
-        <p class="kpi-value text-amber-500">{{ \App\Helpers\FormatHelper::formatIDR($stats['total_pending']) }}</p>
+        <div class="kpi-card kpi-blue">
+            <p class="kpi-label">Nilai Transaksi (Won)</p>
+            <p class="kpi-value text-blue-500">{{ \App\Helpers\FormatHelper::formatIDR($stats['won_deals_sum']) }}</p>
+        </div>
+
+        {{-- Invoice KPIs --}}
+        <a href="{{ route('finance.index', ['status' => 'paid']) }}" class="kpi-card kpi-emerald block group">
+            <p class="kpi-label">Total Paid (Invoice)</p>
+            <p class="kpi-value text-emerald-500">{{ \App\Helpers\FormatHelper::formatIDR($stats['total_spend']) }}</p>
+            <p class="text-[9px] font-bold mt-1 text-emerald-600 opacity-0 group-hover:opacity-100 transition-opacity">View invoices →</p>
+        </a>
+
+        <div class="kpi-card kpi-gold">
+            <p class="kpi-label">Pending (Invoice)</p>
+            <p class="kpi-value text-amber-500">{{ \App\Helpers\FormatHelper::formatIDR($stats['total_pending']) }}</p>
+        </div>
+
+        <div class="kpi-card kpi-red">
+            <p class="kpi-label">Overdue (Invoice)</p>
+            <p class="kpi-value text-red-500">{{ \App\Helpers\FormatHelper::formatIDR($stats['total_overdue']) }}</p>
+        </div>
     </div>
+</div>
 
-    <div class="kpi-card kpi-red">
-        <p class="kpi-label">Overdue</p>
-        <p class="kpi-value text-red-500">{{ \App\Helpers\FormatHelper::formatIDR($stats['total_overdue']) }}</p>
+{{-- Opportunity History --}}
+<div class="cc-card rounded-xl shadow p-6 mb-6">
+    <h3 class="text-lg font-semibold text-[var(--cc-text)] mb-4">Opportunity & Deal History</h3>
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm dark-table resizable-table">
+            <thead>
+                <tr>
+                    <th class="text-left">Opp # / Title</th>
+                    <th class="text-left">Product</th>
+                    <th class="text-left">Stage</th>
+                    <th class="text-right">Value</th>
+                    <th class="text-left pl-6">Close Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($client->opportunities->sortByDesc('created_at') as $opp)
+                @php
+                    $closeMonth = $opp->expected_close_date ? $opp->expected_close_date->format('Y-m') : '';
+                @endphp
+                <tr>
+                    <td>
+                        <a href="{{ route('pipeline.index', ['highlight_id' => $opp->id, 'filter_month' => $closeMonth]) }}" 
+                           class="text-cc-cyan hover:underline font-semibold block">
+                            {{ $opp->opp_number }}
+                        </a>
+                        <span class="text-xs text-[var(--cc-text-muted)]">{{ $opp->title }}</span>
+                    </td>
+                    <td class="text-[var(--cc-text-muted)]">{{ $opp->product->name ?? '—' }}</td>
+                    <td>
+                        <span class="status-badge status-{{ $opp->stage_color }}">
+                            {{ $opp->stage_label }}
+                        </span>
+                    </td>
+                    <td class="text-right font-semibold text-[var(--cc-text)]">
+                        {{ \App\Helpers\FormatHelper::formatIDR($opp->stage === 'won' ? $opp->final_value : $opp->estimated_value) }}
+                    </td>
+                    <td class="text-[var(--cc-text-muted)] pl-6">
+                        @if($opp->stage === 'won' && $opp->actual_close_date)
+                            {{ $opp->actual_close_date->format('d M Y') }}
+                        @elseif($opp->expected_close_date)
+                            {{ $opp->expected_close_date->format('d M Y') }} (Est)
+                        @else
+                            —
+                        @endif
+                    </td>
+                </tr>
+                @empty
+                <tr><td colspan="5" class="py-4 text-center text-[var(--cc-text-muted)]">No opportunities yet</td></tr>
+                @endforelse
+            </tbody>
+        </table>
     </div>
 </div>
 

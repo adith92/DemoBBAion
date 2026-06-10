@@ -110,4 +110,37 @@ class ClientTransactionsTest extends TestCase
         $posB_sum = strpos($contentSum, 'Client B');
         $this->assertTrue($posB_sum < $posA_sum, "Client B should appear before Client A when sorting by transactions value");
     }
+
+    /** @test */
+    public function client_show_displays_opportunity_statistics_and_history()
+    {
+        $gm = $this->user('gm');
+        $client = Client::factory()->create();
+
+        // Create won opportunity
+        Opportunity::factory()->create([
+            'client_id' => $client->id,
+            'title' => 'CRM Deal 1',
+            'stage' => 'won',
+            'final_value' => 500000000,
+        ]);
+
+        // Create a negotiation opportunity
+        Opportunity::factory()->create([
+            'client_id' => $client->id,
+            'title' => 'ERP Deal 2',
+            'stage' => 'negotiation',
+            'estimated_value' => 300000000,
+        ]);
+
+        $response = $this->actingAs($gm)
+            ->get(route('clients.show', $client->id));
+
+        $response->assertStatus(200);
+        $response->assertSee('Jumlah Transaksi (Won)', false);
+        $response->assertSee('1 won');
+        $response->assertSee('CRM Deal 1');
+        $response->assertSee('ERP Deal 2');
+    }
 }
+

@@ -70,12 +70,15 @@ class ClientController extends Controller
             'assignedSales',
             'invoices.payments',
             'meetingLogs',
+            'opportunities.product',
         ]);
 
         $stats = [
             'total_spend'   => $client->invoices->where('status', 'paid')->sum('amount'),
             'total_pending' => $client->invoices->whereIn('status', ['sent', 'draft'])->sum('amount'),
             'total_overdue' => $client->invoices->where('status', 'overdue')->sum('amount'),
+            'won_deals_count' => $client->opportunities->where('stage', 'won')->count(),
+            'won_deals_sum'   => $client->opportunities->where('stage', 'won')->sum('final_value'),
         ];
 
         return view('clients.show', compact('client', 'stats'));
