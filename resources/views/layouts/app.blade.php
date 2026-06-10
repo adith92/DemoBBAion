@@ -137,7 +137,7 @@
      onclick="closeSidebar()"></div>
 
 {{-- FAB --}}
-<x-fab/>
+
 
 {{-- Keyboard shortcuts help overlay (? key) --}}
 <div id="shortcuts-overlay" style="display:none;position:fixed;inset:0;background:var(--cc-overlay);z-index:9500;align-items:center;justify-content:center" onclick="this.style.display='none'">

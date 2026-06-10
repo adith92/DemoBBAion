@@ -445,10 +445,11 @@ class DashboardController extends Controller
         for ($i = 5; $i >= 0; $i--) {
             $m = Carbon::now()->subMonths($i);
             $revenueTrend['labels'][] = $m->format('M Y');
-            $revenueTrend['data'][] = Booking::whereIn('sales_id', $salesIds)
-                ->whereMonth('created_at', $m->month)
-                ->whereYear('created_at', $m->year)
-                ->where('status', 'completed')->sum('price');
+            $revenueTrend['data'][] = Opportunity::whereIn('sales_id', $salesIds)
+                ->where('stage', 'won')
+                ->whereMonth('actual_close_date', $m->month)
+                ->whereYear('actual_close_date', $m->year)
+                ->sum(\Illuminate\Support\Facades\DB::raw('COALESCE(final_value, estimated_value, 0)'));
         }
 
         return view('dashboard.manager', compact(
@@ -470,14 +471,14 @@ class DashboardController extends Controller
         $monthStart = $now->copy()->startOfMonth();
         $yearStart  = $now->copy()->startOfYear();
 
-        $todayRevenue = Booking::where('sales_id', $user->id)->whereDate('created_at', $today)
-                            ->where('status', 'completed')->sum('price');
-        $weekRevenue  = Booking::where('sales_id', $user->id)->whereBetween('created_at', [$weekStart, $now])
-                            ->where('status', 'completed')->sum('price');
-        $monthRevenue = Booking::where('sales_id', $user->id)->whereBetween('created_at', [$monthStart, $now])
-                            ->where('status', 'completed')->sum('price');
-        $yearRevenue  = Booking::where('sales_id', $user->id)->whereBetween('created_at', [$yearStart, $now])
-                            ->where('status', 'completed')->sum('price');
+        $todayRevenue = Opportunity::where('sales_id', $user->id)->where('stage', 'won')->whereDate('actual_close_date', $today)
+                            ->sum(\Illuminate\Support\Facades\DB::raw('COALESCE(final_value, estimated_value, 0)'));
+        $weekRevenue  = Opportunity::where('sales_id', $user->id)->where('stage', 'won')->whereBetween('actual_close_date', [$weekStart, $now])
+                            ->sum(\Illuminate\Support\Facades\DB::raw('COALESCE(final_value, estimated_value, 0)'));
+        $monthRevenue = Opportunity::where('sales_id', $user->id)->where('stage', 'won')->whereBetween('actual_close_date', [$monthStart, $now])
+                            ->sum(\Illuminate\Support\Facades\DB::raw('COALESCE(final_value, estimated_value, 0)'));
+        $yearRevenue  = Opportunity::where('sales_id', $user->id)->where('stage', 'won')->whereBetween('actual_close_date', [$yearStart, $now])
+                            ->sum(\Illuminate\Support\Facades\DB::raw('COALESCE(final_value, estimated_value, 0)'));
 
         $myClients      = Client::where('assigned_sales_id', $user->id)->count();
         $activeBookings = Booking::where('sales_id', $user->id)->where('status', 'active')->count();
@@ -495,10 +496,11 @@ class DashboardController extends Controller
         for ($i = 5; $i >= 0; $i--) {
             $m = Carbon::now()->subMonths($i);
             $revenueTrend['labels'][] = $m->format('M Y');
-            $revenueTrend['data'][] = Booking::where('sales_id', $user->id)
-                ->whereMonth('created_at', $m->month)
-                ->whereYear('created_at', $m->year)
-                ->where('status', 'completed')->sum('price');
+            $revenueTrend['data'][] = Opportunity::where('sales_id', $user->id)
+                ->where('stage', 'won')
+                ->whereMonth('actual_close_date', $m->month)
+                ->whereYear('actual_close_date', $m->year)
+                ->sum(\Illuminate\Support\Facades\DB::raw('COALESCE(final_value, estimated_value, 0)'));
         }
 
         return view('dashboard.sales', compact(
