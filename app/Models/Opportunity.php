@@ -31,6 +31,7 @@ class Opportunity extends Model
         'subscription_id',
         'products',
         'history_timeline',
+        'stage_changed_at',
     ];
 
     protected $casts = [
@@ -43,6 +44,7 @@ class Opportunity extends Model
         'pax' => 'integer',
         'products' => 'array',
         'history_timeline' => 'array',
+        'stage_changed_at' => 'datetime',
     ];
 
     protected static function boot()
@@ -65,6 +67,9 @@ class Opportunity extends Model
                 }
 
                 $opportunity->opp_number = $prefix . str_pad($seq, 4, '0', STR_PAD_LEFT);
+            }
+            if (empty($opportunity->stage_changed_at)) {
+                $opportunity->stage_changed_at = now();
             }
         });
     }
@@ -123,12 +128,13 @@ class Opportunity extends Model
         return Attribute::make(
             get: function () {
                 return match ($this->stage) {
-                    'prospecting' => 'blue',
-                    'proposal'    => 'yellow',
-                    'negotiation' => 'orange',
-                    'won'         => 'green',
-                    'lost'        => 'red',
-                    default       => 'gray',
+                    'call_meeting' => 'purple',
+                    'prospecting'  => 'blue',
+                    'proposal'     => 'yellow',
+                    'negotiation'  => 'orange',
+                    'won'          => 'green',
+                    'lost'         => 'red',
+                    default        => 'gray',
                 };
             }
         );
@@ -139,12 +145,13 @@ class Opportunity extends Model
         return Attribute::make(
             get: function () {
                 return match ($this->stage) {
-                    'prospecting' => 'Prospekting',
-                    'proposal'    => 'Proposal',
-                    'negotiation' => 'Negosiasi',
-                    'won'         => 'Menang',
-                    'lost'        => 'Kalah',
-                    default       => ucfirst($this->stage),
+                    'call_meeting' => 'Call Meeting',
+                    'prospecting'  => 'Prospekting',
+                    'proposal'     => 'Proposal',
+                    'negotiation'  => 'Negosiasi',
+                    'won'          => 'Menang',
+                    'lost'         => 'Kalah',
+                    default        => ucfirst($this->stage),
                 };
             }
         );

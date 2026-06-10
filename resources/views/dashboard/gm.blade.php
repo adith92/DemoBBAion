@@ -152,9 +152,9 @@
                         <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:rgba(59,130,246,0.1);">
                             <span class="material-symbols-outlined text-[17px]" style="color:#60a5fa;">route</span>
                         </div>
-                        <span class="signal-up">▲ 32</span>
+                        <span class="signal-up">{{ $bookingsSignal ?? '▲ 32' }}</span>
                     </div>
-                    <div class="text-lg font-black leading-tight text-cc">{{ $pendingDispatch ?? 248 }}</div>
+                    <div class="text-lg font-black leading-tight text-cc">{{ $activeBookings ?? 248 }}</div>
                     <div class="text-[10px] font-semibold uppercase tracking-wide mt-1 text-cc-muted">{{ __('ui.active_bookings') }}</div>
                     <canvas id="spark-bookings" style="position:absolute;bottom:6px;right:6px;width:64px;height:22px;opacity:0.65;"></canvas>
                 </a>
@@ -167,7 +167,7 @@
                         </div>
                         <span class="signal-up">{{ __('ui.healthy') }}</span>
                     </div>
-                    <div class="text-lg font-black leading-tight text-cc">{{ $availableVehicles ?? 72 }}%</div>
+                    <div class="text-lg font-black leading-tight text-cc">{{ $utilizationRate ?? 72 }}%</div>
                     <div class="text-[10px] font-semibold uppercase tracking-wide mt-1 text-cc-muted">{{ __('ui.fleet_utilization') }}</div>
                     <canvas id="spark-fleet" style="position:absolute;bottom:6px;right:6px;width:64px;height:22px;opacity:0.65;"></canvas>
                 </a>
@@ -178,7 +178,7 @@
                         <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:rgba(139,92,246,0.1);">
                             <span class="material-symbols-outlined text-[17px]" style="color:#a78bfa;">corporate_fare</span>
                         </div>
-                        <span class="signal-up">▲ 12</span>
+                        <span class="signal-up">{{ $clientsSignal ?? '▲ 12' }}</span>
                     </div>
                     <div class="text-lg font-black leading-tight text-cc">{{ $activeClients }}</div>
                     <div class="text-[10px] font-semibold uppercase tracking-wide mt-1 text-cc-muted">{{ __('ui.corp_clients') }}</div>
@@ -315,7 +315,7 @@
                     <a href="{{ route('fleet.index') }}" class="text-[10px] font-semibold" style="color:#3b82f6;">{{ __('ui.view_all') }}</a>
                 </div>
                 @php
-                $fleets = [
+                $fleets = $fleetLeague ?? [
                     ['name'=>'Golden Bird','pct'=>92,'color'=>'#f59e0b','badge'=>__('ui.high_performer'),'badgeColor'=>'rgba(245,158,11,0.12)','badgeText'=>'#fbbf24'],
                     ['name'=>'Big Bird','pct'=>84,'color'=>'#10b981','badge'=>__('ui.stable'),'badgeColor'=>'rgba(16,185,129,0.12)','badgeText'=>'#34d399'],
                     ['name'=>'Cititrans','pct'=>78,'color'=>'#3b82f6','badge'=>__('ui.needs_growth'),'badgeColor'=>'rgba(59,130,246,0.12)','badgeText'=>'#60a5fa'],
@@ -453,7 +453,7 @@
                     <a href="{{ route('bookings.index') }}" class="text-[10px] font-semibold" style="color:#3b82f6;">{{ __('ui.view_all') }}</a>
                 </div>
                 @php
-                $bookings = [
+                $bookings = $recentBookings ?? [
                     ['id'=>'GB-2026-0612','client'=>'Astra International','fleet'=>'Golden Bird','status'=>'confirmed','statusClass'=>'status-confirmed'],
                     ['id'=>'BB-2026-0441','client'=>'Telkom Indonesia','fleet'=>'Big Bird','status'=>'On Trip','statusClass'=>'status-completed'],
                     ['id'=>'CT-2026-0192','client'=>'Bank Mandiri','fleet'=>'Cititrans','status'=>'pending','statusClass'=>'status-pending'],
@@ -497,10 +497,10 @@ document.addEventListener('DOMContentLoaded', function() {
     new Chart(ctx.getContext('2d'), {
         type: 'bar',
         data: {
-            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            labels: @json($weeklyLabels ?? ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']),
             datasets: [{
                 label: 'Revenue (Jt)',
-                data: [320, 410, 285, 520, 475, 240, 190],
+                data: @json($weeklyRevenue ?? [320, 410, 285, 520, 475, 240, 190]),
                 backgroundColor: [
                     'rgba(59,130,246,0.5)',
                     'rgba(59,130,246,0.5)',
@@ -559,11 +559,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // ── KPI Sparklines ──
     const sparks = [
-        { id: 'spark-revenue',   data: [210,240,285,310,295,340,380,395,420,440,460,484], color: '#1468a8' },
-        { id: 'spark-bookings',  data: [180,195,210,230,225,248,260,255,270,248,265,280], color: '#60a5fa' },
-        { id: 'spark-fleet',     data: [65,68,70,72,69,71,74,72,75,73,72,74],            color: '#34d399' },
-        { id: 'spark-clients',   data: [100,104,108,110,112,115,116,118,120,122,125,128], color: '#a78bfa' },
-        { id: 'spark-invoice',   data: [280,310,340,360,395,420,410,430,440,420,415,420], color: '#fbbf24' },
+        { id: 'spark-revenue',   data: @json($sparkRevenue ?? [210,240,285,310,295,340,380,395,420,440,460,484]), color: '#1468a8' },
+        { id: 'spark-bookings',  data: @json($sparkBookings ?? [180,195,210,230,225,248,260,255,270,248,265,280]), color: '#60a5fa' },
+        { id: 'spark-fleet',     data: @json($sparkFleet ?? [65,68,70,72,69,71,74,72,75,73,72,74]),            color: '#34d399' },
+        { id: 'spark-clients',   data: @json($sparkClients ?? [100,104,108,110,112,115,116,118,120,122,125,128]), color: '#a78bfa' },
+        { id: 'spark-invoice',   data: @json($sparkInvoice ?? [280,310,340,360,395,420,410,430,440,420,415,420]), color: '#fbbf24' },
     ];
     sparks.forEach(s => {
         if (window.CRM_Sparkline) CRM_Sparkline.render(s.id, s.data, s.color);

@@ -260,6 +260,7 @@ class OpportunityController extends Controller
                 $validated['final_value'] = $validated['final_value'] ?? $estimatedValue;
                 $validated['actual_close_date'] = $validated['actual_close_date'] ?? now()->toDateString();
             }
+            $validated['stage_changed_at'] = now();
 
             $history = $opportunity->history_timeline ?? [];
             $history[] = [
@@ -351,7 +352,10 @@ class OpportunityController extends Controller
             'activity_date'  => now(),
         ]);
 
-        $updates = ['stage' => $validated['stage']];
+        $updates = [
+            'stage' => $validated['stage'],
+            'stage_changed_at' => now(),
+        ];
 
         if ($validated['stage'] === 'lost' && !empty($validated['lost_reason'])) {
             $updates['lost_reason']        = $validated['lost_reason'];
@@ -406,7 +410,10 @@ class OpportunityController extends Controller
             ], 422);
         }
 
-        $updates = ['stage' => $toStage];
+        $updates = [
+            'stage' => $toStage,
+            'stage_changed_at' => now(),
+        ];
 
         if (isset($validated['estimated_value'])) {
             $updates['estimated_value'] = $validated['estimated_value'];

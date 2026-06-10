@@ -49,7 +49,11 @@ class DashboardController extends Controller
 
         $availableVehicles  = Vehicle::where('status', 'available')->count();
         $pendingDispatch    = Booking::where('status', 'pending')->count();
-        $upcomingMeetings   = 0;
+        
+        // Count meetings in the last 7 days + next 7 days from ActivityLog (type = meeting)
+        $upcomingMeetings   = ActivityLog::where('type', 'meeting')
+                                  ->whereBetween('activity_date', [Carbon::now()->subDays(7)->startOfDay(), Carbon::now()->addDays(7)->endOfDay()])
+                                  ->count();
 
         // Dynamic target vs realization (Booked vs Paid)
         $totalMonthlyBooked = Opportunity::where('stage', 'won')
@@ -68,6 +72,268 @@ class DashboardController extends Controller
         $activeClients = Client::where('status', 'active')->count();
         $todayRevenue  = Booking::whereDate('created_at', $today)
                             ->where('status', 'completed')->sum('price');
+
+        // Dynamic Active Bookings Count
+        $activeBookings = Booking::whereIn('status', ['confirmed', 'active'])->count();
+
+        // 1. Recent Bookings from DB
+        $recentBookings = Booking::with('client')
+            ->latest()
+            ->take(4)
+            ->get()
+            ->map(function($b) {
+                return [
+                    'id' => $b->booking_number,
+                    'client' => $b->client->company_name ?? 'Walk-in Client',
+                    'fleet' => $b->vehicle_type ?? 'Golden Bird',
+                    'status' => ucfirst($b->status),
+                    'statusClass' => match($b->status) {
+                        'completed' => 'status-completed',
+                        'active', 'confirmed' => 'status-confirmed',
+                        'pending' => 'status-pending',
+                        default => 'status-pending'
+                    }
+                ];
+            })
+            ->toArray();
+
+        // 2. 7-Day Revenue & Deals Timeline
+        $days7 = [];
+        $days7Labels = [];
+        $days7Revenue = [];
+        $days7Deals = [];
+        $dayNames = [
+            'Sunday' => 'Ming', 'Monday' => 'Sen', 'Tuesday' => 'Sel',
+            'Wednesday' => 'Rab', 'Thursday' => 'Kam', 'Friday' => 'Jum', 'Saturday' => 'Sab'
+        ];
+
+        for ($i = 6; $i >= 0; $i--) {
+            $day = Carbon::now()->subDays($i);
+            $dayName = $dayNames[$day->format('l')] ?? $day->format('D');
+            $dateStr = $day->format('j M');
+
+            $dealsClosedCount = Opportunity::where('stage', 'won')
+                ->whereDate('actual_close_date', $day)
+                ->count();
+
+            $revenueVal = Opportunity::where('stage', 'won')
+                ->whereDate('actual_close_date', $day)
+                ->sum(\Illuminate\Support\Facades\DB::raw('COALESCE(final_value, estimated_value, 0)'));
+            $revenueJuta = round($revenueVal / 1000000, 1);
+
+            $days7[] = [
+                'day' => $dayName,
+                'date' => $dateStr,
+                'deals' => $dealsClosedCount,
+                'won' => $dealsClosedCount,
+                'today' => $i === 0
+            ];
+
+            $days7Labels[] = $dayName . ' ' . $day->format('j/n');
+            $days7Revenue[] = $revenueJuta;
+            $days7Deals[] = $dealsClosedCount;
+        }
+
+        // 3. Pipeline Stage Donut
+        $stageLabelsMap = [
+            'call_meeting' => 'Call Meeting',
+            'prospecting' => 'Prospecting',
+            'proposal' => 'Proposal',
+            'negotiation' => 'Negotiation',
+            'won' => 'Won',
+            'lost' => 'Lost'
+        ];
+        $stageColorsMap = [
+            'call_meeting' => '#a78bfa',
+            'prospecting' => '#6366f1',
+            'proposal' => '#f59e0b',
+            'negotiation' => '#f97316',
+            'won' => '#10b981',
+            'lost' => '#ef4444'
+        ];
+
+        $totalOpps = Opportunity::count();
+        $pipelineDistribution = [];
+        $pipelineLabels = [];
+        $pipelinePct = [];
+        $pipelineColors = [];
+
+        foreach ($stageLabelsMap as $stage => $label) {
+            $count = Opportunity::where('stage', $stage)->count();
+            $pct = $totalOpps > 0 ? round(($count / $totalOpps) * 100) : 0;
+
+            $pipelineDistribution[] = [
+                'label' => $label,
+                'pct' => $pct,
+                'color' => $stageColorsMap[$stage],
+                'count' => $count
+            ];
+
+            $pipelineLabels[] = $label;
+            $pipelinePct[] = $pct;
+            $pipelineColors[] = $stageColorsMap[$stage];
+        }
+
+        // 4. Sales Leaderboard
+        $leaderboard = Opportunity::where('stage', 'won')
+            ->whereBetween('actual_close_date', [$monthStart, $monthEnd])
+            ->selectRaw('sales_id, SUM(COALESCE(final_value, estimated_value, 0)) as total_revenue')
+            ->groupBy('sales_id')
+            ->orderByDesc('total_revenue')
+            ->with('sales:id,name')
+            ->take(5)
+            ->get();
+
+        $salesLeaderboardLabels = [];
+        $salesLeaderboardData = [];
+        $leaderboardColors = [
+            'rgba(245,158,11,0.7)', 'rgba(148,163,184,0.6)', 'rgba(180,83,9,0.6)',
+            'rgba(99,102,241,0.55)', 'rgba(99,102,241,0.4)'
+        ];
+        $salesLeaderboardColors = [];
+
+        foreach ($leaderboard as $idx => $row) {
+            $salesName = $row->sales->name ?? 'Unknown Sales';
+            $salesLeaderboardLabels[] = explode(' ', $salesName)[0];
+            $salesLeaderboardData[] = round($row->total_revenue / 1000000, 1);
+            $salesLeaderboardColors[] = $leaderboardColors[$idx] ?? 'rgba(99,102,241,0.4)';
+        }
+
+        if (count($salesLeaderboardLabels) === 0) {
+            $salesLeaderboardLabels = ['No Data'];
+            $salesLeaderboardData = [0];
+            $salesLeaderboardColors = ['rgba(99,102,241,0.4)'];
+        }
+
+        // 5. Activity Breakdown
+        $activityTypes = [
+            'call' => ['label' => '📞 Call', 'color' => '#3b82f6'],
+            'email' => ['label' => '📧 Email', 'color' => '#8b5cf6'],
+            'meeting' => ['label' => '🤝 Meeting', 'color' => '#10b981'],
+            'proposal' => ['label' => '📄 Proposal', 'color' => '#f59e0b'],
+            'follow_up' => ['label' => '🔄 Follow-up', 'color' => '#ec4899']
+        ];
+
+        $actTypes = [];
+        $activityChartLabels = [];
+        $activityChartData = [];
+
+        foreach ($activityTypes as $type => $info) {
+            $count = ActivityLog::where('type', $type)
+                ->whereBetween('activity_date', [Carbon::now()->subDays(6)->startOfDay(), Carbon::now()->endOfDay()])
+                ->count();
+
+            $actTypes[] = [
+                'label' => $info['label'],
+                'count' => $count,
+                'color' => $info['color']
+            ];
+
+            $activityChartLabels[] = str_replace(['📞 ', '📧 ', '🤝 ', '📄 ', '🔄 '], '', $info['label']);
+            $activityChartData[] = $count;
+        }
+
+        // 6. Sparklines & Trends
+        $sparkRevenue = []; $sparkBookings = []; $sparkFleet = []; $sparkClients = []; $sparkInvoice = [];
+        for ($i = 11; $i >= 0; $i--) {
+            $m = Carbon::now()->subMonths($i);
+            $start = $m->copy()->startOfMonth();
+            $end = $m->copy()->endOfMonth();
+
+            $revVal = Opportunity::where('stage', 'won')
+                ->whereBetween('actual_close_date', [$start, $end])
+                ->sum(\Illuminate\Support\Facades\DB::raw('COALESCE(final_value, estimated_value, 0)'));
+            $sparkRevenue[] = round($revVal / 1000000, 1);
+
+            $sparkBookings[] = Booking::whereBetween('created_at', [$start, $end])->count();
+
+            $totalFleet = Vehicle::count();
+            $activeFleet = Vehicle::whereIn('status', ['available', 'on_trip'])->count();
+            $sparkFleet[] = $totalFleet > 0 ? round(($activeFleet / $totalFleet) * 100) : 75;
+
+            $sparkClients[] = Client::where('created_at', '<=', $end)->count();
+
+            $invVal = Invoice::whereIn('status', ['sent', 'draft', 'overdue'])
+                ->whereBetween('created_at', [$start, $end])
+                ->sum('amount');
+            $sparkInvoice[] = round($invVal / 1000000, 1);
+        }
+
+        // Booking signals (increase/decrease vs last month)
+        $thisMonthBookings = Booking::whereMonth('created_at', Carbon::now()->month)->count();
+        $lastMonthBookings = Booking::whereMonth('created_at', Carbon::now()->subMonth()->month)->count();
+        $bookingsDiff = $thisMonthBookings - $lastMonthBookings;
+        $bookingsSignal = $bookingsDiff >= 0 ? "▲ " . $bookingsDiff : "▼ " . abs($bookingsDiff);
+
+        // Clients signals
+        $thisMonthClients = Client::whereMonth('created_at', Carbon::now()->month)->count();
+        $clientsSignal = $thisMonthClients > 0 ? "▲ " . $thisMonthClients : "—";
+
+        // Fleet utilization rate
+        $totalVehicles = Vehicle::count();
+        $availableVehiclesCount = Vehicle::where('status', 'available')->count();
+        $onTripVehiclesCount = Vehicle::where('status', 'on_trip')->count();
+        $utilizationRate = $totalVehicles > 0 ? round((($onTripVehiclesCount + $availableVehiclesCount) / $totalVehicles) * 100) : 75;
+
+        // Fleet League by Pool
+        $pools = \App\Models\Pool::withCount([
+            'vehicles',
+            'vehicles as active_vehicles' => function($q) {
+                $q->whereIn('status', ['available', 'on_trip']);
+            }
+        ])->get();
+
+        $fleetLeagueColors = ['#f59e0b', '#10b981', '#3b82f6', '#8b5cf6'];
+        $fleetLeagueBadges = [
+            ['badge' => 'High Performer', 'bg' => 'rgba(245,158,11,0.12)', 'text' => '#fbbf24'],
+            ['badge' => 'Stable', 'bg' => 'rgba(16,185,129,0.12)', 'text' => '#34d399'],
+            ['badge' => 'Needs Growth', 'bg' => 'rgba(59,130,246,0.12)', 'text' => '#60a5fa'],
+            ['badge' => 'Under Review', 'bg' => 'rgba(139,92,246,0.12)', 'text' => '#a78bfa']
+        ];
+
+        $fleetLeague = [];
+        foreach ($pools as $index => $pool) {
+            $pct = $pool->vehicles_count > 0 ? round(($pool->active_vehicles / $pool->vehicles_count) * 100) : 75;
+            $badgeIdx = min($index, 3);
+            
+            $fleetName = match($pool->name) {
+                'Pool Jakarta' => 'Golden Bird',
+                'Pool Bandung' => 'Big Bird',
+                'Pool Surabaya' => 'Cititrans',
+                default => str_replace('Pool ', '', $pool->name)
+            };
+
+            $fleetLeague[] = [
+                'name' => $fleetName,
+                'pct' => $pct,
+                'color' => $fleetLeagueColors[$badgeIdx] ?? '#6b7280',
+                'badge' => $fleetLeagueBadges[$badgeIdx]['badge'],
+                'badgeColor' => $fleetLeagueBadges[$badgeIdx]['bg'],
+                'badgeText' => $fleetLeagueBadges[$badgeIdx]['text']
+            ];
+        }
+
+        if (count($fleetLeague) === 0) {
+            $fleetLeague = [
+                ['name'=>'Golden Bird','pct'=>92,'color'=>'#f59e0b','badge'=>'High Performer','badgeColor'=>'rgba(245,158,11,0.12)','badgeText'=>'#fbbf24'],
+                ['name'=>'Big Bird','pct'=>84,'color'=>'#10b981','badge'=>'Stable','badgeColor'=>'rgba(16,185,129,0.12)','badgeText'=>'#34d399'],
+                ['name'=>'Cititrans','pct'=>78,'color'=>'#3b82f6','badge'=>'Needs Growth','badgeColor'=>'rgba(59,130,246,0.12)','badgeText'=>'#60a5fa'],
+                ['name'=>'Exec. Transport','pct'=>73,'color'=>'#8b5cf6','badge'=>'Under Review','badgeColor'=>'rgba(139,92,246,0.12)','badgeText'=>'#a78bfa']
+            ];
+        }
+
+        // 7. Weekly Revenue movement data
+        $weeklyRevenue = [];
+        $weeklyLabels = [];
+        for ($i = 6; $i >= 0; $i--) {
+            $day = Carbon::now()->subDays($i);
+            $weeklyLabels[] = $day->format('D');
+            
+            $val = Opportunity::where('stage', 'won')
+                ->whereDate('actual_close_date', $day)
+                ->sum(\Illuminate\Support\Facades\DB::raw('COALESCE(final_value, estimated_value, 0)'));
+            $weeklyRevenue[] = round($val / 1000000, 1);
+        }
 
         // Tambahan data performa sales untuk GM
         $users = User::all()->map(function($u) {
@@ -113,7 +379,14 @@ class DashboardController extends Controller
         return view('dashboard.gm', compact(
             'availableVehicles', 'pendingDispatch', 'upcomingMeetings',
             'totalMonthlyBooked', 'totalMonthlyPaid', 'outstandingInvoices',
-            'completedBookings', 'activeClients', 'todayRevenue', 'users', 'deals', 'targets'
+            'completedBookings', 'activeClients', 'todayRevenue', 'users', 'deals', 'targets',
+            'recentBookings', 'days7', 'days7Labels', 'days7Revenue', 'days7Deals',
+            'pipelineDistribution', 'pipelineLabels', 'pipelinePct', 'pipelineColors',
+            'salesLeaderboardLabels', 'salesLeaderboardData', 'salesLeaderboardColors',
+            'actTypes', 'activityChartLabels', 'activityChartData',
+            'sparkRevenue', 'sparkBookings', 'sparkFleet', 'sparkClients', 'sparkInvoice',
+            'bookingsSignal', 'clientsSignal', 'utilizationRate', 'fleetLeague',
+            'weeklyRevenue', 'weeklyLabels', 'activeBookings'
         ));
     }
 
@@ -132,8 +405,8 @@ class DashboardController extends Controller
         }
 
         $teamMembers = $teamQuery->get()->map(function ($s) use ($now) {
-            $won   = Opportunity::where('sales_id', $s->id)->whereMonth('updated_at', $now->month)->where('stage', 'won')->count();
-            $lost  = Opportunity::where('sales_id', $s->id)->whereMonth('updated_at', $now->month)->where('stage', 'lost')->count();
+            $won   = Opportunity::where('sales_id', $s->id)->whereMonth('actual_close_date', $now->month)->whereYear('actual_close_date', $now->year)->where('stage', 'won')->count();
+            $lost  = Opportunity::where('sales_id', $s->id)->whereMonth('actual_close_date', $now->month)->whereYear('actual_close_date', $now->year)->where('stage', 'lost')->count();
             $total = $won + $lost;
             $s->won_count      = $won;
             $s->lost_count     = $lost;

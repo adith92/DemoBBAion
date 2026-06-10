@@ -26,7 +26,7 @@
         {{-- Day labels with deal counts --}}
         <div class="flex justify-between mt-2 px-1">
             @php
-            $days7 = [
+            $days7 = $days7 ?? [
                 ['day'=>'Sen','date'=>'1 Jun','deals'=>3,'won'=>1],
                 ['day'=>'Sel','date'=>'2 Jun','deals'=>5,'won'=>2],
                 ['day'=>'Rab','date'=>'3 Jun','deals'=>2,'won'=>0],
@@ -60,7 +60,7 @@
         {{-- Legend --}}
         <div class="mt-3 space-y-1.5">
             @php
-            $stages = [
+            $stages = $pipelineDistribution ?? [
                 ['label'=>'Prospecting','pct'=>35,'color'=>'#6366f1','count'=>14],
                 ['label'=>'Proposal',   'pct'=>25,'color'=>'#f59e0b','count'=>10],
                 ['label'=>'Negotiation','pct'=>20,'color'=>'#f97316','count'=>8],
@@ -103,7 +103,7 @@
             </div>
             <div class="space-y-2 flex-1">
                 @php
-                $actTypes = [
+                $actTypes = $actTypes ?? [
                     ['label'=>'📞 Call',    'count'=>24,'color'=>'#3b82f6'],
                     ['label'=>'📧 Email',   'count'=>18,'color'=>'#8b5cf6'],
                     ['label'=>'🤝 Meeting', 'count'=>12,'color'=>'#10b981'],
@@ -119,7 +119,7 @@
                     </div>
                     <div class="progress-bar-bg">
                         <div class="progress-bar-fill"
-                             style="width:{{ round($a['count']/24*100) }}%;background:{{ $a['color'] }}"></div>
+                             style="width:{{ round($a['count'] > 0 ? ($a['count']/max(array_column($actTypes, 'count'))*100) : 0) }}%;background:{{ $a['color'] }}"></div>
                     </div>
                 </div>
                 @endforeach
@@ -156,12 +156,12 @@ document.addEventListener('DOMContentLoaded', function() {
         new Chart(ctx7, {
             type: 'bar',
             data: {
-                labels: ['Sen 1/6','Sel 2/6','Rab 3/6','Kam 4/6','Jum 5/6','Sab 6/6','Min 7/6'],
+                labels: @json($days7Labels ?? ['Sen 1/6','Sel 2/6','Rab 3/6','Kam 4/6','Jum 5/6','Sab 6/6','Min 7/6']),
                 datasets: [
                     {
                         type: 'line',
                         label: 'Revenue (Jt Rp)',
-                        data: [320, 415, 285, 524, 478, 245, 190],
+                        data: @json($days7Revenue ?? [320, 415, 285, 524, 478, 245, 190]),
                         borderColor: '#00e5ff',
                         backgroundColor: 'rgba(0,229,255,0.07)',
                         borderWidth: 2.5,
@@ -178,7 +178,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     {
                         type: 'bar',
                         label: 'Deals Closed',
-                        data: [3, 5, 2, 8, 6, 4, 1],
+                        data: @json($days7Deals ?? [3, 5, 2, 8, 6, 4, 1]),
                         backgroundColor: 'rgba(167,139,250,0.35)',
                         borderColor: 'rgba(167,139,250,0.7)',
                         borderWidth: 1,
@@ -220,10 +220,10 @@ document.addEventListener('DOMContentLoaded', function() {
         new Chart(ctxDonut, {
             type: 'doughnut',
             data: {
-                labels: ['Prospecting','Proposal','Negotiation','Won','Lost'],
+                labels: @json($pipelineLabels ?? ['Prospecting','Proposal','Negotiation','Won','Lost']),
                 datasets: [{
-                    data: [35, 25, 20, 15, 5],
-                    backgroundColor: ['#6366f1','#f59e0b','#f97316','#10b981','#ef4444'],
+                    data: @json($pipelinePct ?? [35, 25, 20, 15, 5]),
+                    backgroundColor: @json($pipelineColors ?? ['#6366f1','#f59e0b','#f97316','#10b981','#ef4444']),
                     borderColor: isDark() ? '#09090f' : '#f0f0fa',
                     borderWidth: 3,
                     hoverOffset: 6,
@@ -251,13 +251,13 @@ document.addEventListener('DOMContentLoaded', function() {
         new Chart(ctxLeaders, {
             type: 'bar',
             data: {
-                labels: ['Andi P.','Sari D.','Reza F.','Hendra W.','Budi H.'],
+                labels: @json($salesLeaderboardLabels ?? ['Andi P.','Sari D.','Reza F.','Hendra W.','Budi H.']),
                 datasets: [
                     {
                         label: 'Revenue (Jt)',
-                        data: [740, 615, 480, 355, 290],
-                        backgroundColor: ['rgba(245,158,11,0.7)','rgba(148,163,184,0.6)','rgba(180,83,9,0.6)','rgba(99,102,241,0.55)','rgba(99,102,241,0.4)'],
-                        borderColor:     ['rgba(245,158,11,0.9)','rgba(148,163,184,0.8)','rgba(180,83,9,0.8)','rgba(99,102,241,0.75)','rgba(99,102,241,0.6)'],
+                        data: @json($salesLeaderboardData ?? [740, 615, 480, 355, 290]),
+                        backgroundColor: @json($salesLeaderboardColors ?? ['rgba(245,158,11,0.7)','rgba(148,163,184,0.6)','rgba(180,83,9,0.6)','rgba(99,102,241,0.55)','rgba(99,102,241,0.4)']),
+                        borderColor: @json($salesLeaderboardColors ?? ['rgba(245,158,11,0.9)','rgba(148,163,184,0.8)','rgba(180,83,9,0.8)','rgba(99,102,241,0.75)','rgba(99,102,241,0.6)']),
                         borderWidth: 1,
                         borderRadius: 5,
                         borderSkipped: false,
@@ -290,9 +290,9 @@ document.addEventListener('DOMContentLoaded', function() {
         new Chart(ctxAct, {
             type: 'doughnut',
             data: {
-                labels: ['Call','Email','Meeting','Proposal','Follow-up'],
+                labels: @json($activityChartLabels ?? ['Call','Email','Meeting','Proposal','Follow-up']),
                 datasets: [{
-                    data: [24, 18, 12, 8, 15],
+                    data: @json($activityChartData ?? [24, 18, 12, 8, 15]),
                     backgroundColor: ['#3b82f6','#8b5cf6','#10b981','#f59e0b','#ec4899'],
                     borderColor: isDark() ? '#09090f' : '#f0f0fa',
                     borderWidth: 3,

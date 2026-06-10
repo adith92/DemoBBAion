@@ -192,12 +192,18 @@
                                     <svg class="w-4 h-4 text-[var(--cc-text-muted)] transition-transform duration-200" :class="{'rotate-180': deal.expanded}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                 </div>
                             </div>
+
+                            {{-- Quick Info (Always Visible) --}}
+                            <div class="flex justify-between items-center text-[10px] text-[var(--cc-text-muted)] mt-1 cursor-pointer" @click="deal.expanded = !deal.expanded">
+                                <span class="truncate pr-2 max-w-[70%]" x-text="deal.title"></span>
+                                <span class="font-semibold px-1.5 py-0.5 rounded bg-[var(--cc-border)]/40 text-[9px] text-[var(--cc-text-muted)] shrink-0" x-text="getStageAgeString(deal.stage_changed_at || deal.updated_at)"></span>
+                            </div>
                             
                             {{-- Expanded Details --}}
                             <div x-show="deal.expanded" x-collapse x-transition>
-                                <div class="mt-2 mb-2 space-y-1.5">
+                                <div class="mt-3 mb-2 space-y-1.5 border-t border-[var(--cc-border)]/50 pt-2">
                                     <div class="flex items-center justify-between">
-                                        <p class="text-[11px] font-bold text-indigo-400 uppercase tracking-widest truncate max-w-[65%]" x-text="deal.title"></p>
+                                        <span class="text-[10px] font-bold text-indigo-400 uppercase tracking-widest">Detail Deal</span>
                                         <div class="flex items-center gap-1 text-[10px] text-[var(--cc-text-muted)] font-medium whitespace-nowrap">
                                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                                             <span x-text="formatDate(deal.created_at)"></span>
@@ -539,6 +545,22 @@ function pipelineManager() {
                 return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
             }
             return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+        },
+
+        getStageAgeString(dateStr) {
+            if (!dateStr) return '0 hari';
+            const diffTime = Math.abs(new Date() - new Date(dateStr));
+            const diffDays = diffTime / (1000 * 60 * 60 * 24);
+            const diffHours = Math.floor(diffTime / (1000 * 60 * 60));
+            if (diffHours < 24) {
+                if (diffHours === 0) {
+                    const diffMins = Math.floor(diffTime / (1000 * 60));
+                    if (diffMins === 0) return 'Baru saja';
+                    return `${diffMins} menit`;
+                }
+                return `${diffHours} jam`;
+            }
+            return `${Math.floor(diffDays)} hari`;
         },
 
         stageLabel(st) {
