@@ -72,4 +72,28 @@ class FleetController extends Controller
 
         return view('fleet.show', compact('vehicle', 'bookings', 'maintenanceLogs', 'activeBooking', 'nextMaintenance'));
     }
+
+    public function apiAvailable()
+    {
+        $query = Vehicle::with('pool')
+            ->where('status', 'available');
+            
+        if (request()->has('pool_id')) {
+            $query->where('pool_id', request('pool_id'));
+        }
+
+        return response()->json($query->get());
+    }
+
+    public function apiDriversAvailable()
+    {
+        $query = \App\Models\Driver::with('pool')
+            ->where('status', 'available');
+
+        if (request()->has('pool_id')) {
+            $query->where('pool_id', request('pool_id'));
+        }
+
+        return response()->json($query->get());
+    }
 }

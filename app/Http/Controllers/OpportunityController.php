@@ -227,30 +227,77 @@ class OpportunityController extends Controller
         $oldStage = $opportunity->stage;
         $isStageChanged = $validated['stage'] !== $oldStage;
 
-        if ($isStageChanged) {
-            if (!$this->pipelineService->canTransition($opportunity->stage, $validated['stage'])) {
-                if ($request->wantsJson()) {
-                    return response()->json(['ok' => false, 'message' => "Tidak dapat berpindah ke {$validated['stage']}."], 422);
-                }
-                return back()->withErrors([
-                    'stage' => "Tidak dapat berpindah dari {$opportunity->stage} ke {$validated['stage']}.",
-                ]);
-            }
+        try {
+            \Illuminate\Support\Facades\DB::beginTransaction();
 
-            // Validasi hak akses khusus untuk role 'sales' yang merupakan pemilik oportunitas
-            if (auth()->user()->role !== 'sales') {
-                if ($request->wantsJson()) {
-                    return response()->json(['ok' => false, 'message' => 'Akses ditolak: Hanya Sales yang dapat mengubah stage.'], 403);
+            if ($isStageChanged) {
+                if (!$this->pipelineService->canTransition($opportunity->stage, $validated['stage'])) {
+                    if ($request->wantsJson()) {
+                        return response()->json(['ok' => false, 'message' => "Tidak dapat berpindah ke {$validated['stage']}."], 422);
+                    }
+                    return back()->withErrors([
+                        'stage' => "Tidak dapat berpindah dari {$opportunity->stage} ke {$validated['stage']}.",
+                    ]);
                 }
-                return back()->withErrors(['stage' => 'Akses ditolak: Hanya Sales yang dapat mengubah stage.']);
-            }
 
-            if ($opportunity->sales_id !== auth()->id()) {
-                if ($request->wantsJson()) {
-                    return response()->json(['ok' => false, 'message' => 'Akses ditolak: Hanya Sales pemilik oportunitas yang dapat mengubah stage.'], 403);
+                // Validasi hak akses khusus untuk role 'sales' yang merupakan pemilik oportunitas
+                if (auth()->user()->role !== 'sales') {
+                    if ($request->wantsJson()) {
+                        return response()->json(['ok' => false, 'message' => 'Akses ditolak: Hanya Sales yang dapat mengubah stage.'], 403);
+                    }
+                    return back()->withErrors(['stage' => 'Akses ditolak: Hanya Sales yang dapat mengubah stage.']);
                 }
-                return back()->withErrors(['stage' => 'Akses ditolak: Hanya Sales pemilik oportunitas yang dapat mengubah stage.']);
-            }
+
+                if ($opportunity->sales_id !== auth()->id()) {
+                    if ($request->wantsJson()) {
+                        return response()->json(['ok' => false, 'message' => 'Akses ditolak: Hanya Sales pemilik oportunitas yang dapat mengubah stage.'], 403);
+                    }
+                    return back()->withErrors(['stage' => 'Akses ditolak: Hanya Sales pemilik oportunitas yang dapat mengubah stage.']);
+                }
+
+                // Database Transaction for Fleet & Driver
+                $targetFleetStatus = $validated['stage'] === 'won' ? 'on_trip' : ($validated['stage'] === 'negotiation' ? 'maintenance' : 'available');
+                $targetDriverStatus = $validated['stage'] === 'won' ? 'Assigned' : ($validated['stage'] === 'negotiation' ? 'Reserved' : 'Available');
+
+                if ($request->has('fleet_ids')) {
+                    $fleetIds = $request->input('fleet_ids') ?: [];
+                    $opportunity->assignedVehicles()->whereNotIn('id', $fleetIds)->update([
+                        'assigned_opportunity_id' => null,
+                        'status' => 'available'
+                    ]);
+
+                    if (count($fleetIds) > 0) {
+                        $vehiclesToAssign = \App\Models\Vehicle::whereIn('id', $fleetIds)->lockForUpdate()->get();
+                        foreach ($vehiclesToAssign as $vehicle) {
+                            if ($vehicle->assigned_opportunity_id !== $opportunity->id && $vehicle->status !== 'available') {
+                                throw new \Exception("Unit kendaraan {$vehicle->plate_number} sudah dibooking oleh Sales lain.");
+                            }
+                            $vehicle->update(['assigned_opportunity_id' => $opportunity->id, 'status' => $targetFleetStatus]);
+                        }
+                    }
+                } else if (in_array($validated['stage'], ['lost', 'call_meeting', 'prospecting', 'proposal'])) {
+                    $opportunity->assignedVehicles()->update(['assigned_opportunity_id' => null, 'status' => 'available']);
+                }
+
+                if ($request->has('driver_ids')) {
+                    $driverIds = $request->input('driver_ids') ?: [];
+                    $opportunity->assignedDrivers()->whereNotIn('id', $driverIds)->update([
+                        'assigned_opportunity_id' => null,
+                        'status' => 'Available'
+                    ]);
+
+                    if (count($driverIds) > 0) {
+                        $driversToAssign = \App\Models\Driver::whereIn('id', $driverIds)->lockForUpdate()->get();
+                        foreach ($driversToAssign as $driver) {
+                            if ($driver->assigned_opportunity_id !== $opportunity->id && $driver->status !== 'Available') {
+                                throw new \Exception("Supir {$driver->name} sudah dibooking oleh Sales lain.");
+                            }
+                            $driver->update(['assigned_opportunity_id' => $opportunity->id, 'status' => $targetDriverStatus]);
+                        }
+                    }
+                } else if (in_array($validated['stage'], ['lost', 'call_meeting', 'prospecting', 'proposal'])) {
+                    $opportunity->assignedDrivers()->update(['assigned_opportunity_id' => null, 'status' => 'Available']);
+                }
 
             // Log stage transition as activity
             ActivityLog::create([
@@ -299,11 +346,21 @@ class OpportunityController extends Controller
             $this->pipelineService->triggerWonActions($opportunity);
         }
 
+        \Illuminate\Support\Facades\DB::commit();
+
         if ($request->wantsJson()) {
             return response()->json(['ok' => true, 'opportunity' => $opportunity->fresh()]);
         }
 
         return back()->with('success', 'Opportunity berhasil diperbarui.');
+        
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\DB::rollBack();
+            if ($request->wantsJson()) {
+                return response()->json(['ok' => false, 'message' => $e->getMessage()], 422);
+            }
+            return back()->withErrors(['booking' => $e->getMessage()]);
+        }
     }
 
     // ------------------------------------------------------------------
@@ -339,6 +396,10 @@ class OpportunityController extends Controller
             'stage'       => 'required|in:call_meeting,prospecting,proposal,negotiation,won,lost',
             'lost_reason' => 'required_if:stage,lost|nullable|string',
             'notes'       => 'nullable|string',
+            'fleet_ids'   => 'nullable|array',
+            'fleet_ids.*' => 'exists:vehicles,id',
+            'driver_ids'  => 'nullable|array',
+            'driver_ids.*'=> 'exists:drivers,id',
         ]);
 
         if (!$this->pipelineService->canTransition($opportunity->stage, $validated['stage'])) {
@@ -347,37 +408,114 @@ class OpportunityController extends Controller
             ]);
         }
 
-        // Log the stage advance as an activity
-        ActivityLog::create([
-            'sales_id'       => auth()->id(),
-            'client_id'      => $opportunity->client_id,
-            'opportunity_id' => $opportunity->id,
-            'type'           => 'follow_up',
-            'subject'        => "Stage diadvance: {$opportunity->stage} → {$validated['stage']}",
-            'notes'          => $validated['notes'] ?? null,
-            'activity_date'  => now(),
-        ]);
+        try {
+            \Illuminate\Support\Facades\DB::beginTransaction();
 
-        $updates = [
-            'stage' => $validated['stage'],
-            'stage_changed_at' => now(),
-        ];
+            $targetFleetStatus = $validated['stage'] === 'won' ? 'on_trip' : ($validated['stage'] === 'negotiation' ? 'maintenance' /* usually reserved/hold */ : 'available');
+            $targetDriverStatus = $validated['stage'] === 'won' ? 'Assigned' : ($validated['stage'] === 'negotiation' ? 'Reserved' : 'Available');
 
-        if ($validated['stage'] === 'lost' && !empty($validated['lost_reason'])) {
-            $updates['lost_reason']        = $validated['lost_reason'];
-            $updates['actual_close_date']  = now()->toDateString();
-        }
+            // Handle Fleet Assignments
+            if (isset($validated['fleet_ids'])) {
+                $fleetIds = $validated['fleet_ids'];
+                // Release old fleets
+                $opportunity->assignedVehicles()->whereNotIn('id', $fleetIds)->update([
+                    'assigned_opportunity_id' => null,
+                    'status' => 'available'
+                ]);
 
-        if ($validated['stage'] === 'won') {
-            $updates['actual_close_date']  = now()->toDateString();
+                // Assign new fleets
+                if (count($fleetIds) > 0) {
+                    $vehiclesToAssign = \App\Models\Vehicle::whereIn('id', $fleetIds)
+                        ->lockForUpdate()
+                        ->get();
+                    
+                    foreach ($vehiclesToAssign as $vehicle) {
+                        if ($vehicle->assigned_opportunity_id !== $opportunity->id && $vehicle->status !== 'available') {
+                            throw new \Exception("Unit kendaraan {$vehicle->plate_number} sudah dibooking oleh Sales lain.");
+                        }
+                        $vehicle->update([
+                            'assigned_opportunity_id' => $opportunity->id,
+                            'status' => $targetFleetStatus
+                        ]);
+                    }
+                }
+            } else if (in_array($validated['stage'], ['lost', 'call_meeting', 'prospecting', 'proposal'])) {
+                 $opportunity->assignedVehicles()->update([
+                    'assigned_opportunity_id' => null,
+                    'status' => 'available'
+                ]);
+            }
+
+            // Handle Driver Assignments
+            if (isset($validated['driver_ids'])) {
+                $driverIds = $validated['driver_ids'];
+                // Release old drivers
+                $opportunity->assignedDrivers()->whereNotIn('id', $driverIds)->update([
+                    'assigned_opportunity_id' => null,
+                    'status' => 'Available'
+                ]);
+
+                // Assign new drivers
+                if (count($driverIds) > 0) {
+                    $driversToAssign = \App\Models\Driver::whereIn('id', $driverIds)
+                        ->lockForUpdate()
+                        ->get();
+                    
+                    foreach ($driversToAssign as $driver) {
+                        if ($driver->assigned_opportunity_id !== $opportunity->id && $driver->status !== 'Available') {
+                            throw new \Exception("Supir {$driver->name} sudah dibooking oleh Sales lain.");
+                        }
+                        $driver->update([
+                            'assigned_opportunity_id' => $opportunity->id,
+                            'status' => $targetDriverStatus
+                        ]);
+                    }
+                }
+            } else if (in_array($validated['stage'], ['lost', 'call_meeting', 'prospecting', 'proposal'])) {
+                 $opportunity->assignedDrivers()->update([
+                    'assigned_opportunity_id' => null,
+                    'status' => 'Available'
+                ]);
+            }
+
+            // Log the stage advance as an activity
+            ActivityLog::create([
+                'sales_id'       => auth()->id(),
+                'client_id'      => $opportunity->client_id,
+                'opportunity_id' => $opportunity->id,
+                'type'           => 'follow_up',
+                'subject'        => "Stage diadvance: {$opportunity->stage} → {$validated['stage']}",
+                'notes'          => $validated['notes'] ?? null,
+                'activity_date'  => now(),
+            ]);
+
+            $updates = [
+                'stage' => $validated['stage'],
+                'stage_changed_at' => now(),
+            ];
+
+            if ($validated['stage'] === 'lost' && !empty($validated['lost_reason'])) {
+                $updates['lost_reason']        = $validated['lost_reason'];
+                $updates['actual_close_date']  = now()->toDateString();
+            }
+
+            if ($validated['stage'] === 'won') {
+                $updates['actual_close_date']  = now()->toDateString();
+                $opportunity->update($updates);
+                $this->pipelineService->triggerWonActions($opportunity->fresh());
+                
+                \Illuminate\Support\Facades\DB::commit();
+                return back()->with('success', 'Selamat! Opportunity berhasil dimenangkan dan Unit Operasional berhasil dialokasikan.');
+            }
+
             $opportunity->update($updates);
-            $this->pipelineService->triggerWonActions($opportunity->fresh());
-            return back()->with('success', 'Selamat! Opportunity berhasil dimenangkan.');
+
+            \Illuminate\Support\Facades\DB::commit();
+            return back()->with('success', "Stage berhasil diubah ke {$validated['stage']}.");
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\DB::rollBack();
+            return back()->withErrors(['booking' => $e->getMessage()]);
         }
-
-        $opportunity->update($updates);
-
-        return back()->with('success', "Stage berhasil diubah ke {$validated['stage']}.");
     }
 
 

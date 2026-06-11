@@ -57,4 +57,9 @@ class Vehicle extends Model
     {
         return $this->hasMany(Subscription::class);
     }
+
+    public function assignedOpportunity()
+    {
+        return $this->belongsTo(Opportunity::class, 'assigned_opportunity_id');
+    }
 }

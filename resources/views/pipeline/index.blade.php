@@ -458,6 +458,54 @@
                             <textarea x-model="note" class="w-full rounded-xl border border-[var(--cc-border)] bg-[var(--cc-surface)] px-4 py-2.5 text-sm text-[var(--cc-text)] outline-none focus:border-indigo-500 min-h-[80px]" placeholder="Add details..."></textarea>
                         </div>
 
+                        <!-- OPEARTIONAL ALLOCATION -->
+                        <template x-if="targetStage === 'negotiation' || targetStage === 'won'">
+                            <div class="mt-4 p-4 border border-[var(--cc-border)] bg-[var(--cc-surface)] rounded-xl space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <h3 class="text-sm font-bold text-[var(--cc-text)]">Alokasi Operasional</h3>
+                                    <button type="button" @click="fetchAvailableOperational()" class="text-xs text-indigo-400 hover:text-indigo-300 font-bold">Refresh Ketersediaan</button>
+                                </div>
+                                
+                                <div class="space-y-3">
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-[var(--cc-text-muted)] uppercase tracking-widest mb-1.5">Pilih Unit Kendaraan (Fleet)</label>
+                                        <div class="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto custom-scrollbar">
+                                            <template x-if="availableFleets.length === 0">
+                                                <div class="col-span-2 text-xs text-[var(--cc-text-muted)]">Tidak ada unit tersedia.</div>
+                                            </template>
+                                            <template x-for="fleet in availableFleets" :key="fleet.id">
+                                                <label class="flex items-center gap-2 p-2 rounded-lg border border-[var(--cc-border)] hover:border-indigo-500 cursor-pointer transition">
+                                                    <input type="checkbox" :value="fleet.id" x-model="selectedFleets" class="rounded text-indigo-500 focus:ring-indigo-500 bg-[var(--cc-bg)] border-[var(--cc-border)]">
+                                                    <div class="text-xs">
+                                                        <span class="font-bold text-[var(--cc-text)]" x-text="fleet.plate_number"></span>
+                                                        <div class="text-[9px] text-[var(--cc-text-muted)]" x-text="fleet.brand + ' - ' + fleet.model"></div>
+                                                    </div>
+                                                </label>
+                                            </template>
+                                        </div>
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-[var(--cc-text-muted)] uppercase tracking-widest mb-1.5">Pilih Supir (Driver)</label>
+                                        <div class="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto custom-scrollbar">
+                                            <template x-if="availableDrivers.length === 0">
+                                                <div class="col-span-2 text-xs text-[var(--cc-text-muted)]">Tidak ada supir tersedia.</div>
+                                            </template>
+                                            <template x-for="driver in availableDrivers" :key="driver.id">
+                                                <label class="flex items-center gap-2 p-2 rounded-lg border border-[var(--cc-border)] hover:border-indigo-500 cursor-pointer transition">
+                                                    <input type="checkbox" :value="driver.id" x-model="selectedDrivers" class="rounded text-indigo-500 focus:ring-indigo-500 bg-[var(--cc-bg)] border-[var(--cc-border)]">
+                                                    <div class="text-xs">
+                                                        <span class="font-bold text-[var(--cc-text)]" x-text="driver.name"></span>
+                                                        <div class="text-[9px] text-[var(--cc-text-muted)]" x-text="driver.pool ? driver.pool.name : ''"></div>
+                                                    </div>
+                                                </label>
+                                            </template>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+
                         <template x-if="targetStage === 'won' && modalMode !== 'history'">
                             <div class="bg-emerald-500/10 text-emerald-300 p-4 rounded-2xl text-sm border border-emerald-500/20">
                                 <p class="font-bold">Deal Won!</p>
@@ -512,6 +560,10 @@ function pipelineManager() {
         isSaving: false,
         currentUserId: {{ auth()->id() }},
         currentUserRole: '{{ auth()->user()->role }}',
+        availableFleets: [],
+        availableDrivers: [],
+        selectedFleets: [],
+        selectedDrivers: [],
         editingDeal: {
             title: '',
             client_id: '',
@@ -698,6 +750,19 @@ function pipelineManager() {
             this.isModalOpen = true;
         },
 
+        async fetchAvailableOperational() {
+            try {
+                let [resFleet, resDriver] = await Promise.all([
+                    fetch('/api/vehicles/available').then(res => res.json()),
+                    fetch('/api/drivers/available').then(res => res.json())
+                ]);
+                this.availableFleets = resFleet || [];
+                this.availableDrivers = resDriver || [];
+            } catch (e) {
+                console.error('Error fetching operational data:', e);
+            }
+        },
+
         openStageModal(deal, newStage) {
             this.editingDeal = JSON.parse(JSON.stringify(deal));
             // Initialize formattedPrice for editing
@@ -707,6 +772,13 @@ function pipelineManager() {
             this.targetStage = newStage;
             this.subType = 'Call';
             this.note = '';
+            this.selectedFleets = [];
+            this.selectedDrivers = [];
+            
+            if (newStage === 'negotiation' || newStage === 'won') {
+                this.fetchAvailableOperational();
+            }
+            
             this.modalMode = 'edit-stage';
             this.modalTitle = 'Move to ' + this.stageLabel(newStage);
             this.isModalOpen = true;
@@ -726,7 +798,9 @@ function pipelineManager() {
                     products: this.editingDeal.products,
                     subType: this.subType,
                     notes: this.note,
-                    lost_reason: this.editingDeal.lost_reason
+                    lost_reason: this.editingDeal.lost_reason,
+                    fleet_ids: this.selectedFleets,
+                    driver_ids: this.selectedDrivers
                 };
 
                 let url = '{{ route("opportunities.store") }}';
@@ -748,7 +822,12 @@ function pipelineManager() {
 
                 const data = await res.json();
                 if(!res.ok) {
-                    throw new Error(data.message || 'Error saving deal');
+                    let errMsg = data.message || 'Error saving deal';
+                    // Extract Laravel validation errors if present
+                    if (data.errors) {
+                        errMsg = Object.values(data.errors).flat().join('\n');
+                    }
+                    throw new Error(errMsg);
                 }
 
                 // Update UI

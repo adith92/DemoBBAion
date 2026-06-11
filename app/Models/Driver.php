@@ -26,4 +26,14 @@ class Driver extends Model
     {
         return $this->hasMany(VehicleContract::class);
     }
+
+    public function pool()
+    {
+        return $this->belongsTo(Pool::class);
+    }
+
+    public function assignedOpportunity()
+    {
+        return $this->belongsTo(Opportunity::class, 'assigned_opportunity_id');
+    }
 }

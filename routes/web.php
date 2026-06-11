@@ -119,6 +119,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/activities/upcoming', [ActivityLogController::class, 'apiUpcoming'])->middleware('role:gm,manager,sales');
         Route::get('/opportunities/by-client/{client}', [OpportunityController::class, 'byClient'])->middleware('role:gm,manager,sales');
         Route::get('/opportunities/{opportunity}/history', [OpportunityController::class, 'getHistory'])->middleware('role:gm,manager,sales');
+        Route::get('/vehicles/available', [FleetController::class, 'apiAvailable'])->middleware('role:gm,manager,sales');
+        Route::get('/drivers/available', [FleetController::class, 'apiDriversAvailable'])->middleware('role:gm,manager,sales');
     });
 
     Route::post('/system/seed-demo', [SystemController::class, 'seedDemo'])

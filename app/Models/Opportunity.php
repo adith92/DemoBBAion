@@ -115,6 +115,16 @@ class Opportunity extends Model
         return $this->belongsTo(Subscription::class);
     }
 
+    public function assignedVehicles()
+    {
+        return $this->hasMany(Vehicle::class, 'assigned_opportunity_id');
+    }
+
+    public function assignedDrivers()
+    {
+        return $this->hasMany(Driver::class, 'assigned_opportunity_id');
+    }
+
     // Scopes
     public function scopeByStage($query, string $stage)
     {
