@@ -288,94 +288,22 @@
         /* Animate buses gently */
         @keyframes drift { 0%,100%{transform:translateX(-50%) translateY(0);} 50%{transform:translateX(-50%) translateY(-8px);} }
         .bus-fleet { animation: drift 6s ease-in-out infinite; }
+        
+        spline-viewer {
+            width: 100%;
+            height: 100%;
+        }
+        spline-viewer::part(logo) {
+            display: none;
+        }
     </style>
+    <script type="module" src="https://unpkg.com/@splinetool/viewer@1.9.3/build/spline-viewer.js"></script>
 </head>
 <body>
 
-    {{-- ═══ LEFT PANEL — Fleet Armada Visual ═══ --}}
+    {{-- ═══ LEFT PANEL — Spline 3D Robot ═══ --}}
     <div class="left-panel">
-        <div class="left-bg"></div>
-        <div class="left-grid"></div>
-        <div class="fleet-lines"></div>
-
-        {{-- Glow orbs --}}
-        <div class="orb orb-1"></div>
-        <div class="orb orb-2"></div>
-        <div class="orb orb-3"></div>
-
-        {{-- Bus fleet silhouettes --}}
-        <div class="bus-fleet">
-            <div class="bus bus-sm">
-                <div class="bus-windows">
-                    <div class="bus-win"></div><div class="bus-win"></div><div class="bus-win"></div>
-                </div>
-            </div>
-            <div class="bus bus-lg">
-                <div class="bus-windows">
-                    <div class="bus-win"></div><div class="bus-win"></div><div class="bus-win"></div><div class="bus-win"></div><div class="bus-win"></div>
-                </div>
-            </div>
-            <div class="bus bus-md">
-                <div class="bus-windows">
-                    <div class="bus-win"></div><div class="bus-win"></div><div class="bus-win"></div><div class="bus-win"></div>
-                </div>
-            </div>
-            <div class="bus bus-sm" style="opacity:0.5;">
-                <div class="bus-windows">
-                    <div class="bus-win"></div><div class="bus-win"></div><div class="bus-win"></div>
-                </div>
-            </div>
-        </div>
-
-        {{-- Left content --}}
-        <div class="left-content">
-            {{-- Logo --}}
-            <div class="left-logo">
-                <img src="/images/golden-bird-logo.svg" alt="Golden Bird" style="width:52px;height:52px;border-radius:14px;background:rgba(0,82,204,0.15);border:1px solid rgba(0,102,255,0.3);padding:6px;">
-                <div>
-                    <div class="text-lg font-black text-gray-900 tracking-tight">Golden Bird <span style="color:#3385ff;">CRM</span></div>
-                    <div class="text-[10px] font-semibold uppercase tracking-widest" style="color:#1e4080;">Command Center</div>
-                </div>
-            </div>
-
-            {{-- Tagline --}}
-            <div class="left-tagline">
-                <h2 class="text-3xl font-black text-gray-900 leading-tight mb-3">
-                    Kelola Armada<br>
-                    <span style="color:#3385ff;">B2B Fleet</span><br>
-                    dari Satu Dashboard
-                </h2>
-                <p class="text-sm leading-relaxed mb-6" style="color:#2d4a7a;">
-                    Tracking kendaraan, pipeline sales, invoice & approval — semua terintegrasi real-time.
-                </p>
-
-                {{-- Stats --}}
-                <div class="grid grid-cols-3 gap-3">
-                    <div class="stat-chip text-center">
-                        <div class="text-xl font-black" style="color:#3385ff;">500+</div>
-                        <div class="text-[10px] font-semibold uppercase tracking-wide mt-1" style="color:#1e4080;">Armada</div>
-                    </div>
-                    <div class="stat-chip text-center">
-                        <div class="text-xl font-black" style="color:#3385ff;">128</div>
-                        <div class="text-[10px] font-semibold uppercase tracking-wide mt-1" style="color:#1e4080;">Klien Korporat</div>
-                    </div>
-                    <div class="stat-chip text-center">
-                        <div class="text-xl font-black" style="color:#3385ff;">99%</div>
-                        <div class="text-[10px] font-semibold uppercase tracking-wide mt-1" style="color:#1e4080;">Uptime</div>
-                    </div>
-                </div>
-            </div>
-
-            {{-- Bottom badges --}}
-            <div class="flex items-center gap-2 flex-wrap">
-                <span style="background:rgba(16,185,129,0.1);color:#10b981;border:1px solid rgba(16,185,129,0.2);font-size:9px;font-weight:700;padding:3px 10px;border-radius:6px;text-transform:uppercase;letter-spacing:0.05em;" class="flex items-center gap-1.5">
-                    <span class="pulse" style="width:5px;height:5px;border-radius:50%;background:#10b981;display:inline-block;"></span>
-                    Live on Render
-                </span>
-                <span style="background:rgba(0,82,204,0.15);color:#66a3ff;border:1px solid rgba(0,102,255,0.2);font-size:9px;font-weight:700;padding:3px 10px;border-radius:6px;text-transform:uppercase;letter-spacing:0.05em;">v7.7</span>
-                <span style="background:rgba(0,82,204,0.15);color:#66a3ff;border:1px solid rgba(0,102,255,0.2);font-size:9px;font-weight:700;padding:3px 10px;border-radius:6px;text-transform:uppercase;letter-spacing:0.05em;">Laravel 12</span>
-            </div>
-        </div>
+        <spline-viewer url="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"></spline-viewer>
     </div>
 
     {{-- ═══ RIGHT PANEL — Login Form ═══ --}}
