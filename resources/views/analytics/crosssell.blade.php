@@ -5,17 +5,7 @@
 @section('content')
 <div class="space-y-6">
 
-    {{-- Sub-nav --}}
-    <div class="flex flex-wrap items-center gap-2">
-        <a href="{{ route('analytics.index') }}"
-           class="px-4 py-2 rounded-lg text-sm font-medium cc-card border border-white/8 text-slate-500 hover:cc-card">Overview</a>
-        <a href="{{ route('analytics.pipeline') }}"
-           class="px-4 py-2 rounded-lg text-sm font-medium cc-card border border-white/8 text-slate-500 hover:cc-card">Pipeline Funnel</a>
-        <a href="{{ route('analytics.crosssell') }}"
-           class="px-4 py-2 rounded-lg text-sm font-medium bg-blue-700 text-gray-900">Cross-sell</a>
-        <a href="{{ route('analytics.sales') }}"
-           class="px-4 py-2 rounded-lg text-sm font-medium cc-card border border-white/8 text-slate-500 hover:cc-card">Sales Performance</a>
-    </div>
+    @include('components.analytics-nav')
 
     @php
         $totalClients = $shortTermOnly->count() + $longTermOnly->count() + $evoucherOnly->count()
@@ -26,9 +16,9 @@
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
         {{-- Venn Diagram (SVG) --}}
-        <div class="cc-card rounded-xl border border-white/8 shadow-sm p-6">
-            <h3 class="font-semibold text-slate-100 mb-2">Distribusi Produk per Klien</h3>
-            <p class="text-xs text-slate-500 mb-6">Berdasarkan opportunity won. Total klien: {{ $totalClients }}</p>
+        <div class="cc-card rounded-xl border border-cc shadow-sm p-6">
+            <h3 class="font-semibold text-cc mb-2">Distribusi Produk per Klien</h3>
+            <p class="text-xs text-cc-muted mb-6">Berdasarkan opportunity won. Total klien: {{ $totalClients }}</p>
 
             <div class="flex justify-center">
                 <svg viewBox="0 0 400 340" class="w-full max-w-sm" xmlns="http://www.w3.org/2000/svg">
@@ -81,39 +71,39 @@
             <div class="mt-4 grid grid-cols-2 gap-2 text-xs">
                 <div class="flex items-center gap-2 p-2 bg-blue-900/30 rounded">
                     <span class="w-3 h-3 rounded-full bg-blue-500 flex-shrink-0"></span>
-                    <span class="text-slate-200">Short Term Only: <b>{{ $shortTermOnly->count() }}</b></span>
+                    <span class="text-cc">Short Term Only: <b>{{ $shortTermOnly->count() }}</b></span>
                 </div>
                 <div class="flex items-center gap-2 p-2 bg-green-900/30 rounded">
                     <span class="w-3 h-3 rounded-full bg-green-500 flex-shrink-0"></span>
-                    <span class="text-slate-200">Long Term Only: <b>{{ $longTermOnly->count() }}</b></span>
+                    <span class="text-cc">Long Term Only: <b>{{ $longTermOnly->count() }}</b></span>
                 </div>
                 <div class="flex items-center gap-2 p-2 bg-yellow-900/20 rounded">
                     <span class="w-3 h-3 rounded-full bg-yellow-500 flex-shrink-0"></span>
-                    <span class="text-slate-200">E-Voucher Only: <b>{{ $evoucherOnly->count() }}</b></span>
+                    <span class="text-cc">E-Voucher Only: <b>{{ $evoucherOnly->count() }}</b></span>
                 </div>
                 <div class="flex items-center gap-2 p-2 bg-indigo-900/30 rounded">
                     <span class="w-3 h-3 rounded-full bg-indigo-500 flex-shrink-0"></span>
-                    <span class="text-slate-200">Short + Long: <b>{{ $shortAndLong->count() }}</b></span>
+                    <span class="text-cc">Short + Long: <b>{{ $shortAndLong->count() }}</b></span>
                 </div>
                 <div class="flex items-center gap-2 p-2 bg-purple-900/30 rounded">
                     <span class="w-3 h-3 rounded-full bg-purple-500 flex-shrink-0"></span>
-                    <span class="text-slate-200">Short + EV: <b>{{ $shortAndEv->count() }}</b></span>
+                    <span class="text-cc">Short + EV: <b>{{ $shortAndEv->count() }}</b></span>
                 </div>
                 <div class="flex items-center gap-2 p-2 bg-teal-900/30 rounded">
                     <span class="w-3 h-3 rounded-full bg-teal-500 flex-shrink-0"></span>
-                    <span class="text-slate-200">Long + EV: <b>{{ $longAndEv->count() }}</b></span>
+                    <span class="text-cc">Long + EV: <b>{{ $longAndEv->count() }}</b></span>
                 </div>
                 <div class="flex items-center gap-2 p-2 bg-orange-900/20 rounded col-span-2">
                     <span class="w-3 h-3 rounded-full bg-orange-500 flex-shrink-0"></span>
-                    <span class="text-slate-200">Semua Kategori: <b>{{ $allThree->count() }}</b> &bull;
+                    <span class="text-cc">Semua Kategori: <b>{{ $allThree->count() }}</b> &bull;
                         Belum Ada Produk: <b>{{ $none->count() }}</b></span>
                 </div>
             </div>
         </div>
 
         {{-- Cross-sell Opportunity Insights --}}
-        <div class="cc-card rounded-xl border border-white/8 shadow-sm p-6">
-            <h3 class="font-semibold text-slate-100 mb-4">Peluang Cross-sell</h3>
+        <div class="cc-card rounded-xl border border-cc shadow-sm p-6">
+            <h3 class="font-semibold text-cc mb-4">Peluang Cross-sell</h3>
 
             @php
                 $crossSellOpportunity = $shortTermOnly->count() + $longTermOnly->count() + $evoucherOnly->count();
@@ -150,13 +140,13 @@
                     </div>
                 </div>
 
-                <div class="p-4 cc-card rounded-lg border border-white/8">
+                <div class="p-4 cc-card rounded-lg border border-cc">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="font-semibold text-slate-100">Total Peluang Cross-sell</p>
-                            <p class="text-xs text-slate-500 mt-0.5">Klien dengan hanya 1 kategori produk</p>
+                            <p class="font-semibold text-cc">Total Peluang Cross-sell</p>
+                            <p class="text-xs text-cc-muted mt-0.5">Klien dengan hanya 1 kategori produk</p>
                         </div>
-                        <span class="text-3xl font-bold text-slate-100">{{ $crossSellOpportunity }}</span>
+                        <span class="text-3xl font-bold text-cc">{{ $crossSellOpportunity }}</span>
                     </div>
                 </div>
             </div>
@@ -165,9 +155,9 @@
     </div>
 
     {{-- Client Table --}}
-    <div class="cc-card rounded-xl border border-white/8 shadow-sm overflow-hidden">
-        <div class="px-5 py-4 border-b border-white/5 flex items-center justify-between flex-wrap gap-3">
-            <h3 class="font-semibold text-slate-100">Daftar Klien per Kategori Produk</h3>
+    <div class="cc-card rounded-xl border border-cc shadow-sm overflow-hidden">
+        <div class="px-5 py-4 border-b border-cc flex items-center justify-between flex-wrap gap-3">
+            <h3 class="font-semibold text-cc">Daftar Klien per Kategori Produk</h3>
             <button onclick="exportTable()" class="flex items-center gap-2 px-3 py-1.5 text-sm bg-green-600 text-gray-900 rounded-lg hover:bg-green-700 transition-colors">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
@@ -178,7 +168,7 @@
 
         <div class="overflow-x-auto">
             <table id="crosssellTable" class="w-full text-sm">
-                <thead class="cc-card text-xs text-slate-500 uppercase">
+                <thead class="cc-card text-xs text-cc-muted uppercase">
                     <tr>
                         <th class="px-4 py-3 text-left">Perusahaan</th>
                         <th class="px-4 py-3 text-center">Short Term</th>
@@ -188,7 +178,7 @@
                         <th class="px-4 py-3 text-left">Sales</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-white/5">
+                <tbody class="divide-y divide-cc">
                     @forelse($clientTable as $row)
                     @php
                         $client   = $row['client'];
@@ -199,8 +189,8 @@
                     @endphp
                     <tr class="hover:cc-card">
                         <td class="px-4 py-3">
-                            <div class="font-medium text-slate-100">{{ $client->company_name }}</div>
-                            <div class="text-xs text-slate-500">{{ $client->pic_name ?? '' }}</div>
+                            <div class="font-medium text-cc">{{ $client->company_name }}</div>
+                            <div class="text-xs text-cc-muted">{{ $client->pic_name ?? '' }}</div>
                         </td>
                         <td class="px-4 py-3 text-center">
                             @if($hasShort)
@@ -208,7 +198,7 @@
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                             </span>
                             @else
-                            <span class="text-gray-300 text-lg">—</span>
+                            <span class="text-cc-muted text-lg">—</span>
                             @endif
                         </td>
                         <td class="px-4 py-3 text-center">
@@ -217,7 +207,7 @@
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                             </span>
                             @else
-                            <span class="text-gray-300 text-lg">—</span>
+                            <span class="text-cc-muted text-lg">—</span>
                             @endif
                         </td>
                         <td class="px-4 py-3 text-center">
@@ -226,7 +216,7 @@
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                             </span>
                             @else
-                            <span class="text-gray-300 text-lg">—</span>
+                            <span class="text-cc-muted text-lg">—</span>
                             @endif
                         </td>
                         <td class="px-4 py-3 text-center">
@@ -239,17 +229,17 @@
                                 ];
                                 $tier = $client->tier ?? 'bronze';
                             @endphp
-                            <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium {{ $tierColors[$tier] ?? 'bg-gray-100/10 text-slate-500' }}">
+                            <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium {{ $tierColors[$tier] ?? 'bg-cc-card text-cc-muted' }}">
                                 {{ ucfirst($tier) }}
                             </span>
                         </td>
-                        <td class="px-4 py-3 text-slate-200">
+                        <td class="px-4 py-3 text-cc">
                             {{ optional($client->assignedSales)->name ?? '—' }}
                         </td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="6" class="px-4 py-10 text-center text-slate-500">Belum ada data klien.</td>
+                        <td colspan="6" class="px-4 py-10 text-center text-cc-muted">Belum ada data klien.</td>
                     </tr>
                     @endforelse
                 </tbody>
