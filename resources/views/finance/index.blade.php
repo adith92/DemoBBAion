@@ -49,13 +49,13 @@
         {{-- Status filters --}}
         <div class="flex gap-2 text-sm flex-wrap">
             <a href="{{ route('finance.index', ['filter' => request('filter')]) }}"
-               class="{{ !request('status') ? 'bg-indigo-600 text-white font-semibold' : 'bg-[var(--cc-bg-muted)] text-[var(--cc-text-muted)] border border-[var(--cc-border)]/50 hover:bg-[var(--cc-surface)] hover:text-[var(--cc-text)]' }} px-3 py-1.5 rounded-lg transition-colors font-medium">All</a>
+               class="{{ !request('status') ? 'bg-indigo-600 text-gray-900 font-semibold' : 'bg-[var(--cc-bg-muted)] text-[var(--cc-text-muted)] border border-[var(--cc-border)]/50 hover:bg-[var(--cc-surface)] hover:text-[var(--cc-text)]' }} px-3 py-1.5 rounded-lg transition-colors font-medium">All</a>
             <a href="{{ route('finance.index', ['filter' => request('filter'), 'status' => 'paid']) }}"
-               class="{{ request('status') === 'paid' ? 'bg-emerald-600 text-white font-semibold' : 'bg-[var(--cc-bg-muted)] text-[var(--cc-text-muted)] border border-[var(--cc-border)]/50 hover:bg-[var(--cc-surface)] hover:text-[var(--cc-text)]' }} px-3 py-1.5 rounded-lg transition-colors font-medium">Paid</a>
+               class="{{ request('status') === 'paid' ? 'bg-emerald-600 text-gray-900 font-semibold' : 'bg-[var(--cc-bg-muted)] text-[var(--cc-text-muted)] border border-[var(--cc-border)]/50 hover:bg-[var(--cc-surface)] hover:text-[var(--cc-text)]' }} px-3 py-1.5 rounded-lg transition-colors font-medium">Paid</a>
             <a href="{{ route('finance.index', ['filter' => request('filter'), 'status' => 'sent']) }}"
-               class="{{ request('status') === 'sent' ? 'bg-amber-500 text-white font-semibold' : 'bg-[var(--cc-bg-muted)] text-[var(--cc-text-muted)] border border-[var(--cc-border)]/50 hover:bg-[var(--cc-surface)] hover:text-[var(--cc-text)]' }} px-3 py-1.5 rounded-lg transition-colors font-medium">Pending</a>
+               class="{{ request('status') === 'sent' ? 'bg-amber-500 text-gray-900 font-semibold' : 'bg-[var(--cc-bg-muted)] text-[var(--cc-text-muted)] border border-[var(--cc-border)]/50 hover:bg-[var(--cc-surface)] hover:text-[var(--cc-text)]' }} px-3 py-1.5 rounded-lg transition-colors font-medium">Pending</a>
             <a href="{{ route('finance.index', ['filter' => request('filter'), 'status' => 'overdue']) }}"
-               class="{{ request('status') === 'overdue' ? 'bg-rose-600 text-white font-semibold' : 'bg-[var(--cc-bg-muted)] text-[var(--cc-text-muted)] border border-[var(--cc-border)]/50 hover:bg-[var(--cc-surface)] hover:text-[var(--cc-text)]' }} px-3 py-1.5 rounded-lg transition-colors font-medium">Overdue</a>
+               class="{{ request('status') === 'overdue' ? 'bg-rose-600 text-gray-900 font-semibold' : 'bg-[var(--cc-bg-muted)] text-[var(--cc-text-muted)] border border-[var(--cc-border)]/50 hover:bg-[var(--cc-surface)] hover:text-[var(--cc-text)]' }} px-3 py-1.5 rounded-lg transition-colors font-medium">Overdue</a>
         </div>
     </div>
 

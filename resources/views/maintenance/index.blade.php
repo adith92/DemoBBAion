@@ -39,21 +39,21 @@
         <div class="flex gap-1">
             <a href="{{ route('maintenance.index', array_merge(request()->except('tab','selesai_page'), ['tab' => 'antrian'])) }}"
                class="px-4 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center gap-1.5
-                      {{ $activeTab === 'antrian' ? 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30' : 'text-slate-400 hover:bg-white/5' }}">
+                      {{ $activeTab === 'antrian' ? 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30' : 'text-slate-400 hover:bg-gray-100/5' }}">
                 <span class="material-symbols-outlined text-[16px]">schedule</span>
                 Antrian
                 <span class="ml-1 px-1.5 py-0.5 rounded-full text-[11px] font-bold
-                             {{ $activeTab === 'antrian' ? 'bg-yellow-500/30 text-yellow-300' : 'bg-white/10 text-slate-500' }}">
+                             {{ $activeTab === 'antrian' ? 'bg-yellow-500/30 text-yellow-300' : 'bg-gray-100/10 text-slate-500' }}">
                     {{ $stats['scheduled'] + $stats['in_progress'] }}
                 </span>
             </a>
             <a href="{{ route('maintenance.index', array_merge(request()->except('tab','selesai_page'), ['tab' => 'selesai'])) }}"
                class="px-4 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center gap-1.5
-                      {{ $activeTab === 'selesai' ? 'bg-green-500/20 text-green-300 border border-green-500/30' : 'text-slate-400 hover:bg-white/5' }}">
+                      {{ $activeTab === 'selesai' ? 'bg-green-500/20 text-green-300 border border-green-500/30' : 'text-slate-400 hover:bg-gray-100/5' }}">
                 <span class="material-symbols-outlined text-[16px]">check_circle</span>
                 Selesai
                 <span class="ml-1 px-1.5 py-0.5 rounded-full text-[11px] font-bold
-                             {{ $activeTab === 'selesai' ? 'bg-green-500/30 text-green-300' : 'bg-white/10 text-slate-500' }}">
+                             {{ $activeTab === 'selesai' ? 'bg-green-500/30 text-green-300' : 'bg-gray-100/10 text-slate-500' }}">
                     {{ $stats['completed'] }}
                 </span>
             </a>
@@ -99,7 +99,7 @@
                 <tr class="border-b border-white/5 hover:bg-white/3 transition-colors">
                     <td class="py-3 px-4">
                         <a href="{{ route('fleet.show', $log->vehicle_id) }}"
-                           class="font-mono font-semibold text-[#00e5ff] hover:underline">
+                           class="font-mono font-semibold text-primary hover:underline">
                             {{ $log->vehicle->plate_number }}
                         </a>
                         <div class="text-xs text-slate-500">{{ $log->vehicle->model }}</div>
@@ -117,7 +117,7 @@
                     <td class="py-3 px-4 text-center"><x-status-badge :status="$log->status" /></td>
                     <td class="py-3 px-4 text-right">
                         <a href="{{ route('maintenance.edit', $log->id) }}"
-                           class="text-slate-400 hover:text-[#00e5ff] transition-colors">
+                           class="text-slate-400 hover:text-primary transition-colors">
                             <span class="material-symbols-outlined text-[16px]">edit</span>
                         </a>
                     </td>
@@ -155,7 +155,7 @@
                 <tr class="border-b border-white/5 hover:bg-white/3 transition-colors">
                     <td class="py-3 px-4">
                         <a href="{{ route('fleet.show', $log->vehicle_id) }}"
-                           class="font-mono font-semibold text-[#00e5ff] hover:underline">
+                           class="font-mono font-semibold text-primary hover:underline">
                             {{ $log->vehicle->plate_number }}
                         </a>
                         <div class="text-xs text-slate-500">{{ $log->vehicle->model }}</div>

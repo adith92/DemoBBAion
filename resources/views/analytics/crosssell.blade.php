@@ -12,7 +12,7 @@
         <a href="{{ route('analytics.pipeline') }}"
            class="px-4 py-2 rounded-lg text-sm font-medium cc-card border border-white/8 text-slate-500 hover:cc-card">Pipeline Funnel</a>
         <a href="{{ route('analytics.crosssell') }}"
-           class="px-4 py-2 rounded-lg text-sm font-medium bg-blue-700 text-white">Cross-sell</a>
+           class="px-4 py-2 rounded-lg text-sm font-medium bg-blue-700 text-gray-900">Cross-sell</a>
         <a href="{{ route('analytics.sales') }}"
            class="px-4 py-2 rounded-lg text-sm font-medium cc-card border border-white/8 text-slate-500 hover:cc-card">Sales Performance</a>
     </div>
@@ -168,7 +168,7 @@
     <div class="cc-card rounded-xl border border-white/8 shadow-sm overflow-hidden">
         <div class="px-5 py-4 border-b border-white/5 flex items-center justify-between flex-wrap gap-3">
             <h3 class="font-semibold text-slate-100">Daftar Klien per Kategori Produk</h3>
-            <button onclick="exportTable()" class="flex items-center gap-2 px-3 py-1.5 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+            <button onclick="exportTable()" class="flex items-center gap-2 px-3 py-1.5 text-sm bg-green-600 text-gray-900 rounded-lg hover:bg-green-700 transition-colors">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                 </svg>
@@ -239,7 +239,7 @@
                                 ];
                                 $tier = $client->tier ?? 'bronze';
                             @endphp
-                            <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium {{ $tierColors[$tier] ?? 'bg-white/10 text-slate-500' }}">
+                            <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium {{ $tierColors[$tier] ?? 'bg-gray-100/10 text-slate-500' }}">
                                 {{ ucfirst($tier) }}
                             </span>
                         </td>

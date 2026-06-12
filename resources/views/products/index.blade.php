@@ -16,7 +16,7 @@
         </div>
         @if(auth()->user()->isGM() || auth()->user()->isManager() || auth()->user()->isDirector())
         <a href="{{ route('products.create') }}"
-           class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition-colors duration-200 cursor-pointer shadow-sm">
+           class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-gray-900 text-sm font-semibold rounded-lg hover:bg-blue-700 transition-colors duration-200 cursor-pointer shadow-sm">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
             </svg>
@@ -55,17 +55,17 @@
                     name="q"
                     value="{{ request('q') }}"
                     placeholder="Cari nama produk atau SKU..."
-                    class="w-full pl-9 pr-4 py-2 text-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-black/20 border border-white/10 text-white placeholder-slate-400"
+                    class="w-full pl-9 pr-4 py-2 text-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-slate-100 border border-slate-300 text-slate-900 placeholder-slate-500 dark:bg-black/20 dark:border-white/10 dark:text-gray-900 dark:placeholder-slate-400"
                 >
             </div>
 
             <button type="submit"
-                    class="px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 cursor-pointer transition-colors">
+                    class="px-4 py-2 bg-blue-600 text-gray-900 text-sm font-semibold rounded-lg hover:bg-blue-700 cursor-pointer transition-colors">
                 Cari
             </button>
             @if(request('q') || request('type'))
             <a href="{{ route('products.index') }}"
-               class="px-4 py-2 bg-slate-700/50 border border-white/10 text-white text-sm rounded-lg hover:bg-slate-700 cursor-pointer transition-colors text-center">
+               class="px-4 py-2 bg-slate-200 border border-slate-300 text-slate-700 text-sm rounded-lg hover:bg-slate-300 dark:bg-slate-700/50 dark:border-white/10 dark:text-gray-900 dark:hover:bg-slate-700 cursor-pointer transition-colors text-center">
                 Reset
             </a>
             @endif
@@ -84,18 +84,18 @@
         @endphp
         @foreach($tabs as $val => $label)
         <a href="{{ route('products.index', array_merge(request()->except('type','page'), $val ? ['type' => $val] : [])) }}"
-           class="flex-shrink-0 px-4 py-1.5 text-sm font-medium rounded-full transition-colors cursor-pointer {{ request('type', '') === $val ? 'bg-blue-600 text-white shadow-sm' : 'cc-card border border-slate-200 text-slate-600 hover:bg-slate-50' }}">
+           class="flex-shrink-0 px-4 py-1.5 text-sm font-medium rounded-full transition-colors cursor-pointer {{ request('type', '') === $val ? 'bg-blue-600 text-gray-900 shadow-sm' : 'cc-card border border-slate-200 text-slate-600 hover:bg-slate-50' }}">
             {{ $label }}
         </a>
         @endforeach
     </div>
 
     {{-- Table --}}
-    <div class="glass-panel cc-card rounded-2xl shadow-sm overflow-hidden border border-white/10">
+    <div class="glass-panel cc-card rounded-2xl shadow-sm overflow-hidden border border-slate-200 dark:border-white/10">
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
                 <thead>
-                    <tr class="bg-black/20 border-b border-white/10">
+                    <tr class="bg-slate-50 dark:bg-black/20 border-b border-slate-200 dark:border-white/10">
                         <th class="text-left px-5 py-3.5 text-xs font-semibold uppercase tracking-wide" style="color:var(--cc-text-muted)">SKU</th>
                         <th class="text-left px-5 py-3.5 text-xs font-semibold uppercase tracking-wide" style="color:var(--cc-text-muted)">Nama Produk</th>
                         <th class="text-left px-5 py-3.5 text-xs font-semibold uppercase tracking-wide hidden md:table-cell" style="color:var(--cc-text-muted)">Kategori</th>
@@ -105,9 +105,9 @@
                         <th class="text-right px-5 py-3.5 text-xs font-semibold uppercase tracking-wide" style="color:var(--cc-text-muted)">Aksi</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-white/5">
+                <tbody class="divide-y divide-slate-200 dark:divide-white/5">
                     @forelse($products as $product)
-                    <tr class="hover:bg-white/5 transition-colors">
+                    <tr class="hover:bg-slate-50 dark:hover:bg-gray-100/5 transition-colors">
                         <td class="px-5 py-3.5">
                             <span class="font-mono text-xs px-2 py-0.5 rounded" style="background:var(--cc-sidebar);color:var(--cc-text)">
                                 {{ $product->sku }}
@@ -116,7 +116,7 @@
                         <td class="px-5 py-3.5">
                             <div>
                                 <a href="{{ route('products.show', $product->id) }}"
-                                   class="font-semibold hover:text-blue-400 cursor-pointer transition-colors" style="color:var(--cc-text)">
+                                   class="font-semibold hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer transition-colors" style="color:var(--cc-text)">
                                     {{ $product->name }}
                                 </a>
                                 @if($product->description)
@@ -149,7 +149,7 @@
                             @endif
                         </td>
                         <td class="px-5 py-3.5 text-right">
-                            <span class="text-sm font-bold text-emerald-400 font-mono">
+                            <span class="text-sm font-bold text-emerald-600 dark:text-emerald-400 font-mono">
                                 Rp {{ number_format((float)$product->base_price, 0, ',', '.') }}
                             </span>
                         </td>

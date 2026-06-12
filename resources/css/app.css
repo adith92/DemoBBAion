@@ -8,6 +8,15 @@
    html.light = near-white glass
    ══════════════════════════════════════════════════════════════ */
 :root {
+    /* Custom color tokens */
+    --color-primary: 0 229 255;   /* #00e5ff */
+    --color-secondary: 0 56 135;  /* #003887 */
+    @media (prefers-color-scheme: dark) {
+        :root {
+            --color-primary: 0 229 255;   /* keep same, can be adjusted */
+            --color-secondary: 0 56 135;
+        }
+    }
     /* Bluebird Blue accent stays same in both modes */
     --cc-accent:     #006aa6;
     --cc-accent-dim: rgba(0, 106, 166, 0.12);
@@ -296,8 +305,8 @@ html.dark {
     .health-red    { background: rgba(239,68,68,0.15);  color: #ef4444; border: 1px solid rgba(239,68,68,0.25);  @apply text-[9px] font-black px-1.5 py-0.5 rounded-md; }
 
     /* ===== FLASH ===== */
-    .flash-success { background: rgba(16,185,129,0.1);  border: 1px solid rgba(16,185,129,0.25); @apply text-emerald-300 rounded-xl px-4 py-3 text-[13px]; }
-    .flash-error   { background: rgba(239,68,68,0.1);   border: 1px solid rgba(239,68,68,0.25);  @apply text-red-300 rounded-xl px-4 py-3 text-[13px]; }
+    .flash-success { background: rgba(16,185,129,0.1);  border: 1px solid rgba(16,185,129,0.25); @apply text-emerald-700 dark:text-emerald-300 rounded-xl px-4 py-3 text-[13px]; }
+    .flash-error   { background: rgba(239,68,68,0.1);   border: 1px solid rgba(239,68,68,0.25);  @apply text-red-700 dark:text-red-300 rounded-xl px-4 py-3 text-[13px]; }
 
     /* ===== DARK TABLE (adapts to both modes) ===== */
     .dark-table thead th {

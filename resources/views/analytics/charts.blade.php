@@ -6,7 +6,7 @@
         <div class="flex items-center justify-between mb-3">
             <span class="chart-title">📈 Multi-Metric Trend <span class="chart-sub">6 bulan terakhir</span></span>
             <div class="flex gap-3 text-[11px]" style="color:var(--cc-text-muted)">
-                <span><span style="color:#00e5ff">●</span> Revenue</span>
+                <span><span style="color:var(--color-primary)">●</span> Revenue</span>
                 <span><span style="color:#10b981">●</span> Deals Won</span>
                 <span><span style="color:#a78bfa">●</span> New Clients</span>
             </div>
@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function() {
         data: {
             labels: ['Jan','Feb','Mar','Apr','May','Jun'],
             datasets: [
-                { label: 'Revenue (Jt)', data: [1820,2100,1950,2400,2650,2840], borderColor: '#00e5ff', backgroundColor: 'rgba(0,229,255,0.06)', fill: true, tension: 0.4, borderWidth: 2.5, pointRadius: 4, pointBackgroundColor: '#00e5ff', yAxisID: 'y' },
+                { label: 'Revenue (Jt)', data: [1820,2100,1950,2400,2650,2840], borderColor: 'var(--color-primary)', backgroundColor: 'rgba(0,229,255,0.06)', fill: true, tension: 0.4, borderWidth: 2.5, pointRadius: 4, pointBackgroundColor: 'var(--color-primary)', yAxisID: 'y' },
                 { label: 'Deals Won',    data: [18,22,17,28,31,34],             borderColor: '#10b981', backgroundColor: 'transparent', tension: 0.4, borderWidth: 2, borderDash: [4,3], pointRadius: 3, pointBackgroundColor: '#10b981', yAxisID: 'y2' },
                 { label: 'New Clients', data: [8,11,9,14,12,16],               borderColor: '#a78bfa', backgroundColor: 'transparent', tension: 0.4, borderWidth: 2, borderDash: [4,3], pointRadius: 3, pointBackgroundColor: '#a78bfa', yAxisID: 'y2' },
             ]

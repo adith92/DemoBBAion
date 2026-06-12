@@ -8,8 +8,8 @@
         overflow-x: hidden !important;
     }
     .glass-card {
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.7);
+        border: 1px solid rgba(0, 0, 0, 0.08);
         backdrop-filter: blur(12px);
     }
     .dark .glass-card {
@@ -38,9 +38,9 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <a href="{{ route('pipeline.index') }}" class="bg-gradient-to-br from-indigo-500/10 to-indigo-600/5 rounded-2xl border border-indigo-500/20 p-5 flex items-center justify-between hover:border-indigo-500/40 hover:bg-indigo-500/15 transition duration-150 block group">
             <div>
-                <p class="text-xs font-bold text-indigo-300 uppercase tracking-widest mb-1 group-hover:text-indigo-200 transition-colors">Active Pipeline</p>
+                <p class="text-xs font-bold text-indigo-600 dark:text-indigo-300 uppercase tracking-widest mb-1 group-hover:text-indigo-500 dark:group-hover:text-indigo-200 transition-colors">Active Pipeline</p>
                 <p class="text-2xl font-mono font-bold text-[var(--cc-text)]" x-text="formatIDR(metrics.activePipelineValue)"></p>
-                <p class="text-xs text-indigo-200 mt-1"><span x-text="metrics.activeDealsCount"></span> deals currently active</p>
+                <p class="text-xs text-indigo-600/80 dark:text-indigo-200 mt-1"><span x-text="metrics.activeDealsCount"></span> deals currently active</p>
             </div>
             <div class="h-12 w-12 rounded-xl bg-indigo-500/20 flex items-center justify-center shrink-0 text-indigo-400">
                 <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
@@ -49,9 +49,9 @@
 
         <a href="{{ route('opportunities.index', ['stage' => 'won']) }}" class="bg-gradient-to-br from-emerald-500/10 to-emerald-600/5 rounded-2xl border border-emerald-500/20 p-5 flex items-center justify-between hover:border-emerald-500/40 hover:bg-emerald-500/15 transition duration-150 block group">
             <div>
-                <p class="text-xs font-bold text-emerald-300 uppercase tracking-widest mb-1 group-hover:text-emerald-200 transition-colors">Total Revenue Won</p>
+                <p class="text-xs font-bold text-emerald-600 dark:text-emerald-300 uppercase tracking-widest mb-1 group-hover:text-emerald-500 dark:group-hover:text-emerald-200 transition-colors">Total Revenue Won</p>
                 <p class="text-2xl font-mono font-bold text-[var(--cc-text)]" x-text="formatIDR(metrics.totalActual)"></p>
-                <p class="text-xs text-emerald-200 mt-1">Acquired from closed won deals</p>
+                <p class="text-xs text-emerald-600/80 dark:text-emerald-200 mt-1">Acquired from closed won deals</p>
             </div>
             <div class="h-12 w-12 rounded-xl bg-emerald-500/20 flex items-center justify-center shrink-0 text-emerald-400">
                 <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
@@ -60,9 +60,9 @@
 
         <div class="bg-gradient-to-br from-amber-500/10 to-amber-600/5 rounded-2xl border border-amber-500/20 p-5 flex items-center justify-between">
             <div>
-                <p class="text-xs font-bold text-amber-300 uppercase tracking-widest mb-1">Win Rate</p>
+                <p class="text-xs font-bold text-amber-600 dark:text-amber-300 uppercase tracking-widest mb-1">Win Rate</p>
                 <p class="text-2xl font-mono font-bold text-[var(--cc-text)]" x-text="metrics.winRate.toFixed(1) + '%'"></p>
-                <p class="text-xs text-amber-200 mt-1">Closing efficiency</p>
+                <p class="text-xs text-amber-600/80 dark:text-amber-200 mt-1">Closing efficiency</p>
             </div>
             <div class="h-12 w-12 rounded-xl bg-amber-500/20 flex items-center justify-center shrink-0 text-amber-400">
                 <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path></svg>
@@ -100,10 +100,10 @@
                                     <div class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-teal-400" x-text="(personalMetrics.totalTarget > 0 ? ((personalMetrics.totalActual / personalMetrics.totalTarget) * 100).toFixed(1) : '0.0') + '%'"></div>
                                 </div>
                             </div>
-                            <div class="h-3 w-full overflow-hidden rounded-full bg-slate-800 shadow-inner mt-4">
+                            <div class="h-3 w-full overflow-hidden rounded-full bg-slate-200 dark:bg-slate-800 shadow-inner mt-4">
                                 <div class="h-full bg-gradient-to-r from-emerald-500 to-teal-400 transition-all duration-1000 ease-out relative"
                                      :style="`width: ${Math.min(personalMetrics.totalTarget > 0 ? (personalMetrics.totalActual / personalMetrics.totalTarget) * 100 : 0, 100)}%`">
-                                    <div class="absolute inset-0 bg-white/20 w-full h-full animate-pulse"></div>
+                                    <div class="absolute inset-0 bg-gray-100/20 w-full h-full animate-pulse"></div>
                                 </div>
                             </div>
                         </div>
@@ -134,10 +134,10 @@
                                 <div class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-emerald-400" x-text="globalProgress.toFixed(1) + '%'"></div>
                             </div>
                         </div>
-                        <div class="h-3 w-full overflow-hidden rounded-full bg-slate-800 shadow-inner">
+                        <div class="h-3 w-full overflow-hidden rounded-full bg-slate-200 dark:bg-slate-800 shadow-inner">
                             <div class="h-full bg-gradient-to-r from-indigo-500 via-blue-500 to-emerald-400 transition-all duration-1000 ease-out relative"
                                  :style="`width: ${Math.min(globalProgress, 100)}%`">
-                                <div class="absolute inset-0 bg-white/20 w-full h-full animate-pulse"></div>
+                                <div class="absolute inset-0 bg-gray-100/20 w-full h-full animate-pulse"></div>
                             </div>
                         </div>
                     </div>
@@ -149,15 +149,15 @@
                 <template x-for="cat in productCategories" :key="cat">
                     <div class="p-5 glass-card hover:border-white/20 transition-colors rounded-2xl group">
                         <div class="flex justify-between items-start mb-4">
-                            <div class="text-sm font-bold text-slate-300" x-text="cat"></div>
-                            <div class="text-xs font-black bg-white/5 px-2 py-0.5 rounded-full" 
+                            <div class="text-sm font-bold text-slate-700 dark:text-slate-300" x-text="cat"></div>
+                            <div class="text-xs font-black bg-black/5 dark:bg-gray-100/5 px-2 py-0.5 rounded-full" 
                                  :class="getProductBarColorClass(cat, true)" 
                                  x-text="getProductProgress(cat).toFixed(0) + '%'"></div>
                         </div>
-                        <div class="text-xl font-mono font-bold text-[var(--cc-text)] mb-1 group-hover:text-indigo-300 transition-colors" x-text="formatIDR(metrics.productMetrics[cat]?.actual || 0)"></div>
+                        <div class="text-xl font-mono font-bold text-[var(--cc-text)] mb-1 group-hover:text-indigo-600 dark:group-hover:text-indigo-300 transition-colors" x-text="formatIDR(metrics.productMetrics[cat]?.actual || 0)"></div>
                         <div class="text-[10px] uppercase font-bold text-slate-500 tracking-wider mb-4" x-text="'Target: ' + formatIDR(metrics.productMetrics[cat]?.target || 0)"></div>
                         
-                        <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                        <div class="w-full h-1.5 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
                             <div class="h-full transition-all duration-700 delay-100" 
                                  :class="getProductBarColorClass(cat, false)"
                                  :style="`width: ${Math.min(getProductProgress(cat), 100)}%`"></div>
@@ -188,7 +188,7 @@
                 <div class="space-y-3 flex-1 overflow-y-auto pr-2 custom-scrollbar">
                     <template x-if="currentUser.role === 'Sales'">
                         <template x-for="(item, idx) in leaderboard" :key="item.user.id">
-                            <div class="flex items-center gap-4 bg-white/5 p-3 rounded-2xl border border-white/5 hover:bg-white/10 transition-colors">
+                            <div class="flex items-center gap-4 bg-black/5 dark:bg-gray-100/5 p-3 rounded-2xl border border-black/5 dark:border-white/5 hover:bg-black/10 dark:hover:bg-gray-100/10 transition-colors">
                                 <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl font-bold text-xs border" :class="getRankStyle(idx)" x-text="idx + 1"></div>
                                 <div class="flex-1 min-w-0">
                                     <a :href="'/sales/' + item.user.id + '/performance'" class="truncate text-sm font-bold text-cc-cyan hover:underline" x-text="item.user.name"></a>
@@ -202,7 +202,7 @@
 
                     <template x-if="currentUser.role !== 'Sales' && selectedManagerId">
                         <template x-for="(item, idx) in managerLeaderboard.find(m => m.user.id === selectedManagerId)?.reps || []" :key="item.user.id">
-                            <div class="flex items-center gap-4 bg-white/5 p-3 rounded-2xl border border-white/5 hover:bg-white/10 transition-colors">
+                            <div class="flex items-center gap-4 bg-black/5 dark:bg-gray-100/5 p-3 rounded-2xl border border-black/5 dark:border-white/5 hover:bg-black/10 dark:hover:bg-gray-100/10 transition-colors">
                                 <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl font-bold text-xs border" :class="getRankStyle(idx)" x-text="idx + 1"></div>
                                 <div class="flex-1 min-w-0">
                                     <a :href="'/sales/' + item.user.id + '/performance'" class="truncate text-sm font-bold text-cc-cyan hover:underline" x-text="item.user.name"></a>
@@ -217,7 +217,7 @@
                     <template x-if="currentUser.role !== 'Sales' && !selectedManagerId">
                         <template x-for="(item, idx) in managerLeaderboard" :key="item.user.id">
                             <div @click="selectedManagerId = item.user.id"
-                                 class="flex items-center gap-4 bg-white/5 p-3 rounded-2xl border border-white/5 cursor-pointer hover:border-indigo-500/50 hover:bg-white/10 transition group">
+                                 class="flex items-center gap-4 bg-black/5 dark:bg-gray-100/5 p-3 rounded-2xl border border-black/5 dark:border-white/5 cursor-pointer hover:border-indigo-500/50 hover:bg-black/10 dark:hover:bg-gray-100/10 transition group">
                                 <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl font-bold text-xs border" :class="getRankStyle(idx)" x-text="idx + 1"></div>
                                 <div class="flex-1 min-w-0">
                                     <div class="flex items-center gap-2">
@@ -237,7 +237,7 @@
                     </template>
                     
                     <template x-if="(currentUser.role === 'Sales' && leaderboard.length === 0) || (currentUser.role !== 'Sales' && managerLeaderboard.length === 0)">
-                        <div class="text-center text-sm text-slate-500 py-8 border border-dashed border-white/10 rounded-2xl">No data available</div>
+                        <div class="text-center text-sm text-slate-500 py-8 border border-dashed border-black/10 dark:border-white/10 rounded-2xl">No data available</div>
                     </template>
                 </div>
             </div>
@@ -411,17 +411,17 @@ function dashboardManager() {
         
         getProductBarColorClass(cat, isText) {
             const p = this.getProductProgress(cat);
-            if (p >= 100) return isText ? 'text-emerald-400' : 'bg-emerald-500';
-            if (p >= 75) return isText ? 'text-indigo-400' : 'bg-indigo-500';
-            if (p >= 50) return isText ? 'text-amber-400' : 'bg-amber-500';
-            return isText ? 'text-rose-400' : 'bg-rose-500';
+            if (p >= 100) return isText ? 'text-emerald-600 dark:text-emerald-400' : 'bg-emerald-500';
+            if (p >= 75) return isText ? 'text-indigo-600 dark:text-indigo-400' : 'bg-indigo-500';
+            if (p >= 50) return isText ? 'text-amber-600 dark:text-amber-400' : 'bg-amber-500';
+            return isText ? 'text-rose-600 dark:text-rose-400' : 'bg-rose-500';
         },
         
         getRankStyle(idx) {
-            if (idx === 0) return 'bg-amber-500/20 text-amber-300 border-amber-500/30';
-            if (idx === 1) return 'bg-slate-300/20 text-slate-300 border-slate-300/30';
-            if (idx === 2) return 'bg-amber-700/20 text-amber-600 border-amber-700/30';
-            return 'bg-slate-800 text-slate-400 border-white/5';
+            if (idx === 0) return 'bg-amber-500/20 text-amber-700 dark:text-amber-300 border-amber-500/30';
+            if (idx === 1) return 'bg-slate-300/20 text-slate-700 dark:text-slate-300 border-slate-300/30';
+            if (idx === 2) return 'bg-amber-700/20 text-amber-800 dark:text-amber-600 border-amber-700/30';
+            return 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-white/5';
         }
     }
 }

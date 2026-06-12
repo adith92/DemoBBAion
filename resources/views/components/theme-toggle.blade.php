@@ -14,7 +14,7 @@
             :class="$store.theme.mode === 'dark' ? 'transform translate-x-0 bg-zinc-800' : 'transform translate-x-8 bg-gray-200'"
         >
             <!-- Moon Icon (Dark Mode Active) -->
-            <svg x-show="$store.theme.mode === 'dark'" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 text-white">
+            <svg x-show="$store.theme.mode === 'dark'" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 text-gray-900">
                 <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
             </svg>
             <!-- Sun Icon (Light Mode Active) -->

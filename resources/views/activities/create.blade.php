@@ -27,7 +27,7 @@
 
         <div class="cc-card rounded-2xl border border-[var(--cc-border)]/50 overflow-hidden">
             <div class="bg-gradient-to-r from-indigo-600 to-indigo-700 px-6 py-5">
-                <h2 class="text-xl font-bold text-white">Catat Aktivitas</h2>
+                <h2 class="text-xl font-bold text-gray-900">Catat Aktivitas</h2>
                 <p class="text-indigo-200 text-sm mt-0.5">Rekam interaksi dengan klien atau prospek</p>
             </div>
 
@@ -201,7 +201,7 @@
                         Batal
                     </a>
                     <button type="submit"
-                            class="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-6 py-2.5 rounded-xl transition-all">
+                            class="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-gray-900 font-semibold px-6 py-2.5 rounded-xl transition-all">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                         </svg>

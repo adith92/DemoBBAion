@@ -9,7 +9,7 @@
 ]" />
 
 {{-- Hero --}}
-<div class="bg-gradient-to-br from-indigo-900 to-indigo-800 rounded-2xl shadow p-8 mb-6 text-white border border-indigo-700/50">
+<div class="bg-gradient-to-br from-indigo-900 to-indigo-800 rounded-2xl shadow p-8 mb-6 text-gray-900 border border-indigo-700/50">
     <div class="flex flex-col md:flex-row justify-between items-start gap-4">
         <div>
             <p class="text-indigo-200 text-xs uppercase tracking-widest font-semibold mb-1">Sales Performance</p>
@@ -56,7 +56,7 @@
         <div class="flex gap-2 text-sm">
             @foreach(['daily' => 'Daily', 'weekly' => 'Weekly', 'monthly' => 'Monthly', 'yearly' => 'Yearly'] as $p => $label)
                 <a href="{{ route('sales.performance', ['user' => $user->id, 'period' => $p]) }}"
-                   class="{{ $period === $p ? 'bg-indigo-600 text-white font-semibold shadow-md shadow-indigo-600/10' : 'bg-[var(--cc-bg-muted)] text-[var(--cc-text-muted)] hover:bg-[var(--cc-surface)] border border-[var(--cc-border)]/50' }} px-3 py-1.5 rounded-lg font-medium text-xs transition-all">
+                   class="{{ $period === $p ? 'bg-indigo-600 text-gray-900 font-semibold shadow-md shadow-indigo-600/10' : 'bg-[var(--cc-bg-muted)] text-[var(--cc-text-muted)] hover:bg-[var(--cc-surface)] border border-[var(--cc-border)]/50' }} px-3 py-1.5 rounded-lg font-medium text-xs transition-all">
                     {{ $label }}
                 </a>
             @endforeach

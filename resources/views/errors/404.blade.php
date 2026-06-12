@@ -34,7 +34,7 @@
             {{-- Error code --}}
             <div>
                 <div class="text-[72px] font-black leading-none tracking-tight"
-                     style="background: linear-gradient(135deg, #3b82f6, #00e5ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                     style="background: linear-gradient(135deg, #3b82f6, var(--color-primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
                     404
                 </div>
                 <div class="text-[18px] font-bold text-slate-200 mt-2">Halaman Tidak Ditemukan</div>

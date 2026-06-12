@@ -45,7 +45,7 @@
         
         @if($canModify)
         <div class="flex items-center gap-3">
-            <button class="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-indigo-600/30 hover:bg-indigo-500 transition-all">
+            <button class="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-gray-900 shadow-lg shadow-indigo-600/30 hover:bg-indigo-500 transition-all">
                 <span class="material-symbols-outlined text-[16px]">add</span>
                 Register Vehicle
             </button>
@@ -187,7 +187,7 @@
                     {{-- Top row: plate status & location --}}
                     <div class="flex items-start justify-between mb-4">
                         {{-- Indonesian Plate Number Representation --}}
-                        <div class="flex flex-col items-center border border-slate-700 bg-slate-900 text-white font-mono px-3 py-1 rounded shadow-md select-none shrink-0 border-t-2 border-t-indigo-500">
+                        <div class="flex flex-col items-center border border-slate-700 bg-slate-900 text-gray-900 font-mono px-3 py-1 rounded shadow-md select-none shrink-0 border-t-2 border-t-indigo-500">
                             <span class="text-base font-bold tracking-widest">{{ $u->plate_number }}</span>
                             <div class="w-full h-px bg-slate-800 my-0.5"></div>
                             <span class="text-[8px] tracking-widest text-slate-400">06.31</span>
@@ -236,7 +236,7 @@
                                 <div class="font-bold text-[var(--cc-text)] mb-0.5">{{ $u->assignedOpportunity->client->company_name ?? 'Unknown Company' }}</div>
                                 <div class="text-[var(--cc-text-muted)] flex items-center gap-1.5 mt-1">
                                     <span class="truncate">{{ $u->assignedOpportunity->title }}</span>
-                                    <span class="text-[10px] bg-indigo-500/20 px-1.5 py-0.5 rounded text-white shrink-0">{{ ucfirst($u->assignedOpportunity->stage) }}</span>
+                                    <span class="text-[10px] bg-indigo-500/20 px-1.5 py-0.5 rounded text-gray-900 shrink-0">{{ ucfirst($u->assignedOpportunity->stage) }}</span>
                                 </div>
                             </div>
                         @else

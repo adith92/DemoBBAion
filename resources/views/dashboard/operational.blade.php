@@ -68,7 +68,7 @@
                         </thead>
                         <tbody>
                             @forelse($activeBookingList as $booking)
-                            <tr class="border-b hover:bg-black/5 dark:hover:bg-white/5 transition-colors" style="border-color:var(--cc-border)">
+                            <tr class="border-b hover:bg-black/5 dark:hover:bg-gray-100/5 transition-colors" style="border-color:var(--cc-border)">
                                 <td class="py-2">
                                     <a href="{{ route('bookings.show', $booking->id) }}" class="text-blue-600 dark:text-blue-400 hover:underline font-mono">
                                         {{ $booking->booking_number }}

@@ -44,7 +44,7 @@
         </div>
         @can('role:gm,finance,manager')
         <a href="{{ route('subscriptions.create') }}"
-           class="inline-flex items-center gap-2 bg-indigo-600 text-white px-4 py-2.5 rounded-xl hover:bg-indigo-500 transition-all text-sm font-semibold shadow-lg shadow-indigo-600/20">
+           class="inline-flex items-center gap-2 bg-indigo-600 text-gray-900 px-4 py-2.5 rounded-xl hover:bg-indigo-500 transition-all text-sm font-semibold shadow-lg shadow-indigo-600/20">
             ➕ Tambah Kontrak
         </a>
         @endcan
@@ -64,7 +64,7 @@
         @foreach($tabs as $val => $label)
         <a href="{{ route('subscriptions.index', array_merge(request()->query(), ['status' => $val])) }}"
            class="px-4 py-1.5 rounded-full text-sm font-medium transition-colors
-           {{ $status === $val ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/10' : 'bg-[var(--cc-bg-muted)] text-[var(--cc-text-muted)] hover:bg-[var(--cc-surface)] hover:text-[var(--cc-text)] border border-[var(--cc-border)]/50' }}">
+           {{ $status === $val ? 'bg-indigo-600 text-gray-900 shadow-md shadow-indigo-600/10' : 'bg-[var(--cc-bg-muted)] text-[var(--cc-text-muted)] hover:bg-[var(--cc-surface)] hover:text-[var(--cc-text)] border border-[var(--cc-border)]/50' }}">
             {{ $label }}
         </a>
         @endforeach
@@ -216,7 +216,7 @@
                     <span class="material-symbols-outlined text-[20px]">warning</span>
                 </div>
                 <div>
-                    <h3 class="text-base font-bold text-slate-900 dark:text-white">Terminasi Kontrak</h3>
+                    <h3 class="text-base font-bold text-slate-900 dark:text-gray-900">Terminasi Kontrak</h3>
                     <p class="text-xs text-slate-400 font-medium font-mono" id="termination-sub-number">GB-2026-0001</p>
                 </div>
             </div>
@@ -240,7 +240,7 @@
                        pattern="[0-9]" 
                        inputmode="numeric" 
                        required 
-                       class="w-12 h-12 text-center text-2xl font-bold rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all"
+                       class="w-12 h-12 text-center text-2xl font-bold rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all"
                        data-index="{{ $i }}"
                        autocomplete="off">
                 @endfor
@@ -259,7 +259,7 @@
                 <button type="button" onclick="closeTerminationModal()" class="flex-1 px-4 py-2.5 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 font-semibold text-sm transition-colors">
                     Batal
                 </button>
-                <button type="submit" class="flex-1 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl font-semibold text-sm shadow-lg shadow-red-500/20 hover:shadow-red-600/30 transition-all">
+                <button type="submit" class="flex-1 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-gray-900 rounded-xl font-semibold text-sm shadow-lg shadow-red-500/20 hover:shadow-red-600/30 transition-all">
                     Konfirmasi Terminasi
                 </button>
             </div>

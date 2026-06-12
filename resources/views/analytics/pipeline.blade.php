@@ -7,7 +7,7 @@
 
     {{-- Header --}}
     <div class="flex items-center gap-3">
-        <span class="material-symbols-outlined text-[#003887] text-[28px]">monitoring</span>
+        <span class="material-symbols-outlined text-secondary text-[28px]">monitoring</span>
         <div>
             <h2 class="text-xl font-bold text-slate-100">Pipeline Analytics</h2>
             <p class="text-xs text-slate-500">Konversi &amp; performa funnel penjualan</p>
@@ -15,7 +15,7 @@
     </div>
 
     {{-- Win rate banner --}}
-    <div class="bg-gradient-to-r from-[#003887] via-[#1e4fa8] to-secondary text-white rounded-2xl p-6 shadow-xl flex items-center justify-between">
+    <div class="bg-gradient-to-r from-[var(--color-secondary)] via-[#1e4fa8] to-secondary text-gray-900 rounded-2xl p-6 shadow-xl flex items-center justify-between">
         <div>
             <p class="text-blue-100 text-xs font-semibold uppercase tracking-wider">Overall Win Rate</p>
             <p class="text-4xl font-extrabold mt-1">{{ $overallWinRate }}%</p>
@@ -50,7 +50,7 @@
     {{-- Conversion rates --}}
     <div class="cc-card rounded-2xl shadow-sm border border-white/8 p-6">
         <h3 class="text-base font-bold text-slate-100 mb-4 flex items-center gap-2">
-            <span class="material-symbols-outlined text-[20px] text-[#003887]">conversion_path</span>
+            <span class="material-symbols-outlined text-[20px] text-secondary">conversion_path</span>
             Conversion Rates
         </h3>
         <div class="space-y-4">
@@ -58,10 +58,10 @@
             <div>
                 <div class="flex justify-between text-xs font-semibold text-slate-500 mb-1">
                     <span>{{ ucfirst(str_replace('_',' → ',str_replace('_to_',' to ',$key))) }}</span>
-                    <span class="text-[#003887] font-bold">{{ $rate }}%</span>
+                    <span class="text-secondary font-bold">{{ $rate }}%</span>
                 </div>
-                <div class="w-full bg-white/10 rounded-full h-2.5 overflow-hidden">
-                    <div class="bg-gradient-to-r from-[#003887] to-secondary h-full rounded-full" style="width: {{ min($rate,100) }}%"></div>
+                <div class="w-full bg-gray-100/10 rounded-full h-2.5 overflow-hidden">
+                    <div class="bg-gradient-to-r from-[var(--color-secondary)] to-secondary h-full rounded-full" style="width: {{ min($rate,100) }}%"></div>
                 </div>
             </div>
             @endforeach

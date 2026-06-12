@@ -16,7 +16,7 @@
                 </span>
             </div>
             <div class="flex items-center gap-3 text-[11px]" style="color:var(--cc-text-muted)">
-                <span><span style="color:#00e5ff">●</span> Revenue</span>
+                <span><span style="color:var(--color-primary)">●</span> Revenue</span>
                 <span><span style="color:#a78bfa">●</span> Deals closed</span>
             </div>
         </div>
@@ -162,13 +162,13 @@ document.addEventListener('DOMContentLoaded', function() {
                         type: 'line',
                         label: 'Revenue (Jt Rp)',
                         data: {!! json_encode($days7Revenue ?? [320, 415, 285, 524, 478, 245, 190]) !!},
-                        borderColor: '#00e5ff',
+                        borderColor: 'var(--color-primary)',
                         backgroundColor: 'rgba(0,229,255,0.07)',
                         borderWidth: 2.5,
                         fill: true,
                         tension: 0.45,
                         pointRadius: 4,
-                        pointBackgroundColor: '#00e5ff',
+                        pointBackgroundColor: 'var(--color-primary)',
                         pointBorderColor: 'rgba(0,229,255,0.3)',
                         pointBorderWidth: 2,
                         pointHoverRadius: 6,

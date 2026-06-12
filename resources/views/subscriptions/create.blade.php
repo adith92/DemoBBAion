@@ -174,7 +174,7 @@
             {{-- Actions --}}
             <div class="flex gap-3 pt-2 border-t border-[var(--cc-border)]/50">
                 <button type="submit"
-                        class="bg-indigo-600 text-white px-6 py-2.5 rounded-xl hover:bg-indigo-500 transition-all text-sm font-semibold shadow-lg shadow-indigo-600/20">
+                        class="bg-indigo-600 text-gray-900 px-6 py-2.5 rounded-xl hover:bg-indigo-500 transition-all text-sm font-semibold shadow-lg shadow-indigo-600/20">
                     Simpan Kontrak
                 </button>
                 <a href="{{ route('subscriptions.index') }}"

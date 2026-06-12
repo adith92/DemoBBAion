@@ -233,7 +233,7 @@
                     <!-- TABLE FOR CLIENTS, BOOKINGS, FLEET, DRIVERS -->
                     <div x-show="!loading && items.length > 0 && ['clients','bookings','fleet','drivers'].includes(breakdownType)" class="overflow-x-auto rounded-xl border border-[var(--cc-border)] bg-[var(--cc-surface-secondary)]">
                         <table class="w-full text-sm text-left">
-                            <thead class="text-xs uppercase bg-black/5 dark:bg-white/5 text-[var(--cc-text-muted)] border-b border-[var(--cc-border)]">
+                            <thead class="text-xs uppercase bg-black/5 dark:bg-gray-100/5 text-[var(--cc-text-muted)] border-b border-[var(--cc-border)]">
                                 <!-- Clients Header -->
                                 <tr x-show="breakdownType === 'clients'">
                                     <th class="px-4 py-3">Client Name</th>
@@ -266,7 +266,7 @@
                             </thead>
                             <tbody class="divide-y divide-[var(--cc-border)]">
                                 <template x-for="item in items" :key="item.id">
-                                    <tr class="hover:bg-black/5 dark:hover:bg-white/5 transition-colors group">
+                                    <tr class="hover:bg-black/5 dark:hover:bg-gray-100/5 transition-colors group">
                                         <!-- Clients Row -->
                                         <template x-if="breakdownType === 'clients'">
                                             <>

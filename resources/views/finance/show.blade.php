@@ -173,7 +173,7 @@
         <div class="cc-card rounded-lg shadow p-6">
             <h3 class="font-semibold text-[var(--cc-text)] mb-4">Actions</h3>
             <div class="space-y-2">
-                <button onclick="window.print()" class="w-full bg-indigo-600 text-white py-2.5 rounded-xl hover:bg-indigo-500 font-semibold text-sm transition-all shadow-lg shadow-indigo-600/20">
+                <button onclick="window.print()" class="w-full bg-indigo-600 text-gray-900 py-2.5 rounded-xl hover:bg-indigo-500 font-semibold text-sm transition-all shadow-lg shadow-indigo-600/20">
                     🖨 Print Invoice
                 </button>
                 <a href="{{ route('finance.index') }}" class="block w-full bg-[var(--cc-bg-muted)] border border-[var(--cc-border)] text-[var(--cc-text)] py-2.5 rounded-xl hover:bg-[var(--cc-surface)] text-center font-semibold text-sm transition-all">

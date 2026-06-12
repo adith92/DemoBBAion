@@ -25,8 +25,8 @@ export default {
                 'cc-text':     '#e2e8f0',
                 'cc-muted':    '#64748b',
                 // Material Design 3 (preserved compatibility)
-                'primary':     '#003887',
-                'secondary':   '#1960a6',
+                'primary':     'rgb(var(--color-primary) / <alpha-value>)',
+                'secondary':   'rgb(var(--color-secondary) / <alpha-value>)',
                 'tertiary':    '#003c73',
                 'surface':     '#f8f9ff',
                 'on-surface':  '#0b1c30',

@@ -96,7 +96,7 @@
 
         <!-- Buttons -->
         <div class="flex gap-4 pt-6 border-t border-[var(--cc-border)]/50">
-            <button type="submit" class="bg-indigo-600 text-white px-6 py-2.5 rounded-xl font-semibold hover:bg-indigo-500 transition-all">Create Booking</button>
+            <button type="submit" class="bg-indigo-600 text-gray-900 px-6 py-2.5 rounded-xl font-semibold hover:bg-indigo-500 transition-all">Create Booking</button>
             <a href="{{ route('bookings.index') }}" class="bg-[var(--cc-bg-muted)] text-[var(--cc-text)] border border-[var(--cc-border)] px-6 py-2.5 rounded-xl font-semibold hover:bg-[var(--cc-surface)] transition-all">Cancel</a>
         </div>
     </form>

@@ -259,7 +259,7 @@
                                 <div class="flex items-center justify-between mt-3 mb-2">
                                     <div class="flex flex-wrap gap-1">
                                         <template x-for="p in (deal.products || [])" :key="p.id">
-                                            <span class="inline-flex items-center rounded-lg bg-indigo-500/20 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-indigo-300 ring-1 ring-inset ring-indigo-500/30">
+                                            <span class="inline-flex items-center rounded-lg bg-indigo-500/10 dark:bg-indigo-500/20 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-indigo-700 dark:text-indigo-300 ring-1 ring-inset ring-indigo-500/20 dark:ring-indigo-500/30">
                                                 <span x-text="(p.quantity > 1 ? p.quantity + 'x ' : '') + p.category"></span>
                                             </span>
                                         </template>
@@ -275,7 +275,7 @@
                                 </div>
                                 
                                 <template x-if="deal.stage === 'lost' && deal.lost_reason">
-                                    <div class="mt-2 text-[10px] text-rose-300 bg-rose-500/20 p-2 rounded-lg flex items-start gap-1 border border-rose-500/20">
+                                    <div class="mt-2 text-[10px] text-rose-700 dark:text-rose-300 bg-rose-500/10 dark:bg-rose-500/20 p-2 rounded-lg flex items-start gap-1 border border-rose-500/20">
                                         <svg class="w-3 h-3 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                         <span x-text="deal.lost_reason"></span>
                                     </div>
@@ -326,7 +326,7 @@
                                 <div class="cursor-pointer group flex justify-between items-start rounded-xl -ml-2 p-2 transition hover:bg-[var(--cc-surface)]"
                                      @click="expandedHistoryId = (expandedHistoryId === entry.id ? null : entry.id)">
                                     <div>
-                                        <div class="text-sm font-bold text-[var(--cc-text)] group-hover:text-indigo-300 transition-colors"
+                                        <div class="text-sm font-bold text-[var(--cc-text)] group-hover:text-indigo-600 dark:group-hover:text-indigo-300 transition-colors"
                                              x-text="stageLabel(entry.stage) + (entry.subType ? ' (' + entry.subType + ')' : '')"></div>
                                         <div class="text-xs text-[var(--cc-text-muted)]" x-text="formatDate(entry.timestamp, true)"></div>
                                     </div>
@@ -432,11 +432,11 @@
                                             </div>
                                         </div>
                                         <div>
-                                            <input type="text" placeholder="Details / Note (Optional)" x-model="p.details" class="w-full rounded-lg border border-transparent bg-[var(--cc-modal-bg)]/50 px-3 py-1.5 text-xs text-[var(--cc-text)] outline-none focus:border-[var(--cc-border)] placeholder:text-slate-600" />
+                                            <input type="text" placeholder="Details / Note (Optional)" x-model="p.details" class="w-full rounded-lg border border-transparent bg-[var(--cc-modal-bg)]/50 px-3 py-1.5 text-xs text-[var(--cc-text)] outline-none focus:border-[var(--cc-border)] placeholder:text-slate-400 dark:placeholder:text-slate-600" />
                                         </div>
                                     </div>
                                 </template>
-                                <button @click="addProduct()" type="button" class="w-full rounded-xl border border-dashed border-white/20 py-3 text-sm font-bold text-[var(--cc-text-muted)] hover:text-indigo-300 hover:border-indigo-400/50 hover:bg-indigo-500/10 transition-colors flex items-center justify-center gap-2">
+                                <button @click="addProduct()" type="button" class="w-full rounded-xl border border-dashed border-black/20 dark:border-white/20 py-3 text-sm font-bold text-[var(--cc-text-muted)] hover:text-indigo-600 dark:hover:text-indigo-300 hover:border-indigo-400/50 hover:bg-indigo-500/5 dark:hover:bg-indigo-500/10 transition-colors flex items-center justify-center gap-2">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                                     Add Product Item
                                 </button>
@@ -463,7 +463,7 @@
                             <div class="mt-4 p-4 border border-[var(--cc-border)] bg-[var(--cc-surface)] rounded-xl space-y-4">
                                 <div class="flex items-center justify-between">
                                     <h3 class="text-sm font-bold text-[var(--cc-text)]">Alokasi Operasional</h3>
-                                    <button type="button" @click="fetchAvailableOperational()" class="text-xs text-indigo-400 hover:text-indigo-300 font-bold">Refresh Ketersediaan</button>
+                                    <button type="button" @click="fetchAvailableOperational()" class="text-xs text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 dark:hover:text-indigo-300 font-bold">Refresh Ketersediaan</button>
                                 </div>
                                 
                                 <div class="space-y-3">
@@ -507,7 +507,7 @@
                         </template>
 
                         <template x-if="targetStage === 'won' && modalMode !== 'history'">
-                            <div class="bg-emerald-500/10 text-emerald-300 p-4 rounded-2xl text-sm border border-emerald-500/20">
+                            <div class="bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 p-4 rounded-2xl text-sm border border-emerald-500/20">
                                 <p class="font-bold">Deal Won!</p>
                                 <p class="mt-1">100% of the Estimated Value (<span x-text="formatIDR(calculateTotalEst())"></span>) will be recognized as Actual Revenue.</p>
                             </div>

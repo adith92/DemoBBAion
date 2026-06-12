@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     'rgba(16,185,129,0.65)', 'rgba(239,68,68,0.65)',
                     'rgba(245,158,11,0.65)', 'rgba(0,229,255,0.65)'
                 ],
-                borderColor: ['#10b981','#ef4444','#f59e0b','#00e5ff'],
+                borderColor: ['#10b981','#ef4444','#f59e0b','var(--color-primary)'],
                 borderWidth: 1, borderRadius: 6, borderSkipped: false,
             }]
         },

@@ -9,7 +9,7 @@
     {{-- Brand --}}
     <div class="hidden md:flex items-center gap-3 px-5 py-5" style="border-bottom:1px solid var(--cc-sidebar-divider);">
         <div class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style="background:linear-gradient(135deg,rgba(0,229,255,0.15),rgba(59,130,246,0.15)); border:1px solid rgba(0,229,255,0.2);">
-            <span class="material-symbols-outlined text-[20px]" style="color:#00e5ff;">directions_bus</span>
+            <span class="material-symbols-outlined text-[20px]" style="color:var(--color-primary);">directions_bus</span>
         </div>
         <div>
             <div class="text-sm font-bold text-[var(--cc-sidebar-brand)] leading-tight">{{ __('ui.bluebird_crm') }}</div>
@@ -172,45 +172,45 @@
                 <!-- Alpine.js Modal overlay -->
                 <div x-show="open" x-cloak class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" @keydown.escape.window="open = false">
                     <!-- Modal card -->
-                    <div @click.away="if (!loading) open = false" class="w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl space-y-4" style="background-color: #0f172a;">
-                        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-                            <h3 class="text-sm font-bold text-white flex items-center gap-2">
-                                <span class="material-symbols-outlined text-amber-400">database</span>
+                    <div @click.away="if (!loading) open = false" class="w-full max-w-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-2xl space-y-4">
+                        <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
+                            <h3 class="text-sm font-bold text-slate-900 dark:text-gray-900 flex items-center gap-2">
+                                <span class="material-symbols-outlined text-amber-500">database</span>
                                 Seed Demo Data
                             </h3>
-                            <button @click="open = false" :disabled="loading" class="text-slate-400 hover:text-white disabled:opacity-50">
+                            <button @click="open = false" :disabled="loading" class="text-slate-400 hover:text-slate-600 dark:hover:text-gray-900 disabled:opacity-50">
                                 <span class="material-symbols-outlined text-[18px]">close</span>
                             </button>
                         </div>
 
                         <div x-show="!loading" class="space-y-4 text-xs">
-                            <p class="text-slate-400 leading-relaxed text-left">
+                            <p class="text-slate-600 dark:text-slate-400 leading-relaxed text-left">
                                 Pilih jumlah data demo (Opportunity, Client, dll.) yang ingin Anda tambahkan ke sistem secara otomatis dengan kalkulasi finansial riil.
                             </p>
                             
                             <div class="grid grid-cols-3 gap-2">
                                 <button type="button" @click="amount = 100" class="py-2 rounded-lg font-bold border transition-all"
-                                        :class="amount === 100 ? 'bg-amber-500/20 border-amber-500 text-amber-300' : 'bg-slate-800/40 border-slate-700/60 text-slate-300 hover:bg-slate-800'">
+                                        :class="amount === 100 ? 'bg-amber-500/10 dark:bg-amber-500/20 border-amber-500 text-amber-700 dark:text-amber-300' : 'bg-slate-100 dark:bg-slate-800/40 border-slate-200 dark:border-slate-700/60 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800'">
                                     100 Data
                                 </button>
                                 <button type="button" @click="amount = 1000" class="py-2 rounded-lg font-bold border transition-all"
-                                        :class="amount === 1000 ? 'bg-amber-500/20 border-amber-500 text-amber-300' : 'bg-slate-800/40 border-slate-700/60 text-slate-300 hover:bg-slate-800'">
+                                        :class="amount === 1000 ? 'bg-amber-500/10 dark:bg-amber-500/20 border-amber-500 text-amber-700 dark:text-amber-300' : 'bg-slate-100 dark:bg-slate-800/40 border-slate-200 dark:border-slate-700/60 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800'">
                                     1.000 Data
                                 </button>
                                 <button type="button" @click="amount = 10000" class="py-2 rounded-lg font-bold border transition-all"
-                                        :class="amount === 10000 ? 'bg-amber-500/20 border-amber-500 text-amber-300' : 'bg-slate-800/40 border-slate-700/60 text-slate-300 hover:bg-slate-800'">
+                                        :class="amount === 10000 ? 'bg-amber-500/10 dark:bg-amber-500/20 border-amber-500 text-amber-700 dark:text-amber-300' : 'bg-slate-100 dark:bg-slate-800/40 border-slate-200 dark:border-slate-700/60 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800'">
                                     10.000 Data
                                 </button>
                             </div>
 
                             <div class="space-y-1 text-left">
-                                <label class="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Atau Custom Jumlah Data</label>
+                                <label class="text-[10px] text-slate-500 dark:text-slate-400 font-semibold uppercase tracking-wider">Atau Custom Jumlah Data</label>
                                 <input type="number" x-model="customAmount" placeholder="Contoh: 500" min="1" max="100000" 
-                                       class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-white placeholder-slate-600 focus:outline-none focus:border-amber-500/50" />
+                                       class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 text-slate-900 dark:text-gray-900 placeholder-slate-400 dark:placeholder-slate-600 focus:outline-none focus:border-amber-500/50" />
                             </div>
 
                             <div class="flex gap-3 pt-2">
-                                <button type="button" @click="open = false" class="flex-1 py-2 bg-slate-800 text-slate-300 hover:text-white rounded-lg font-semibold transition-all">
+                                <button type="button" @click="open = false" class="flex-1 py-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:text-gray-900 rounded-lg font-semibold transition-all">
                                     Batal
                                 </button>
                                 <button type="button" 
@@ -244,7 +244,7 @@
                                                 isError = true;
                                             });
                                         "
-                                        class="flex-1 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-lg font-bold transition-all">
+                                        class="flex-1 py-2 bg-amber-500 hover:bg-amber-400 text-slate-900 rounded-lg font-bold transition-all">
                                     Mulai Seeding
                                 </button>
                             </div>
@@ -252,16 +252,16 @@
 
                         <!-- Loading Spinner -->
                         <div x-show="loading" class="flex flex-col items-center justify-center py-6 space-y-3">
-                            <svg class="animate-spin h-8 w-8 text-amber-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <svg class="animate-spin h-8 w-8 text-amber-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>
-                            <span class="text-xs text-slate-300 font-medium animate-pulse">Menghasilkan data demo riil, mohon tunggu...</span>
+                            <span class="text-xs text-slate-600 dark:text-slate-300 font-medium animate-pulse">Menghasilkan data demo riil, mohon tunggu...</span>
                         </div>
 
                         <!-- Success / Error Message -->
                         <div x-show="message" class="text-center py-2 px-3 rounded-lg text-xs font-semibold"
-                             :class="isError ? 'bg-red-500/10 text-red-400 border border-red-500/20' : 'bg-green-500/10 text-green-400 border border-green-500/20'">
+                             :class="isError ? 'bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20' : 'bg-green-500/10 text-green-600 dark:text-green-400 border border-green-500/20'">
                             <span x-text="message"></span>
                         </div>
                     </div>

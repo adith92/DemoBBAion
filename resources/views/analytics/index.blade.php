@@ -8,7 +8,7 @@
     {{-- Header with sub-nav --}}
     <div class="flex flex-wrap items-center gap-2">
         <a href="{{ route('analytics.index') }}"
-           class="px-4 py-2 rounded-lg text-sm font-medium bg-blue-700 text-white">Overview</a>
+           class="px-4 py-2 rounded-lg text-sm font-medium bg-blue-700 text-gray-900">Overview</a>
         <a href="{{ route('analytics.pipeline') }}"
            class="px-4 py-2 rounded-lg text-sm font-medium cc-card border border-white/8 text-slate-500 hover:cc-card">Pipeline Funnel</a>
         <a href="{{ route('analytics.crosssell') }}"
@@ -47,8 +47,8 @@
                         <span class="font-medium text-slate-200">{{ $stageLabels[$i] }}</span>
                         <span class="text-slate-500">{{ $cnt }} deal &bull; Rp {{ number_format($val, 0, ',', '.') }}</span>
                     </div>
-                    <div class="h-8 bg-white/10 rounded-lg overflow-hidden">
-                        <div class="{{ $colors[$i] }} h-full rounded-lg flex items-center px-3 text-white text-xs font-semibold transition-all"
+                    <div class="h-8 bg-gray-100/10 rounded-lg overflow-hidden">
+                        <div class="{{ $colors[$i] }} h-full rounded-lg flex items-center px-3 text-gray-900 text-xs font-semibold transition-all"
                              style="width: {{ max($pct, 4) }}%">
                             {{ $pct }}%
                         </div>
@@ -91,7 +91,7 @@
                         ['label' => 'Short + E-Voucher',   'key' => 'short_and_ev',     'color' => 'bg-purple-900/40 text-purple-700'],
                         ['label' => 'Long + E-Voucher',    'key' => 'long_and_ev',      'color' => 'bg-teal-900/40 text-teal-700'],
                         ['label' => 'Semua Kategori',      'key' => 'all_three',         'color' => 'bg-orange-900/30 text-orange-700'],
-                        ['label' => 'Belum Ada Produk',    'key' => 'none',              'color' => 'bg-white/10 text-slate-500'],
+                        ['label' => 'Belum Ada Produk',    'key' => 'none',              'color' => 'bg-gray-100/10 text-slate-500'],
                     ];
                 @endphp
                 @foreach($segments as $seg)

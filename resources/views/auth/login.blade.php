@@ -333,14 +333,14 @@
             <div class="left-logo">
                 <img src="/images/golden-bird-logo.svg" alt="Golden Bird" style="width:52px;height:52px;border-radius:14px;background:rgba(0,82,204,0.15);border:1px solid rgba(0,102,255,0.3);padding:6px;">
                 <div>
-                    <div class="text-lg font-black text-white tracking-tight">Golden Bird <span style="color:#3385ff;">CRM</span></div>
+                    <div class="text-lg font-black text-gray-900 tracking-tight">Golden Bird <span style="color:#3385ff;">CRM</span></div>
                     <div class="text-[10px] font-semibold uppercase tracking-widest" style="color:#1e4080;">Command Center</div>
                 </div>
             </div>
 
             {{-- Tagline --}}
             <div class="left-tagline">
-                <h2 class="text-3xl font-black text-white leading-tight mb-3">
+                <h2 class="text-3xl font-black text-gray-900 leading-tight mb-3">
                     Kelola Armada<br>
                     <span style="color:#3385ff;">B2B Fleet</span><br>
                     dari Satu Dashboard
@@ -387,14 +387,14 @@
                 <img src="/images/golden-bird-logo.svg" alt="Logo"
                      style="width:40px;height:40px;border-radius:10px;background:rgba(0,82,204,0.15);border:1px solid rgba(0,102,255,0.3);padding:5px;">
                 <div>
-                    <div class="text-base font-black text-white">Golden Bird <span style="color:#3385ff;">CRM</span></div>
+                    <div class="text-base font-black text-gray-900">Golden Bird <span style="color:#3385ff;">CRM</span></div>
                     <div class="text-[9px] uppercase tracking-widest font-semibold" style="color:#1e4080;">Command Center</div>
                 </div>
             </div>
 
             {{-- Header --}}
             <div class="mb-7">
-                <h1 class="text-2xl font-black text-white tracking-tight mb-1">Selamat Datang 👋</h1>
+                <h1 class="text-2xl font-black text-gray-900 tracking-tight mb-1">Selamat Datang 👋</h1>
                 <p class="text-sm" style="color:#2d4a7a;">Masuk ke Golden Bird CRM Command Center</p>
             </div>
 

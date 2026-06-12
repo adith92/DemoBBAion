@@ -20,13 +20,13 @@
 ]" />
 
 {{-- Hero --}}
-<div class="rounded-2xl p-6 mb-5 text-white relative overflow-hidden"
-     style="background: linear-gradient(135deg, #003887 0%, #1468a8 60%, #0052cc 100%);">
+<div class="rounded-2xl p-6 mb-5 text-gray-900 relative overflow-hidden"
+     style="background: linear-gradient(135deg, var(--color-secondary) 0%, #1468a8 60%, #0052cc 100%);">
     <div class="absolute inset-0 opacity-10"
-         style="background: radial-gradient(ellipse at 80% 50%, #00e5ff 0%, transparent 60%)"></div>
+         style="background: radial-gradient(ellipse at 80% 50%, var(--color-primary) 0%, transparent 60%)"></div>
     <div class="relative flex flex-col md:flex-row justify-between items-start gap-4">
         <div class="flex items-center gap-4">
-            <div class="w-16 h-16 rounded-full bg-white/10 text-white flex items-center justify-center font-bold text-2xl border border-white/20 shadow-inner">
+            <div class="w-16 h-16 rounded-full bg-gray-100/10 text-gray-900 flex items-center justify-center font-bold text-2xl border border-white/20 shadow-inner">
                 {{ strtoupper(substr($driver->name, 0, 1)) }}
             </div>
             <div>
@@ -40,7 +40,7 @@
             <x-status-badge :status="$driver->status" />
             @if($canModify)
             <a href="#"
-               class="flex items-center gap-1 text-xs bg-white/10 hover:bg-white/20 border border-white/20 rounded-lg px-3 py-1.5 transition-colors">
+               class="flex items-center gap-1 text-xs bg-gray-100/10 hover:bg-gray-100/20 border border-white/20 rounded-lg px-3 py-1.5 transition-colors">
                 <span class="material-symbols-outlined text-[14px]">edit</span> Edit Profil
             </a>
             @endif
@@ -53,37 +53,37 @@
 
     {{-- Profil & Identitas --}}
     <div class="cc-card rounded-xl p-5">
-        <h3 class="text-[13px] font-bold text-slate-300 mb-4 flex items-center gap-2 uppercase tracking-wide">
-            <span class="material-symbols-outlined text-[16px] text-[#00e5ff]">account_circle</span>
+        <h3 class="text-[13px] font-bold text-slate-800 dark:text-slate-300 mb-4 flex items-center gap-2 uppercase tracking-wide">
+            <span class="material-symbols-outlined text-[16px] text-primary">account_circle</span>
             Profil Supir
         </h3>
         <dl class="space-y-3 text-sm">
             <div class="flex justify-between">
                 <dt class="text-slate-500">Nama Lengkap</dt>
-                <dd class="text-slate-200 font-medium">{{ $driver->name }}</dd>
+                <dd class="text-slate-800 dark:text-slate-200 font-medium">{{ $driver->name }}</dd>
             </div>
             <div class="flex justify-between">
                 <dt class="text-slate-500">Nomor Telepon</dt>
-                <dd class="text-slate-200 font-medium">{{ $driver->phone ?? '—' }}</dd>
+                <dd class="text-slate-800 dark:text-slate-200 font-medium">{{ $driver->phone ?? '—' }}</dd>
             </div>
             <div class="flex justify-between">
                 <dt class="text-slate-500">Nomor SIM</dt>
-                <dd class="text-slate-200 font-medium font-mono">{{ $driver->license_number ?? '—' }}</dd>
+                <dd class="text-slate-800 dark:text-slate-200 font-medium font-mono">{{ $driver->license_number ?? '—' }}</dd>
             </div>
             <div class="flex justify-between">
                 <dt class="text-slate-500">Lokasi Pool</dt>
-                <dd class="text-slate-200 font-medium">{{ $driver->pool?->name ?? '—' }}</dd>
+                <dd class="text-slate-800 dark:text-slate-200 font-medium">{{ $driver->pool?->name ?? '—' }}</dd>
             </div>
             <div class="flex justify-between">
                 <dt class="text-slate-500">Dibuat Pada</dt>
-                <dd class="text-slate-200 font-medium">{{ $driver->created_at ? $driver->created_at->format('d M Y') : '—' }}</dd>
+                <dd class="text-slate-800 dark:text-slate-200 font-medium">{{ $driver->created_at ? $driver->created_at->format('d M Y') : '—' }}</dd>
             </div>
         </dl>
     </div>
 
     {{-- Status Penugasan --}}
     <div class="cc-card rounded-xl p-5">
-        <h3 class="text-[13px] font-bold text-slate-300 mb-4 flex items-center gap-2 uppercase tracking-wide">
+        <h3 class="text-[13px] font-bold text-slate-800 dark:text-slate-300 mb-4 flex items-center gap-2 uppercase tracking-wide">
             <span class="material-symbols-outlined text-[16px] text-indigo-400">assignment_ind</span>
             Penugasan
         </h3>
@@ -91,19 +91,19 @@
             @if($driver->assignedOpportunity)
             <div>
                 <dt class="text-slate-500 mb-1">Klien Aktif</dt>
-                <dd class="text-slate-200 font-bold">
-                    <a href="{{ route('clients.show', $driver->assignedOpportunity->client_id) }}" class="text-[#00e5ff] hover:underline">
+                <dd class="text-slate-800 dark:text-slate-200 font-bold">
+                    <a href="{{ route('clients.show', $driver->assignedOpportunity->client_id) }}" class="text-blue-600 dark:text-primary hover:underline">
                         {{ $driver->assignedOpportunity->client->company_name ?? 'Unknown Client' }}
                     </a>
                 </dd>
             </div>
             <div class="border-t border-white/5 pt-3">
                 <dt class="text-slate-500 mb-1">Nama Kontrak / Opportunity</dt>
-                <dd class="text-slate-200 font-medium">{{ $driver->assignedOpportunity->title }}</dd>
+                <dd class="text-slate-800 dark:text-slate-200 font-medium">{{ $driver->assignedOpportunity->title }}</dd>
             </div>
             <div class="flex justify-between border-t border-white/5 pt-3">
                 <dt class="text-slate-500">Stage Kontrak</dt>
-                <dd class="text-indigo-400 font-semibold uppercase text-xs">{{ $driver->assignedOpportunity->stage }}</dd>
+                <dd class="text-indigo-600 dark:text-indigo-400 font-semibold uppercase text-xs">{{ $driver->assignedOpportunity->stage }}</dd>
             </div>
             @else
             <div class="text-center py-6 text-slate-500 italic">
@@ -116,11 +116,11 @@
 
     {{-- Catatan Operasional --}}
     <div class="cc-card rounded-xl p-5">
-        <h3 class="text-[13px] font-bold text-slate-300 mb-4 flex items-center gap-2 uppercase tracking-wide">
+        <h3 class="text-[13px] font-bold text-slate-800 dark:text-slate-300 mb-4 flex items-center gap-2 uppercase tracking-wide">
             <span class="material-symbols-outlined text-[16px] text-amber-500">notes</span>
             Catatan Operasional
         </h3>
-        <div class="text-sm text-slate-400 leading-relaxed min-h-[100px]">
+        <div class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed min-h-[100px]">
             {{ $driver->notes ?? 'Tidak ada catatan operasional khusus untuk supir ini.' }}
         </div>
     </div>
@@ -128,13 +128,13 @@
 
 {{-- Riwayat Booking --}}
 <div class="cc-card rounded-xl overflow-hidden mb-4">
-    <div class="flex justify-between items-center px-5 py-4 border-b border-white/5">
-        <h3 class="text-[14px] font-bold text-slate-200">Riwayat Booking Supir</h3>
+    <div class="flex justify-between items-center px-5 py-4 border-b border-slate-200 dark:border-white/5">
+        <h3 class="text-[14px] font-bold text-slate-800 dark:text-slate-200">Riwayat Booking Supir</h3>
     </div>
     <div class="overflow-x-auto">
         <table class="w-full text-sm">
             <thead>
-                <tr class="border-b border-white/5 text-[11px] uppercase text-slate-500 font-semibold">
+                <tr class="border-b border-slate-200 dark:border-white/5 text-[11px] uppercase text-slate-500 font-semibold">
                     <th class="text-left py-3 px-4">Booking #</th>
                     <th class="text-left py-3 px-4">Klien</th>
                     <th class="text-left py-3 px-4">Pickup</th>
@@ -148,27 +148,27 @@
                     $driverBookings = $driver->bookings()->with(['client', 'vehicle'])->latest('pickup_datetime')->limit(10)->get();
                 @endphp
                 @forelse($driverBookings as $booking)
-                <tr class="border-b border-white/5 hover:bg-white/3 transition-colors">
+                <tr class="border-b border-slate-200 dark:border-white/5 hover:bg-slate-50 dark:hover:bg-white/3 transition-colors">
                     <td class="py-3 px-4">
-                        <a href="{{ route('bookings.show', $booking->id) }}" class="text-[#00e5ff] hover:underline font-mono text-[12px]">
+                        <a href="{{ route('bookings.show', $booking->id) }}" class="text-blue-600 dark:text-primary hover:underline font-mono text-[12px]">
                             {{ $booking->booking_number }}
                         </a>
                     </td>
                     <td class="py-3 px-4">
                         @if($booking->client)
-                            <a href="{{ route('clients.show', $booking->client_id) }}" class="text-blue-400 hover:underline text-[13px]">
+                            <a href="{{ route('clients.show', $booking->client_id) }}" class="text-blue-600 dark:text-blue-400 hover:underline text-[13px]">
                                 {{ $booking->client->company_name }}
                             </a>
                         @else
                             —
                         @endif
                     </td>
-                    <td class="py-3 px-4 text-slate-400 text-[12px]">{{ $booking->pickup_datetime ? $booking->pickup_datetime->format('d M Y') : '—' }}</td>
-                    <td class="py-3 px-4 text-slate-400 text-[12px] max-w-[160px] truncate">{{ $booking->destination }}</td>
+                    <td class="py-3 px-4 text-slate-600 dark:text-slate-400 text-[12px]">{{ $booking->pickup_datetime ? $booking->pickup_datetime->format('d M Y') : '—' }}</td>
+                    <td class="py-3 px-4 text-slate-600 dark:text-slate-400 text-[12px] max-w-[160px] truncate">{{ $booking->destination }}</td>
                     <td class="py-3 px-4 text-center"><x-status-badge :status="$booking->status" /></td>
                     <td class="py-3 px-4 text-right">
                         @if($booking->vehicle)
-                            <a href="{{ route('fleet.show', $booking->vehicle->id) }}" class="text-[#00e5ff] hover:underline">
+                            <a href="{{ route('fleet.show', $booking->vehicle->id) }}" class="text-blue-600 dark:text-primary hover:underline">
                                 {{ $booking->vehicle->plate_number }}
                             </a>
                         @else

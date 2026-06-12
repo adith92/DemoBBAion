@@ -20,15 +20,15 @@
             {{-- Status filters --}}
             <div class="flex gap-1 text-xs">
                 <a href="{{ route('bookings.index', \Illuminate\Support\Arr::except(request()->query(), ['status'])) }}"
-                   class="{{ !request('status') ? 'bg-blue-600 text-white' : 'bg-[var(--cc-bg-muted)] text-[var(--cc-text-muted)] border border-[var(--cc-border)]/50 hover:bg-[var(--cc-surface)] hover:text-[var(--cc-text)]' }} px-3 py-1.5 rounded-lg transition-colors font-medium">All</a>
+                   class="{{ !request('status') ? 'bg-blue-600 text-gray-900' : 'bg-[var(--cc-bg-muted)] text-[var(--cc-text-muted)] border border-[var(--cc-border)]/50 hover:bg-[var(--cc-surface)] hover:text-[var(--cc-text)]' }} px-3 py-1.5 rounded-lg transition-colors font-medium">All</a>
                 <a href="{{ route('bookings.index', array_merge(request()->query(), ['status' => 'active'])) }}"
-                   class="{{ request('status') === 'active' ? 'bg-purple-600 text-white' : 'bg-[var(--cc-bg-muted)] text-[var(--cc-text-muted)] border border-[var(--cc-border)]/50 hover:bg-[var(--cc-surface)] hover:text-[var(--cc-text)]' }} px-3 py-1.5 rounded-lg transition-colors font-medium">Active</a>
+                   class="{{ request('status') === 'active' ? 'bg-purple-600 text-gray-900' : 'bg-[var(--cc-bg-muted)] text-[var(--cc-text-muted)] border border-[var(--cc-border)]/50 hover:bg-[var(--cc-surface)] hover:text-[var(--cc-text)]' }} px-3 py-1.5 rounded-lg transition-colors font-medium">Active</a>
                 <a href="{{ route('bookings.index', array_merge(request()->query(), ['status' => 'pending'])) }}"
-                   class="{{ request('status') === 'pending' ? 'bg-yellow-500 text-white' : 'bg-[var(--cc-bg-muted)] text-[var(--cc-text-muted)] border border-[var(--cc-border)]/50 hover:bg-[var(--cc-surface)] hover:text-[var(--cc-text)]' }} px-3 py-1.5 rounded-lg transition-colors font-medium">Pending</a>
+                   class="{{ request('status') === 'pending' ? 'bg-yellow-500 text-gray-900' : 'bg-[var(--cc-bg-muted)] text-[var(--cc-text-muted)] border border-[var(--cc-border)]/50 hover:bg-[var(--cc-surface)] hover:text-[var(--cc-text)]' }} px-3 py-1.5 rounded-lg transition-colors font-medium">Pending</a>
                 <a href="{{ route('bookings.index', array_merge(request()->query(), ['status' => 'completed'])) }}"
-                   class="{{ request('status') === 'completed' ? 'bg-green-600 text-white' : 'bg-[var(--cc-bg-muted)] text-[var(--cc-text-muted)] border border-[var(--cc-border)]/50 hover:bg-[var(--cc-surface)] hover:text-[var(--cc-text)]' }} px-3 py-1.5 rounded-lg transition-colors font-medium">Completed</a>
+                   class="{{ request('status') === 'completed' ? 'bg-green-600 text-gray-900' : 'bg-[var(--cc-bg-muted)] text-[var(--cc-text-muted)] border border-[var(--cc-border)]/50 hover:bg-[var(--cc-surface)] hover:text-[var(--cc-text)]' }} px-3 py-1.5 rounded-lg transition-colors font-medium">Completed</a>
                 <a href="{{ route('bookings.index', array_merge(request()->query(), ['status' => 'cancelled'])) }}"
-                   class="{{ request('status') === 'cancelled' ? 'bg-red-600 text-white' : 'bg-[var(--cc-bg-muted)] text-[var(--cc-text-muted)] border border-[var(--cc-border)]/50 hover:bg-[var(--cc-surface)] hover:text-[var(--cc-text)]' }} px-3 py-1.5 rounded-lg transition-colors font-medium">Cancelled</a>
+                   class="{{ request('status') === 'cancelled' ? 'bg-red-600 text-gray-900' : 'bg-[var(--cc-bg-muted)] text-[var(--cc-text-muted)] border border-[var(--cc-border)]/50 hover:bg-[var(--cc-surface)] hover:text-[var(--cc-text)]' }} px-3 py-1.5 rounded-lg transition-colors font-medium">Cancelled</a>
             </div>
 
             @if(auth()->user()->isSales() || auth()->user()->isGM() || auth()->user()->isOperational())

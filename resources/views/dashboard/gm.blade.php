@@ -381,13 +381,13 @@
                 {{-- Widget Content (Scrollable) --}}
                 <div class="space-y-3 flex-grow overflow-y-auto pr-1 custom-scrollbar">
                     <template x-for="(manager, mIdx) in managerLeaderboard" :key="manager.user.id">
-                        <div class="rounded-xl border border-white/5 bg-white/5 p-3 space-y-2.5 transition duration-200">
+                        <div class="rounded-xl border border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-gray-100/5 p-3 space-y-2.5 transition duration-200">
                             
                             {{-- Manager Row --}}
                             <div class="flex items-center justify-between cursor-pointer" @click="selectedManagerId = (selectedManagerId === manager.user.id ? null : manager.user.id)">
                                 <div class="flex items-center gap-2.5 min-w-0">
-                                    <span class="w-6 h-6 rounded-lg font-bold text-xs flex items-center justify-center border border-white/5" 
-                                          :class="mIdx === 0 ? 'bg-amber-500/20 text-amber-300' : (mIdx === 1 ? 'bg-slate-400/20 text-slate-300' : 'bg-slate-800 text-slate-400')"
+                                    <span class="w-6 h-6 rounded-lg font-bold text-xs flex items-center justify-center border border-slate-200 dark:border-white/5" 
+                                          :class="mIdx === 0 ? 'bg-amber-500/20 text-amber-700 dark:text-amber-300' : (mIdx === 1 ? 'bg-slate-400/20 text-slate-600 dark:text-slate-300' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400')"
                                           x-text="mIdx + 1"></span>
                                     <div class="min-w-0">
                                         <p class="text-xs font-bold text-[var(--cc-text)] truncate" x-text="manager.user.name"></p>
@@ -397,8 +397,8 @@
                                 </div>
                                 <div class="flex items-center gap-2">
                                     <div class="text-right">
-                                        <p class="text-xs font-bold text-emerald-400 font-mono" x-text="formatIDR(manager.revenue)"></p>
-                                        <p class="text-[9px] text-indigo-400 font-bold" x-text="getPercentage(manager.revenue, manager.target) + '% Target'"></p>
+                                        <p class="text-xs font-bold text-emerald-600 dark:text-emerald-400 font-mono" x-text="formatIDR(manager.revenue)"></p>
+                                        <p class="text-[9px] text-indigo-600 dark:text-indigo-400 font-bold" x-text="getPercentage(manager.revenue, manager.target) + '% Target'"></p>
                                     </div>
                                     <span class="material-symbols-outlined text-[16px] text-slate-400 transition-transform duration-200"
                                           :class="{'rotate-180': selectedManagerId === manager.user.id}">expand_more</span>
@@ -406,9 +406,9 @@
                             </div>
 
                             {{-- Subordinates (Reps) List --}}
-                            <div x-show="selectedManagerId === manager.user.id" x-collapse class="pl-8 space-y-2 border-l border-white/10 mt-1">
+                            <div x-show="selectedManagerId === manager.user.id" x-collapse class="pl-8 space-y-2 border-l border-slate-200 dark:border-white/10 mt-1">
                                 <template x-for="(rep, rIdx) in manager.reps" :key="rep.user.id">
-                                    <div class="flex items-center justify-between text-xs py-1 hover:bg-white/5 rounded-lg px-2 -mx-2 transition-colors">
+                                    <div class="flex items-center justify-between text-xs py-1 hover:bg-slate-100 dark:hover:bg-gray-100/5 rounded-lg px-2 -mx-2 transition-colors">
                                         <div class="min-w-0 flex items-center gap-2">
                                             <span class="text-[10px] text-slate-400 font-bold" x-text="(rIdx+1) + '.'"></span>
                                             <span class="font-medium text-[var(--cc-text-muted)] truncate" x-text="rep.user.name"></span>
@@ -418,9 +418,9 @@
                                             
                                             {{-- Performance badge --}}
                                             <span class="text-[9px] font-bold px-1.5 py-0.5 rounded-full border"
-                                                  :class="getPercentage(rep.revenue, rep.target) >= 100 ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 
-                                                          (getPercentage(rep.revenue, rep.target) >= 50 ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' : 
-                                                                                                          'bg-rose-500/10 text-rose-400 border-rose-500/20')"
+                                                  :class="getPercentage(rep.revenue, rep.target) >= 100 ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20' : 
+                                                          (getPercentage(rep.revenue, rep.target) >= 50 ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20' : 
+                                                                                                          'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20')"
                                                   x-text="getPercentage(rep.revenue, rep.target) + '%'"></span>
                                         </div>
                                     </div>

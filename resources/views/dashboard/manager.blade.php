@@ -89,7 +89,7 @@
                         <div class="flex h-5 rounded-full overflow-hidden bg-gray-100 dark:bg-gray-800">
                             @foreach($stages as $s)
                             @if(isset($row['totals'][$s]) && $row['totals'][$s] > 0 && $rowTotal > 0)
-                            <div class="{{ $stageColors[$s] ?? 'bg-gray-300 dark:bg-gray-600' }} flex items-center justify-center text-white text-xs"
+                            <div class="{{ $stageColors[$s] ?? 'bg-gray-300 dark:bg-gray-600' }} flex items-center justify-center text-gray-900 text-xs"
                                  style="width: {{ round(($row['totals'][$s] / $rowTotal) * 100) }}%"
                                  title="{{ $stageLabelsMap[$s] ?? $s }}: {{ $row['totals'][$s] }}">
                                 {{ $row['totals'][$s] }}
@@ -128,7 +128,7 @@
                         ];
                     @endphp
                     @forelse($recentActivities as $activity)
-                    <div class="px-5 py-3 hover:bg-black/5 dark:hover:bg-white/5">
+                    <div class="px-5 py-3 hover:bg-black/5 dark:hover:bg-gray-100/5">
                         <div class="flex items-start gap-2">
                             <span class="text-lg leading-none mt-0.5">
                                 {{ $activityIcons[$activity->type] ?? '📌' }}
@@ -163,7 +163,7 @@
                 </div>
                 <div class="overflow-x-auto" style="max-height:calc(100% - 56px)">
                     <table class="w-full text-sm">
-                        <thead class="bg-black/5 dark:bg-white/5 text-xs text-[var(--cc-text-muted)] uppercase sticky top-0">
+                        <thead class="bg-black/5 dark:bg-gray-100/5 text-xs text-[var(--cc-text-muted)] uppercase sticky top-0">
                             <tr>
                                 <th class="px-4 py-3 text-left">Sales</th>
                                 <th class="px-4 py-3 text-center">Won</th>
@@ -174,7 +174,7 @@
                         </thead>
                         <tbody class="divide-y divide-[var(--cc-border)]">
                             @forelse($teamMembers as $member)
-                            <tr class="hover:bg-black/5 dark:hover:bg-white/5">
+                            <tr class="hover:bg-black/5 dark:hover:bg-gray-100/5">
                                 <td class="px-4 py-3 font-medium text-[var(--cc-text)]">{{ $member->name }}</td>
                                 <td class="px-4 py-3 text-center text-green-600 dark:text-green-400 font-semibold">{{ $member->won_count }}</td>
                                 <td class="px-4 py-3 text-center">

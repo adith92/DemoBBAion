@@ -41,7 +41,7 @@
         
         @if($canModify)
         <div class="flex items-center gap-3">
-            <button class="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-indigo-600/30 hover:bg-indigo-500 transition-all">
+            <button class="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-gray-900 shadow-lg shadow-indigo-600/30 hover:bg-indigo-500 transition-all">
                 <span class="material-symbols-outlined text-[16px]">add</span>
                 Register Driver
             </button>
