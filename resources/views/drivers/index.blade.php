@@ -150,8 +150,8 @@
                             {{ str_replace('_', ' ', $d->status === 'inactive' ? 'leave' : $d->status) }}
                         </span>
                         <span class="inline-flex items-center gap-1 text-xs text-[var(--cc-text-muted)] font-medium mt-1">
-                            <span class="material-symbols-outlined text-[12px] text-red-400">location_on</span>
-                            {{ $d->pool?->name ?? 'Unknown' }}
+                            <span class="material-symbols-outlined text-[12px] text-indigo-400">home</span>
+                            Pool: {{ $d->pool?->name ?? '—' }}
                         </span>
                     </div>
                 </div>
