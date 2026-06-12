@@ -50,32 +50,44 @@
     </div>
 
     {{-- Stats Grid --}}
+    @php
+        $currentStatus = request('status', 'All');
+    @endphp
     <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
-        <div class="rounded-2xl border border-[var(--cc-border)] bg-[var(--cc-surface)] p-4 backdrop-blur-md">
+        <a href="{{ request()->fullUrlWithQuery(['status' => 'All']) }}" 
+           class="block rounded-2xl border bg-[var(--cc-surface)] p-4 backdrop-blur-md transition-all duration-200 hover:scale-[1.02] hover:shadow-lg {{ $currentStatus === 'All' ? 'border-indigo-500 ring-2 ring-indigo-500/20' : 'border-[var(--cc-border)] hover:border-indigo-500/40' }}">
             <div class="text-xs font-bold text-[var(--cc-text-muted)] uppercase tracking-wider">Total Supir</div>
             <div class="text-3xl font-mono font-bold text-[var(--cc-text)] mt-1">{{ $stats['total'] }}</div>
             <div class="text-[10px] text-[var(--cc-text-muted)] mt-1">Registered drivers</div>
-        </div>
-        <div class="rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-4 backdrop-blur-md">
+        </a>
+        
+        <a href="{{ request()->fullUrlWithQuery(['status' => 'available']) }}" 
+           class="block rounded-2xl border bg-emerald-500/10 p-4 backdrop-blur-md transition-all duration-200 hover:scale-[1.02] hover:shadow-lg {{ $currentStatus === 'available' ? 'border-emerald-500 ring-2 ring-emerald-500/20' : 'border-emerald-500/20 hover:border-emerald-500/50' }}">
             <div class="text-xs font-bold text-emerald-400 uppercase tracking-wider">Available</div>
             <div class="text-3xl font-mono font-bold text-emerald-400 mt-1">{{ $stats['available'] }}</div>
             <div class="text-[10px] text-emerald-500 mt-1">Ready for assignment</div>
-        </div>
-        <div class="rounded-2xl border border-blue-500/20 bg-blue-500/10 p-4 backdrop-blur-md">
+        </a>
+        
+        <a href="{{ request()->fullUrlWithQuery(['status' => 'assigned']) }}" 
+           class="block rounded-2xl border bg-blue-500/10 p-4 backdrop-blur-md transition-all duration-200 hover:scale-[1.02] hover:shadow-lg {{ $currentStatus === 'assigned' ? 'border-blue-500 ring-2 ring-blue-500/20' : 'border-blue-500/20 hover:border-blue-500/50' }}">
             <div class="text-xs font-bold text-blue-400 uppercase tracking-wider">Assigned</div>
             <div class="text-3xl font-mono font-bold text-blue-400 mt-1">{{ $stats['assigned'] }}</div>
             <div class="text-[10px] text-[var(--cc-text-muted)] mt-1">On active duty</div>
-        </div>
-        <div class="rounded-2xl border border-purple-500/20 bg-purple-500/10 p-4 backdrop-blur-md">
+        </a>
+        
+        <a href="{{ request()->fullUrlWithQuery(['status' => 'reserved']) }}" 
+           class="block rounded-2xl border bg-purple-500/10 p-4 backdrop-blur-md transition-all duration-200 hover:scale-[1.02] hover:shadow-lg {{ $currentStatus === 'reserved' ? 'border-purple-500 ring-2 ring-purple-500/20' : 'border-purple-500/20 hover:border-purple-500/50' }}">
             <div class="text-xs font-bold text-purple-400 uppercase tracking-wider">Reserved</div>
             <div class="text-3xl font-mono font-bold text-purple-400 mt-1">{{ $stats['reserved'] }}</div>
             <div class="text-[10px] text-[var(--cc-text-muted)] mt-1">Booked for contract</div>
-        </div>
-        <div class="rounded-2xl border border-rose-500/20 bg-rose-500/10 p-4 backdrop-blur-md">
+        </a>
+        
+        <a href="{{ request()->fullUrlWithQuery(['status' => 'inactive']) }}" 
+           class="block rounded-2xl border bg-rose-500/10 p-4 backdrop-blur-md transition-all duration-200 hover:scale-[1.02] hover:shadow-lg {{ $currentStatus === 'inactive' ? 'border-rose-500 ring-2 ring-rose-500/20' : 'border-rose-500/20 hover:border-rose-500/50' }}">
             <div class="text-xs font-bold text-rose-400 uppercase tracking-wider">Leave</div>
             <div class="text-3xl font-mono font-bold text-rose-400 mt-1">{{ $stats['leave'] }}</div>
             <div class="text-[10px] text-[var(--cc-text-muted)] mt-1">Not available</div>
-        </div>
+        </a>
     </div>
 
     {{-- Control Filters Panel --}}

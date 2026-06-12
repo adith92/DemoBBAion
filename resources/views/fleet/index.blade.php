@@ -54,57 +54,75 @@
     </div>
 
     {{-- Fleet Stats Grid --}}
+    @php
+        $currentStatus = request('status', 'All');
+    @endphp
     <div class="grid gap-4" :class="showMaintenanceDetails ? 'grid-cols-2 lg:grid-cols-8' : 'grid-cols-2 lg:grid-cols-6'">
-        <div class="rounded-2xl border border-[var(--cc-border)] bg-[var(--cc-surface)] p-4 backdrop-blur-md">
+        <a href="{{ request()->fullUrlWithQuery(['status' => 'All']) }}" 
+           class="block rounded-2xl border bg-[var(--cc-surface)] p-4 backdrop-blur-md transition-all duration-200 hover:scale-[1.02] hover:shadow-lg {{ $currentStatus === 'All' ? 'border-indigo-500 ring-2 ring-indigo-500/20' : 'border-[var(--cc-border)] hover:border-indigo-500/40' }}">
             <div class="text-xs font-bold text-[var(--cc-text-muted)] uppercase tracking-wider">Total Fleet</div>
             <div class="text-3xl font-mono font-bold text-[var(--cc-text)] mt-1">{{ $stats['total'] }}</div>
             <div class="text-[10px] text-[var(--cc-text-muted)] mt-1">Mobil Long Term units</div>
-        </div>
-        <div class="rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-4 backdrop-blur-md">
+        </a>
+        
+        <a href="{{ request()->fullUrlWithQuery(['status' => 'available']) }}" 
+           class="block rounded-2xl border bg-emerald-500/10 p-4 backdrop-blur-md transition-all duration-200 hover:scale-[1.02] hover:shadow-lg {{ $currentStatus === 'available' ? 'border-emerald-500 ring-2 ring-emerald-500/20' : 'border-emerald-500/20 hover:border-emerald-500/50' }}">
             <div class="text-xs font-bold text-emerald-400 uppercase tracking-wider">Available</div>
             <div class="text-3xl font-mono font-bold text-emerald-400 mt-1">{{ $stats['available'] }}</div>
             <div class="text-[10px] text-emerald-500 mt-1">Ready for assignment</div>
-        </div>
-        <div class="rounded-2xl border border-blue-500/20 bg-blue-500/10 p-4 backdrop-blur-md">
+        </a>
+        
+        <a href="{{ request()->fullUrlWithQuery(['status' => 'rent_out']) }}" 
+           class="block rounded-2xl border bg-blue-500/10 p-4 backdrop-blur-md transition-all duration-200 hover:scale-[1.02] hover:shadow-lg {{ $currentStatus === 'rent_out' ? 'border-blue-500 ring-2 ring-blue-500/20' : 'border-blue-500/20 hover:border-blue-500/50' }}">
             <div class="text-xs font-bold text-blue-400 uppercase tracking-wider">Rented Out</div>
             <div class="text-3xl font-mono font-bold text-blue-400 mt-1">{{ $stats['rented'] }}</div>
             <div class="text-[10px] text-[var(--cc-text-muted)] mt-1">On active contract</div>
-        </div>
-        <div class="rounded-2xl border border-purple-500/20 bg-purple-500/10 p-4 backdrop-blur-md">
+        </a>
+        
+        <a href="{{ request()->fullUrlWithQuery(['status' => 'booked']) }}" 
+           class="block rounded-2xl border bg-purple-500/10 p-4 backdrop-blur-md transition-all duration-200 hover:scale-[1.02] hover:shadow-lg {{ $currentStatus === 'booked' ? 'border-purple-500 ring-2 ring-purple-500/20' : 'border-purple-500/20 hover:border-purple-500/50' }}">
             <div class="text-xs font-bold text-purple-400 uppercase tracking-wider">Booked</div>
             <div class="text-3xl font-mono font-bold text-purple-400 mt-1">{{ $stats['booked'] }}</div>
             <div class="text-[10px] text-[var(--cc-text-muted)] mt-1">Earmarked/Reserved</div>
-        </div>
-        <div class="rounded-2xl border border-pink-500/20 bg-pink-500/10 p-4 backdrop-blur-md">
+        </a>
+        
+        <a href="{{ request()->fullUrlWithQuery(['status' => 'hold']) }}" 
+           class="block rounded-2xl border bg-pink-500/10 p-4 backdrop-blur-md transition-all duration-200 hover:scale-[1.02] hover:shadow-lg {{ $currentStatus === 'hold' ? 'border-pink-500 ring-2 ring-pink-500/20' : 'border-pink-500/20 hover:border-pink-500/50' }}">
             <div class="text-xs font-bold text-pink-400 uppercase tracking-wider">Hold</div>
             <div class="text-3xl font-mono font-bold text-pink-400 mt-1">{{ $stats['hold'] }}</div>
             <div class="text-[10px] text-[var(--cc-text-muted)] mt-1">Pending negotiation</div>
-        </div>
-
+        </a>
+ 
         <template x-if="!showMaintenanceDetails">
-            <div @click="showMaintenanceDetails = true" class="rounded-2xl border border-amber-500/20 bg-amber-500/10 p-4 backdrop-blur-md cursor-pointer hover:bg-amber-500/20 transition-colors">
+            <a href="{{ request()->fullUrlWithQuery(['status' => 'maintenance']) }}" 
+               @click="showMaintenanceDetails = true" 
+               class="block rounded-2xl border bg-amber-500/10 p-4 backdrop-blur-md cursor-pointer transition-all duration-200 hover:scale-[1.02] hover:shadow-lg {{ $currentStatus === 'maintenance' ? 'border-amber-500 ring-2 ring-amber-500/20' : 'border-amber-500/20 hover:border-amber-500/50' }}">
                 <div class="text-xs font-bold text-amber-400 uppercase tracking-wider">Maintenance</div>
                 <div class="text-3xl font-mono font-bold text-amber-400 mt-1">{{ $stats['maintenance'] }}</div>
                 <div class="text-[10px] text-[var(--cc-text-muted)] mt-1">Click to view details <span class="text-[10px]">▼</span></div>
-            </div>
+            </a>
         </template>
         <template x-if="showMaintenanceDetails">
             <div class="contents">
-                <div @click="showMaintenanceDetails = false" class="rounded-2xl border border-amber-500/20 bg-amber-500/10 p-4 backdrop-blur-md cursor-pointer hover:bg-amber-500/20 transition-colors">
+                <a href="{{ request()->fullUrlWithQuery(['status' => 'maintenance']) }}" 
+                   @click="showMaintenanceDetails = false" 
+                   class="block rounded-2xl border bg-amber-500/10 p-4 backdrop-blur-md cursor-pointer transition-all duration-200 hover:scale-[1.02] hover:shadow-lg {{ $currentStatus === 'maintenance' ? 'border-amber-500 ring-2 ring-amber-500/20' : 'border-amber-500/20 hover:border-amber-500/50' }}">
                     <div class="text-xs font-bold text-amber-400 uppercase tracking-wider">Maintenance</div>
                     <div class="text-3xl font-mono font-bold text-amber-400 mt-1">{{ $stats['maintenance'] }}</div>
                     <div class="text-[10px] text-[var(--cc-text-muted)] mt-1">Total in workshop <span class="text-[10px]">▲</span></div>
-                </div>
-                <div class="rounded-2xl border border-rose-500/20 bg-rose-500/10 p-4 backdrop-blur-md animate-in fade-in slide-in-from-left-4 duration-300">
+                </a>
+                <a href="{{ request()->fullUrlWithQuery(['status' => 'Being Serviced']) }}" 
+                   class="block rounded-2xl border bg-rose-500/10 p-4 backdrop-blur-md transition-all duration-200 hover:scale-[1.02] hover:shadow-lg animate-in fade-in slide-in-from-left-4 duration-300 {{ $currentStatus === 'Being Serviced' ? 'border-rose-500 ring-2 ring-rose-500/20' : 'border-rose-500/20 hover:border-rose-500/50' }}">
                     <div class="text-xs font-bold text-rose-400 uppercase tracking-wider">Servicing</div>
                     <div class="text-3xl font-mono font-bold text-rose-400 mt-1">{{ $stats['beingServiced'] }}</div>
                     <div class="text-[10px] text-[var(--cc-text-muted)] mt-1">In repair</div>
-                </div>
-                <div class="rounded-2xl border border-orange-500/20 bg-orange-500/10 p-4 backdrop-blur-md animate-in fade-in slide-in-from-left-4 duration-300">
+                </a>
+                <a href="{{ request()->fullUrlWithQuery(['status' => 'In Queue']) }}" 
+                   class="block rounded-2xl border bg-orange-500/10 p-4 backdrop-blur-md transition-all duration-200 hover:scale-[1.02] hover:shadow-lg animate-in fade-in slide-in-from-left-4 duration-300 {{ $currentStatus === 'In Queue' ? 'border-orange-500 ring-2 ring-orange-500/20' : 'border-orange-500/20 hover:border-orange-500/50' }}">
                     <div class="text-xs font-bold text-orange-400 uppercase tracking-wider">In Queue</div>
                     <div class="text-3xl font-mono font-bold text-orange-400 mt-1">{{ $stats['inQueue'] }}</div>
                     <div class="text-[10px] text-[var(--cc-text-muted)] mt-1">Workshop queue</div>
-                </div>
+                </a>
             </div>
         </template>
     </div>
