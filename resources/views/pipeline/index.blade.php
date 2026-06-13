@@ -412,6 +412,9 @@
                                         </button>
                                         <select x-model="p.category" class="w-[90%] bg-transparent text-sm text-[var(--cc-text)] font-bold outline-none">
                                             <option class="text-slate-900" value="Mobil Long Term">Mobil Long Term</option>
+                                            <option class="text-slate-900" value="Mobil Short Term">Mobil Short Term</option>
+                                            <option class="text-slate-900" value="Bis Short Term">Bis Short Term</option>
+                                            <option class="text-slate-900" value="Bis Long Term">Bis Long Term</option>
                                             <option class="text-slate-900" value="E-Voucher">E-Voucher</option>
                                             <option class="text-slate-900" value="Supir">Supir</option>
                                         </select>
@@ -456,7 +459,7 @@
                         </div>
 
                         <!-- OPERATIONAL ALLOCATION FOR NON-SALES, OR LINK DRIVER(S) FOR SALES -->
-                        <template x-if="currentUserRole !== 'sales' && (targetStage === 'negotiation' || targetStage === 'won')">
+                        <template x-if="currentUserRole !== 'sales' && (targetStage === 'negotiation' || targetStage === 'won') && (hasMobilLongTerm() || getSupirQty() > 0)">
                             <div class="mt-4 p-4 border border-[var(--cc-border)] bg-[var(--cc-surface)] rounded-xl space-y-4">
                                 <div class="flex items-center justify-between">
                                     <h3 class="text-sm font-bold text-[var(--cc-text)]">Alokasi Operasional</h3>
@@ -464,41 +467,45 @@
                                 </div>
                                 
                                 <div class="space-y-3">
-                                    <div>
-                                        <label class="block text-[10px] font-bold text-[var(--cc-text-muted)] uppercase tracking-widest mb-1.5">Pilih Unit Kendaraan (Fleet)</label>
-                                        <div class="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto custom-scrollbar">
-                                            <template x-if="availableFleets.length === 0">
-                                                <div class="col-span-2 text-xs text-[var(--cc-text-muted)]">Tidak ada unit tersedia.</div>
-                                            </template>
-                                            <template x-for="fleet in availableFleets" :key="fleet.id">
-                                                <label class="flex items-center gap-2 p-2 rounded-lg border border-[var(--cc-border)] hover:border-indigo-500 cursor-pointer transition">
-                                                    <input type="checkbox" :value="fleet.id" x-model="selectedFleets" class="rounded text-indigo-500 focus:ring-indigo-500 bg-[var(--cc-bg)] border-[var(--cc-border)]">
-                                                    <div class="text-xs">
-                                                        <span class="font-bold text-[var(--cc-text)]" x-text="fleet.plate_number"></span>
-                                                        <div class="text-[9px] text-[var(--cc-text-muted)]" x-text="fleet.brand + ' - ' + fleet.model"></div>
-                                                    </div>
-                                                </label>
-                                            </template>
+                                    <template x-if="hasMobilLongTerm()">
+                                        <div>
+                                            <label class="block text-[10px] font-bold text-[var(--cc-text-muted)] uppercase tracking-widest mb-1.5">Pilih Unit Kendaraan (Fleet)</label>
+                                            <div class="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto custom-scrollbar">
+                                                <template x-if="availableFleets.length === 0">
+                                                    <div class="col-span-2 text-xs text-[var(--cc-text-muted)]">Tidak ada unit tersedia.</div>
+                                                </template>
+                                                <template x-for="fleet in availableFleets" :key="fleet.id">
+                                                    <label class="flex items-center gap-2 p-2 rounded-lg border border-[var(--cc-border)] hover:border-indigo-500 cursor-pointer transition">
+                                                        <input type="checkbox" :value="fleet.id" x-model="selectedFleets" class="rounded text-indigo-500 focus:ring-indigo-500 bg-[var(--cc-bg)] border-[var(--cc-border)]">
+                                                        <div class="text-xs">
+                                                            <span class="font-bold text-[var(--cc-text)]" x-text="fleet.plate_number"></span>
+                                                            <div class="text-[9px] text-[var(--cc-text-muted)]" x-text="fleet.brand + ' - ' + fleet.model"></div>
+                                                        </div>
+                                                    </label>
+                                                </template>
+                                            </div>
                                         </div>
-                                    </div>
+                                    </template>
                                     
-                                    <div>
-                                        <label class="block text-[10px] font-bold text-[var(--cc-text-muted)] uppercase tracking-widest mb-1.5">Pilih Supir (Driver)</label>
-                                        <div class="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto custom-scrollbar">
-                                            <template x-if="availableDrivers.length === 0">
-                                                <div class="col-span-2 text-xs text-[var(--cc-text-muted)]">Tidak ada supir tersedia.</div>
-                                            </template>
-                                            <template x-for="driver in availableDrivers" :key="driver.id">
-                                                <label class="flex items-center gap-2 p-2 rounded-lg border border-[var(--cc-border)] hover:border-indigo-500 cursor-pointer transition">
-                                                    <input type="checkbox" :value="driver.id" x-model="selectedDrivers" class="rounded text-indigo-500 focus:ring-indigo-500 bg-[var(--cc-bg)] border-[var(--cc-border)]">
-                                                    <div class="text-xs">
-                                                        <span class="font-bold text-[var(--cc-text)]" x-text="driver.name"></span>
-                                                        <div class="text-[9px] text-[var(--cc-text-muted)]" x-text="driver.pool ? driver.pool.name : ''"></div>
-                                                    </div>
-                                                </label>
-                                            </template>
+                                    <template x-if="getSupirQty() > 0">
+                                        <div>
+                                            <label class="block text-[10px] font-bold text-[var(--cc-text-muted)] uppercase tracking-widest mb-1.5">Pilih Supir (Driver)</label>
+                                            <div class="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto custom-scrollbar">
+                                                <template x-if="availableDrivers.length === 0">
+                                                    <div class="col-span-2 text-xs text-[var(--cc-text-muted)]">Tidak ada supir tersedia.</div>
+                                                </template>
+                                                <template x-for="driver in availableDrivers" :key="driver.id">
+                                                    <label class="flex items-center gap-2 p-2 rounded-lg border border-[var(--cc-border)] hover:border-indigo-500 cursor-pointer transition">
+                                                        <input type="checkbox" :value="driver.id" x-model="selectedDrivers" class="rounded text-indigo-500 focus:ring-indigo-500 bg-[var(--cc-bg)] border-[var(--cc-border)]">
+                                                        <div class="text-xs">
+                                                            <span class="font-bold text-[var(--cc-text)]" x-text="driver.name"></span>
+                                                            <div class="text-[9px] text-[var(--cc-text-muted)]" x-text="driver.pool ? driver.pool.name : ''"></div>
+                                                        </div>
+                                                    </label>
+                                                </template>
+                                            </div>
                                         </div>
-                                    </div>
+                                    </template>
                                 </div>
                             </div>
                         </template>
@@ -727,6 +734,11 @@ function pipelineManager() {
             return this.editingDeal.products
                 .filter(p => p.category === 'Supir')
                 .reduce((sum, p) => sum + (parseInt(p.quantity) || 0), 0);
+        },
+
+        hasMobilLongTerm() {
+            if (!this.editingDeal || !this.editingDeal.products) return false;
+            return this.editingDeal.products.some(p => p.category === 'Mobil Long Term');
         },
 
         addProduct() {

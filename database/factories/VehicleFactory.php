@@ -13,7 +13,7 @@ class VehicleFactory extends Factory
     {
         return [
             'plate_number' => strtoupper(fake()->bothify('? #### ??')),
-            'brand' => fake()->randomElement(['bigbird', 'goldenbird', 'cititrans', 'executive']),
+            'brand' => fake()->randomElement(['goldenbird', 'executive']),
             'model' => fake()->randomElement(['Avanza', 'Innova', 'HiAce', 'Elf', 'APV', 'Fortuner', 'Pajero']),
             'capacity' => fake()->numberBetween(4, 30),
             'year' => fake()->year(),

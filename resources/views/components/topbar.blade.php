@@ -1,7 +1,7 @@
 @php
     $role = Auth::user()->role ?? '';
-    $roleBadge = ['director'=>'👔 Director','gm'=>'🏢 GM','manager'=>'📊 Manager','sales'=>'💼 Sales','operational'=>'🚗 Ops','finance'=>'💰 Finance'];
-    $roleEmoji = ['director'=>'👔','gm'=>'🏢','manager'=>'📊','sales'=>'💼','operational'=>'🚗','finance'=>'💰'];
+    $roleBadge = ['director'=>'👔 Director','gm'=>'🏢 GM','manager'=>'📊 Manager','sales'=>'💼 Sales','operational'=>'🚗 Ops','pool'=>'🅿️ Pool','finance'=>'💰 Finance'];
+    $roleEmoji = ['director'=>'👔','gm'=>'🏢','manager'=>'📊','sales'=>'💼','operational'=>'🚗','pool'=>'🅿️','finance'=>'💰'];
 @endphp
 
 <header id="topbar" class="topbar sticky top-0 h-14 flex items-center justify-between px-5 z-40 flex-shrink-0">

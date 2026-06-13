@@ -56,12 +56,13 @@ class SearchController extends Controller
 
         // ── Vehicles / Fleet ─────────────────────────────────────────────────
         Vehicle::where('plate_number', 'like', "%{$q}%")
-            ->orWhere('unit_name', 'like', "%{$q}%")
+            ->orWhere('model', 'like', "%{$q}%")
+            ->orWhere('brand', 'like', "%{$q}%")
             ->limit($limit)
             ->get()
             ->each(fn($v) => $results->push([
                 'icon'  => '🚌',
-                'label' => $v->unit_name ?? $v->plate_number,
+                'label' => ($v->brand ? ucfirst($v->brand) : '') . ' ' . $v->model,
                 'sub'   => 'Fleet · ' . ($v->plate_number ?? '—') . ' · ' . ($v->status ?? '—'),
                 'type'  => 'fleet',
                 'url'   => route('fleet.show', $v->id),
