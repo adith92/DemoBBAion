@@ -65,11 +65,6 @@ class Vehicle extends Model
         return $this->hasMany(MaintenanceLog::class);
     }
 
-    public function contracts()
-    {
-        return $this->hasMany(VehicleContract::class);
-    }
-
     public function subscriptions()
     {
         return $this->hasMany(Subscription::class);

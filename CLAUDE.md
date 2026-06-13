@@ -28,12 +28,12 @@ Mengelola: corporate clients, fleet dispatch, sales pipeline, finance & billing,
 ## 🔑 6 User Roles & Access
 | Role | Access |
 |------|--------|
-| `director` | Full access semua modul |
-| `gm` | Full access minus system config |
+| `gm` | Full access semua modul (eks-director, pucuk pimpinan) |
 | `manager` | Sales + Approval + Fleet view |
 | `sales` | Pipeline + Clients + Activities |
-| `operational` | Fleet + Dispatch/Booking |
-| `finance` | Finance + Invoices + Subscriptions + Vouchers |
+| `operational` | Fleet + Dispatch/Booking (pool-scoped) |
+| `finance` | Finance + Invoices + Subscriptions |
+| `pool` | Fleet read-only (pool-scoped, sama seperti operational) |
 
 ---
 
@@ -41,9 +41,9 @@ Mengelola: corporate clients, fleet dispatch, sales pipeline, finance & billing,
 | Branch | Purpose | Status |
 |--------|---------|--------|
 | `main` | Production-ready stable | Live di Railway |
-| `ui-modern-preview` | Dark command center UI v7.5 | **Active development** |
+| `checkpoint_design` | Feature/design iteration | Active development |
 
-> ⚠️ JANGAN ubah `main` langsung. Semua UI work di `ui-modern-preview`.
+> ⚠️ JANGAN ubah `main` langsung. Buat branch feature atau gunakan `checkpoint_design`.
 
 ---
 
@@ -76,10 +76,9 @@ railway run php artisan migrate --force
 ```
 resources/views/
 ├── layouts/app.blade.php       ← MAIN DARK LAYOUT (CSS classes, sidebar, topbar)
-├── auth/login.blade.php        ← Login page
+├── auth/login.blade.php        ← Login page (demo 1-click, jangan untuk produksi nyata)
 ├── dashboard/
 │   ├── gm.blade.php            ← ✅ Command center (KPI, chart, rankings)
-│   ├── director.blade.php      ← ✅ Command center
 │   ├── manager.blade.php       ← ⏳ Pending redesign
 │   ├── sales.blade.php         ← ⏳ Pending redesign
 │   ├── operational.blade.php   ← ⏳ Pending redesign
@@ -89,6 +88,7 @@ app/Http/Controllers/
 routes/web.php                  ← all routes (do not modify)
 nixpacks.toml                   ← Railway build (PHP 8.4)
 DEPLOYMENT.md                   ← deploy guide Railway + Render
+SYSTEM_AUDIT.md                 ← reverse-engineered codebase audit (AI/dev reference)
 ```
 
 ---
@@ -123,15 +123,16 @@ Classes:
 
 ---
 
-## 👤 Demo Accounts
+## 👤 Demo Accounts (post-Tahap A)
 | Role | Email | Password |
 |------|-------|----------|
-| Director | director@goldenbird.co.id | password123 |
 | GM | gm@goldenbird.co.id | password123 |
-| Manager | manager@goldenbird.co.id | password123 |
-| Sales | sales@goldenbird.co.id | password123 |
-| Operational | operational@goldenbird.co.id | password123 |
+| Manager (×5) | manager1..5@goldenbird.co.id | password123 |
+| Sales (×15) | sales1..15@goldenbird.co.id | password123 |
+| Operational | ops@goldenbird.co.id | password123 |
 | Finance | finance@goldenbird.co.id | password123 |
+
+> ⚠️ Role `director` sudah DIHAPUS (Tahap A). Login page otomatis tampilkan semua akun demo — fitur ini untuk demo saja, jangan gunakan di produksi nyata.
 
 ---
 

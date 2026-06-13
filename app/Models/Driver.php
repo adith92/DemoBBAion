@@ -41,11 +41,6 @@ class Driver extends Model
         return $this->hasMany(Booking::class);
     }
 
-    public function contracts()
-    {
-        return $this->hasMany(VehicleContract::class);
-    }
-
     public function pool()
     {
         return $this->belongsTo(Pool::class);

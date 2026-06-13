@@ -624,9 +624,15 @@ class OpportunityController extends Controller
             $this->pipelineService->triggerWonActions($opportunity->fresh());
         }
 
-        // Return per-stage summary so frontend can update counts + Rupiah values instantly
-        $summary = Opportunity::selectRaw("stage, COUNT(*) as count, COALESCE(SUM(estimated_value),0) as total")
-            ->groupBy('stage')
+        // Return per-stage summary scoped to current user's visible opportunities
+        $summaryQuery = Opportunity::selectRaw("stage, COUNT(*) as count, COALESCE(SUM(estimated_value),0) as total");
+        if ($user->role === 'sales') {
+            $summaryQuery->where('sales_id', $user->id);
+        } elseif ($user->role === 'manager') {
+            $subIds = $user->subordinates()->pluck('id')->push($user->id);
+            $summaryQuery->whereIn('sales_id', $subIds);
+        }
+        $summary = $summaryQuery->groupBy('stage')
             ->get()
             ->keyBy('stage')
             ->map(fn($r) => ['count' => (int)$r->count, 'total' => (float)$r->total])
@@ -703,6 +709,69 @@ class OpportunityController extends Controller
             'ok'          => true,
             'opportunity' => $opportunity,
         ]);
+    }
+
+    // ------------------------------------------------------------------
+    // Private helpers
+    // ------------------------------------------------------------------
+
+    // ------------------------------------------------------------------
+    // Apply discount to opportunity — POST /opportunities/{o}/discount
+    // ------------------------------------------------------------------
+
+    public function storeDiscount(Request $request, Opportunity $opportunity)
+    {
+        $user = auth()->user();
+        if ($user->role === 'sales' && $opportunity->sales_id !== $user->id) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'discount_percent' => 'required|numeric|min:0|max:100',
+            'discount_notes'   => 'nullable|string|max:500',
+        ]);
+
+        $opportunity->update([
+            'discount_percent' => $validated['discount_percent'],
+            'discount_notes'   => $validated['discount_notes'] ?? null,
+        ]);
+
+        ActivityLog::create([
+            'sales_id'       => $user->id,
+            'client_id'      => $opportunity->client_id,
+            'opportunity_id' => $opportunity->id,
+            'type'           => 'follow_up',
+            'subject'        => "Diskon {$validated['discount_percent']}% diterapkan",
+            'notes'          => $validated['discount_notes'] ?? '',
+            'activity_date'  => now(),
+        ]);
+
+        return back()->with('success', 'Diskon berhasil disimpan.');
+    }
+
+    // ------------------------------------------------------------------
+    // Opportunities by client — GET /api/opportunities/by-client/{client}
+    // ------------------------------------------------------------------
+
+    public function byClient(\App\Models\Client $client)
+    {
+        $user  = auth()->user();
+        $query = Opportunity::with('product')
+            ->where('client_id', $client->id);
+
+        if ($user->role === 'sales') {
+            $query->where('sales_id', $user->id);
+        } elseif ($user->role === 'manager') {
+            $subIds = $user->subordinates()->pluck('id')->push($user->id);
+            $query->whereIn('sales_id', $subIds);
+        }
+
+        $opportunities = $query->orderByDesc('created_at')->get([
+            'id', 'opp_number', 'stage', 'estimated_value', 'final_value',
+            'created_at', 'actual_close_date',
+        ]);
+
+        return response()->json(['ok' => true, 'opportunities' => $opportunities]);
     }
 
     // ------------------------------------------------------------------
